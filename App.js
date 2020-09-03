@@ -1,8 +1,65 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Contants from 'expo-constants';
+import DriverLogin from './Driver/DriverLogin' ;
+import DriverHomePage from './Driver/DriverHomePage' ;
+import { NavigationContainer } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
-export default function App() {
+const Stack = createStackNavigator();
+const myOptions={
+  // title: "My sweet home",
+  // headerTintColor:"white",
+  // headerStyle:{
+  //   backgroundColor:"#4DB6AC"
+  // }
+  headerShown: false
+}
+function App() {
+  return (
+    <View style={styles.container}>
+        <Stack.Navigator>
+          <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
+              <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
+              {/* <Stack.Screen name="Profile" component={Profile} options={{...myOptions,title:"Profile"}}/> */}
+              {/* <Stack.Screen name="Settings" component={Settings} /> */}
+        </Stack.Navigator>
+      
+    </View>
+  );
+}
+
+export default ()=>{
+  return (
+    <NavigationContainer>
+      <App/>
+    </NavigationContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // backgroundColor: '#EEEEEE',
+    // marginTop: Contants.statusBarHeight,
+    //alignItems: 'center',
+    //justifyContent: 'center',
+  },
+});
+
+
+/////// Alia's code.. not finished yet
+
+//import HomeScreen from './User/HomeScreen';
+
+/*const navigator = createStackNavigator({
+  Homepage: HomeScreen
+
+}, {
+  initialRouteName: 'Homepage',
+});*/
+
+/*export default function App() {
   return (
     <View style={styles.container}>
       <Text>Our GREATE App!</Text>
@@ -18,4 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+});*/
+
+/*export default createAppContainer(navigator);*/
+
