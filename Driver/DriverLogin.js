@@ -6,6 +6,7 @@ import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+
 const DriverLogin =({navigation}) => {
   
   const [data,setData] = React.useState({
@@ -49,345 +50,205 @@ const DriverLogin =({navigation}) => {
     })
   }
 
-
-//   const userLogin = () => { 
-//     if(data.UserName === '' && data.password === '') {
-//     //   Alert.alert('ادخل اسم المستخدم وكلمة المرور لتسجيل الدخول');
-//     setData({
-//         ...data,
-//         isValidUser: false,
-//         isValidPassword: false,
-//         isValidUserAndPassword:true
-//     });
-//     }else if(data.UserName === ''){
-//     //   Alert.alert('ادخل اسم المتخدم');
-//     setData({
-//         ...data,
-//         isValidUser: false,
-//         isValidPassword: true,
-//         isValidUserAndPassword:true
-//     });
-//     }else if(data.password === ''){
-//     //   Alert.alert('ادخل كلمة المرور');
-//     setData({
-//         ...data,
-//         isValidUser: true,
-//         isValidPassword: false,
-//         isValidUserAndPassword:true
-//     });
-//     }else {
-//         setData({
-//             ...data,
-//             // UserName:data.UserName.toLowerCase(),
-//             isValidUser: true,
-//             isValidPassword: true,
-//             isLoading:true
-//         });
-//         data.UserName=data.UserName.toLowerCase()
-//         firebase.database().ref('DeliveryDriver/').once('value', function (snapshot) {
-//         snapshot.forEach(function(snapshot) { 
-//           if(snapshot.val().UserName=== data.UserName && snapshot.val().Password === data.password){
-//             console.log(snapshot.val())
-//             setData({
-//               ...data,
-//               isLoading:false
-//           });
-//             navigation.navigate("DriverHomePage")
-//           }else{
-//             // Alert.alert('اسم المستخدم أو كلمة المرور غير صحيحة')
-//             setData({
-//                 ...data,
-//                 isValidUser: true,
-//                 isValidPassword: true,
-//                 isValidUserAndPassword:false,
-//                 isLoading:false
-//             });
-//           }
-//         });
-//       });
-//   }
-// }
-
-
 const userLogin = () => { 
   if(data.UserName === '' && data.password === '') {
-  //   Alert.alert('ادخل اسم المستخدم وكلمة المرور لتسجيل الدخول');
-  setData({
-      ...data,
-      isValidUser: false,
-      isValidPassword: false,
-      isValidUserAndPassword:true
-  });
+    setData({
+        ...data,
+        isValidUser: false,
+        isValidPassword: false,
+        isValidUserAndPassword:true
+    });
   }else if(data.UserName === ''){
-  //   Alert.alert('ادخل اسم المستخدم');
-  setData({
-      ...data,
-      isValidUser: false,
-      isValidPassword: true,
-      isValidUserAndPassword:true
-  });
+    setData({
+        ...data,
+        isValidUser: false,
+        isValidPassword: true,
+        isValidUserAndPassword:true
+    });
   }else if(data.password === ''){
-  //   Alert.alert('ادخل كلمة المرور');
-  setData({
-      ...data,
-      isValidUser: true,
-      isValidPassword: false,
-      isValidUserAndPassword:true
-  });
+    setData({
+        ...data,
+        isValidUser: true,
+        isValidPassword: false,
+        isValidUserAndPassword:true
+    });
   }else {
-      setData({
-          ...data,
-          // UserName:data.UserName.toLowerCase(),
-          isValidUser: true,
-          isValidPassword: true,
-          isLoading:true
-      });
-      data.UserName=data.UserName.toLowerCase()
+    setData({
+        ...data,
+        // UserName:data.UserName.toLowerCase(),
+        isValidUser: true,
+        isValidPassword: true,
+        isLoading:true
+    });
+
+    data.UserName=data.UserName.toLowerCase()
+    var index=data.UserName.indexOf("@");
+
+    if (index > -1){ 
+      data.UserName=data.UserName.substring(0,index)
       data.UserName=data.UserName.concat("@gmail.com")
-      // Alert.alert(data.UserName)
-      try{
-        firebase.auth().signInWithEmailAndPassword(data.UserName,data.password)
-        .then(user => {
-           setData({
-            ...data,
-            isLoading:false
+    }else{
+      data.UserName=data.UserName.concat("@gmail.com")
+    }
+    try{
+      firebase.auth().signInWithEmailAndPassword(data.UserName,data.password)
+      .then(user => {
+        setData({
+          ...data,
+          isLoading:false
         });
-        navigation.navigate("DriverHomePage")
-        }).catch((error) => {
-            setData({
-              ...data,
-              isValidUser: true,
-              isValidPassword: true,
-              isValidUserAndPassword:false,
-              isLoading:false
+      navigation.navigate("DriverHomePage")
+      }).catch((error) => {
+          setData({
+            ...data,
+            isValidUser: true,
+            isValidPassword: true,
+            isValidUserAndPassword:false,
+            isLoading:false,
           });
         })
-      }
-      catch(error){
+      }catch(error){
         setData({
           ...data,
           isValidUser: true,
           isValidPassword: true,
           isValidUserAndPassword:true,
           isLoading:false
-      });
-      Alert.alert(error)
+        });
+        Alert.alert(error)
       }
-
-    //   firebase.database().ref('DeliveryDriver/').once('value', function (snapshot) {
-    //   snapshot.forEach(function(snapshot) { 
-    //     if(snapshot.val().UserName=== data.UserName && snapshot.val().Password === data.password){
-    //       console.log(snapshot.val())
-    //       setData({
-    //         ...data,
-    //         isLoading:false
-    //     });
-    //       navigation.navigate("DriverHomePage")
-    //     }else{
-    //       // Alert.alert('اسم المستخدم أو كلمة المرور غير صحيحة')
-    //       setData({
-    //           ...data,
-    //           isValidUser: true,
-    //           isValidPassword: true,
-    //           isValidUserAndPassword:false,
-    //           isLoading:false
-    //       });
-    //     }
-    //   });
-    // });
-}
+  }
 }
 
-
-const readUserData= () => {
-  firebase.database().ref('DeliveryDriver/').once('value', function (snapshot) {
-    snapshot.forEach(function(snapshot) { 
-      if(snapshot.val().UserName=== data.UserName && snapshot.val().Password === data.password){
-        Alert.alert('User logged-in successfully!')
-        console.log(snapshot.val())
-      }else{
-        Alert.alert('unsuccessfully')
-      }
-    });
-  });
-}
-  
-
- const writeUserData =() => {
-    firebase.database().ref('User/').push({
-        Name: 'Fouz',
-        UserName:'FouzAlrabai',
-        PhoneNumber: '0508106364',
-        Password: 'Fouz11223344',
-        Email: 'Fouzalrabaye@gmail.com',
-        location: 'Almalqa,Riyadh'
-    }).then((data)=>{
-        //success callback
-        Alert.alert('User register successfully!')
-        console.log('data ' , data)
-    }).catch((error)=>{
-        //error callback
-        Alert.alert(error.message)
-        console.log('error ' , error)
-    })
-}
-
-
-// const readUserData = ()=> {
-//   var query = firebase.database().ref('DeliveryDriver/').orderByChild("UserName").equalTo("Fouz_39");
-//   query.once("value").then(function(result) {
-//     result.forEach(function(snapshot) { // loop over result snapshots, since there may be multiple
-//       const userData = snapshot.val();
-//       if(userData.Password==='fouz1234'){
-//       Alert.alert(userData.Email)
-//       console.log(snapshot.val())
-//     }
-//     });
-//   });
-// }
   return (
 
     <KeyboardAvoidingView
         style={styles.container}
-        behavior="padding"
-      >
-    <View style={styles.container}>
+        behavior="padding">
+
+      <View style={styles.container}>
+
         <StatusBar backgroundColor='#009387' barStyle="light=content"/>
-      <View style={styles.header}>
+
+        <View style={styles.header}>
+
             <Animatable.Image 
             animation="bounceIn"
             duraton="1500"
             source={require('../assets/DriverLogo.jpg')}
             style={styles.logo}
-            resizeMode="stretch"            
-            />
-      
-        <Text style={styles.text_header}>تسجيل الدخول</Text>
-      </View>
-      { data.isValidUserAndPassword ? null : 
-            <Animatable.View animation="fadeInRight" duration={500}>
-            <Text style={styles.errorMsg2}>اسم المستخدم أو كلمة المرور غير صحيحة</Text>
-            </Animatable.View>
-            }
-      <Animatable.View
-        animation="fadeInUpBig"
-        style={styles.footer}>
-        <Text style={styles.text_footer}>اسم المستخدم:</Text>
-        <View style={styles.action}>
-          <FontAwesome
-              name="user-o"
-              color="#9E9D24"
-              size={20}
-                
-          /> 
-          
-          <TextInput style={styles.textInput} 
-                    label="UserName"
-                    placeholder="ادخل اسم المستخدم"
-                    autoCapitalize="none"
-                    onChangeText={(val)=>textInputChange(val)}
-                    >
-          </TextInput>  
-          {data.check_textInputChange?
-          <Animatable.View
-              Animation="bounceIn">
-          <Feather
-              name="check-circle"
-              color="green"
-              size={15}
-              
-          /> 
-           </Animatable.View> 
-          :null}   
+            resizeMode="stretch"/>
+        
+           <Text style={styles.text_header}>تسجيل الدخول</Text>
+
         </View>
-            { data.isValidUser ? null : 
+
+        {data.isValidUserAndPassword ? 
+            null 
+            : 
             <Animatable.View animation="fadeInRight" duration={500}>
-            <Text style={styles.errorMsg}>يجب ادخال اسم المستخدم</Text>
+                <Text style={styles.errorMsg2}>اسم المستخدم أو كلمة المرور غير صحيحة</Text>
             </Animatable.View>
+        }
+
+        <Animatable.View animation="fadeInUpBig"style={styles.footer}>
+          
+            <Text style={styles.text_footer}>اسم المستخدم:</Text>
+
+            <View style={styles.action}>
+              <FontAwesome
+                name="user-o"
+                color="#9E9D24"
+                size={20}/> 
+          
+              <TextInput style={styles.textInput} 
+                  label="UserName"
+                  placeholder="ادخل اسم المستخدم"
+                  autoCapitalize="none"
+                  onChangeText={(val)=>textInputChange(val)}>
+              </TextInput>  
+
+              {data.check_textInputChange?
+                <Animatable.View Animation="bounceIn">
+                  <Feather
+                      name="check-circle"
+                      color="green"
+                      size={15}/> 
+                </Animatable.View> 
+                :
+                null
+              }   
+            </View>
+
+            {data.isValidUser ?
+              null 
+              : 
+              <Animatable.View animation="fadeInRight" duration={500}>
+                <Text style={styles.errorMsg}>يجب ادخال اسم المستخدم</Text>
+              </Animatable.View>
             }
             
-        <Text style={[styles.text_footer,{marginTop: 25}]}>كلمة المرور:</Text>
+            <Text style={[styles.text_footer,{marginTop: 25}]}>كلمة المرور:</Text>
 
-        <View style={styles.action}>
-          <Feather
-              name="lock"
-              color="#9E9D24"
-              size={20}
-          /> 
-          <TextInput style={styles.textInput} 
-                    label="Password"
-                    placeholder="ادخل كلمة المرور"
-                    autoCapitalize="none"
-                    secureTextEntry={data.secureTextEntry?true:false}
-                    onChangeText={(val)=>handlePasswordChange(val)}
-                    textAlign= 'right'
-                      >
-          </TextInput>  
-          <TouchableOpacity
-            onPress={updateSecureTextEntry}
-          >
-            {data.secureTextEntry?
-          <Feather
-              name="eye-off"
-              color="grey"
-              size={15}
-          />  
-          :
-          <Feather
-          name="eye"
-          color="grey"
-          size={15}
-            /> }
-          </TouchableOpacity>   
-        </View>
+            <View style={styles.action}>
+              <Feather
+                  name="lock"
+                  color="#9E9D24"
+                  size={20}/> 
 
-        { data.isValidPassword ? null : 
-            <Animatable.View animation="fadeInRight" duration={500}>
-            <Text style={styles.errorMsg}>يجب ادخال كلمة المرور</Text>
-            </Animatable.View>
+              <TextInput style={styles.textInput} 
+                  label="Password"
+                  placeholder="ادخل كلمة المرور"
+                  autoCapitalize="none"
+                  secureTextEntry={data.secureTextEntry?true:false}
+                  onChangeText={(val)=>handlePasswordChange(val)}
+                  textAlign= 'right'>
+                </TextInput>  
+
+              <TouchableOpacity onPress={updateSecureTextEntry}>
+                  {data.secureTextEntry?
+                      <Feather
+                        name="eye-off"
+                        color="grey"
+                        size={15}/>  
+                    :
+                      <Feather
+                        name="eye"
+                        color="grey"
+                        size={15}/> 
+                  }
+              </TouchableOpacity>   
+            </View>
+
+            {data.isValidPassword ?
+                null 
+              : 
+                <Animatable.View animation="fadeInRight" duration={500}>
+                    <Text style={styles.errorMsg}>يجب ادخال كلمة المرور</Text>
+                </Animatable.View>
             }
             
             <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل نسيت كلمة المرور؟</Text>
           
             
-        <TouchableOpacity
-            onPress={() => writeUserData()}
-          >
-        <View style={styles.button}>
+            <TouchableOpacity onPress={() => userLogin()}>
+                <View style={styles.button}>
 
-        { data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> : 
-              <LinearGradient
-              // colors={['#CDDC39','#9E9D24']}
-              colors={['#AFB42B','#827717']}
-              style={styles.signIn}
-              >               
-                  <Text style={[styles.textSign,{color:'#fff'}]}>تسجيل الدخول </Text>
-                  
-              </LinearGradient>
+                  {data.isLoading ? 
+                      <ActivityIndicator size="large" color="#9E9D24" />   
+                    : 
+                      <LinearGradient
+                      colors={['#AFB42B','#827717']}
+                      style={styles.signIn}> 
 
-            }      
-
-{/* <Button
-          color="#3740FE"
-          title="Logout"
-          onPress={() => userLogin()}
-        /> */}
-
-              {/* <TouchableOpacity
-                  onPress={()=>navigator.navigate('SignSpScreen')}
-                  style={[styles.signIn,{
-                    borderColor: '#009387',
-                    borderWidth: 1,
-                    marginTop: 15
-                  }]}
-              >
-                <Text style={[styles.textSign,{color:'#009387'}
-                ]}>Sign Up</Text>
-              </TouchableOpacity> */}
-        </View>
-        </TouchableOpacity> 
-      </Animatable.View>
-    </View>
+                        <Text style={[styles.textSign,{color:'#fff'}]}>تسجيل الدخول </Text>
+                    
+                      </LinearGradient>
+                  }      
+                </View>
+            </TouchableOpacity> 
+        </Animatable.View>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -461,9 +322,7 @@ const styles = StyleSheet.create({
   errorMsg: {
       color: '#FF0000',
       fontSize: 14,
-    //   textAlign: 'right',
     textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
-
   },
   errorMsg2: {
     color: '#FF0000',
@@ -490,8 +349,7 @@ const styles = StyleSheet.create({
 },
   textSign: {
       fontSize: 18,
-      fontWeight: 'bold'
-      
+      fontWeight: 'bold'  
   }
 });
 

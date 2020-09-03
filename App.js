@@ -8,11 +8,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 const myOptions={
-  // title: "My sweet home",
-  // headerTintColor:"white",
-  // headerStyle:{
-  //   backgroundColor:"#4DB6AC"
-  // }
   headerShown: false
 }
 function App() {
@@ -20,9 +15,7 @@ function App() {
     <View style={styles.container}>
         <Stack.Navigator>
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
-              <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
-              {/* <Stack.Screen name="Profile" component={Profile} options={{...myOptions,title:"Profile"}}/> */}
-              {/* <Stack.Screen name="Settings" component={Settings} /> */}
+          <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
         </Stack.Navigator>
       
     </View>
@@ -40,10 +33,6 @@ export default ()=>{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#EEEEEE',
-    // marginTop: Contants.statusBarHeight,
-    //alignItems: 'center',
-    //justifyContent: 'center',
   },
 });
 
