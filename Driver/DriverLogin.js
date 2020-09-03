@@ -75,23 +75,12 @@ const userLogin = () => {
   }else {
     setData({
         ...data,
-        // UserName:data.UserName.toLowerCase(),
         isValidUser: true,
         isValidPassword: true,
         isLoading:true
     });
-
-    data.UserName=data.UserName.toLowerCase()
-    var index=data.UserName.indexOf("@");
-
-    if (index > -1){ 
-      data.UserName=data.UserName.substring(0,index)
-      data.UserName=data.UserName.concat("@gmail.com")
-    }else{
-      data.UserName=data.UserName.concat("@gmail.com")
-    }
     try{
-      firebase.auth().signInWithEmailAndPassword(data.UserName,data.password)
+      firebase.auth().signInWithEmailAndPassword(data.UserName.concat("@gmail.com"),data.password)
       .then(user => {
         setData({
           ...data,
