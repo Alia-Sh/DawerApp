@@ -124,7 +124,7 @@ const userLogin = () => {
             <Animatable.Image 
             animation="bounceIn"
             duraton="1500"
-            source={require('../assets/DriverLogo.jpg')}
+            source={require('../assets/DriverLogo.png')}
             style={styles.logo}
             resizeMode="stretch"/>
         
