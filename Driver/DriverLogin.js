@@ -87,6 +87,7 @@ const userLogin = () => {
           isLoading:false
         });
       navigation.navigate("DriverHomePage")
+      // navigation.navigate("UserHomePage")
       }).catch((error) => {
           setData({
             ...data,
@@ -107,6 +108,33 @@ const userLogin = () => {
         Alert.alert(error)
       }
   }
+}
+
+const createUser =()=>{
+
+  firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
+    if (firebase.auth().currentUser) {
+      userId = firebase.auth().currentUser.uid;
+      if (userId) {
+          firebase.database().ref('User/' + userId).set({
+            Email:"Hessa@gmail.com",
+            Name:"Hessa",
+            Password:data.password,
+            PhoneNumber:"0000000000",
+            UserName:data.UserName,
+          });
+          firebase.database().ref('User/' + userId).child('Location').set({
+            address:"Riyath",
+            latitude:24.688122806487524,
+            longitude:46.729763634502895
+          });
+      }
+    }
+  }).catch(function(error) {
+    // Handle Errors here.
+      console.log('Register!');
+      console.log(error);
+  })
 }
 
   return (
