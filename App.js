@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import Contants from 'expo-constants';
 import DriverLogin from './Driver/DriverLogin' ;
 import DriverHomePage from './Driver/DriverHomePage' ;
+import AdminLogin from './Admin/AdminLogin' ;
+import AdminHomePage from './Admin/AdminHomePage' ;
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import UserHomePage from './User/UserHomePage' ;
@@ -36,9 +38,11 @@ function App() {
   return (
     <View style={styles.container}>
         <Stack.Navigator>
+        <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
           <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
           <Stack.Screen name="UserHomePage" component={Root} options={myOptions}/>
+          <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
         </Stack.Navigator>
       
     </View>
