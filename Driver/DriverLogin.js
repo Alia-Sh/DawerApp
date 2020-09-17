@@ -86,8 +86,8 @@ const userLogin = () => {
           ...data,
           isLoading:false
         });
-      navigation.navigate("DriverHomePage")
-      // navigation.navigate("UserHomePage")
+      // navigation.navigate("DriverHomePage")
+      navigation.navigate("HomeScreen")
       }).catch((error) => {
           setData({
             ...data,

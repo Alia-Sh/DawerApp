@@ -7,13 +7,13 @@ import AdminLogin from './Admin/AdminLogin' ;
 import AdminHomePage from './Admin/AdminHomePage' ;
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import UserHomePage from './User/UserHomePage' ;
 import DrawerContent from './User/DrawerContent';
 import UserViewProfile from './User/UserViewProfile' ;
 import UserEditProfile from './User/UserEditProfile' ;
 import EditPassword from './User/EditPassword';
 import GoogleMap from './User/GoogleMap';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import HomeScreen from './User/HomeScreen';
 
 
 const Stack = createStackNavigator();
@@ -24,8 +24,8 @@ const myOptions={
 const Drawer = createDrawerNavigator();
 function Root() {
   return (
-<Drawer.Navigator initioalRouteName="UserHomePage" drawerContent={props => <DrawerContent { ... props}/>}>
-          <Drawer.Screen name="UserHomePage" component={UserHomePage} options={myOptions}/>
+<Drawer.Navigator initioalRouteName="HomeScreen" drawerContent={props => <DrawerContent { ... props}/>}>
+          <Drawer.Screen name="HomeScreen" component={HomeScreen} options={myOptions}/>
           <Drawer.Screen name="UserViewProfile" component={UserViewProfile} options={myOptions}/>
           <Drawer.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
           <Drawer.Screen name="UserEditProfile" component={UserEditProfile} options={myOptions}/>
@@ -38,10 +38,10 @@ function App() {
   return (
     <View style={styles.container}>
         <Stack.Navigator>
-        <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>
+        {/* <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/> */}
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
           <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
-          <Stack.Screen name="UserHomePage" component={Root} options={myOptions}/>
+          <Stack.Screen name="HomeScreen" component={Root} options={myOptions}/>
           <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
         </Stack.Navigator>
       

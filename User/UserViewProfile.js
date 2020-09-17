@@ -66,7 +66,7 @@ const UserViewProfile = ({navigation})=>{
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
                         onPress={()=>{
-                            navigation.navigate("UserHomePage")
+                            navigation.navigate("HomeScreen")
                         }}/>
                     <View>
                         <Text style={styles.headerText}>الملف الشخصي</Text>
