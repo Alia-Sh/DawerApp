@@ -108,95 +108,63 @@ const adminLogin = () => {
         isValidPassword: false,
         isValidUserAndPassword:true
     });
-  }else {
+  } else {
     setData({
-        ...data,
-        isValidUser: true,
-        isValidPassword: true,
-        isLoading:true
+      ...data,
+      isValidUser: true,
+      isValidPassword: true,
+      isLoading:true
     });
 
-    // it might works or NOT !!!!!!!!!!!!!!!!!!!!!!!!!
-      // checking if the user exists
-   //data.UserName=data.UserName.toLowerCase()
-   console.log('before');
-   var isAdmin ="empty";
-   console.log(isAdmin);
-   var ref = firebase.database().ref("Admin");
-   
- // ref.orderByChild("Name").equalTo("Hussa").on("child_added", function(snapshot) {
-    console.log('after is admin');
-  //  console.log(snapshot.key);
-    //console.log(snapshot.val());
-   // isAdmin=snapshot.val().toString;
-    console.log(isAdmin);
-//});
-
-// new one @@@i didnt try it yet
-var user=data.UserName.toString();
-console.log("im here asking for username "+user);
-
-//var query = firebase.database().ref('dawerapp/Admin/L1DUV4BNXSQITI2ZvJ5CYXsxx4x1').orderByChild("UserName").equalTo(user);
-//var query = firebase.database().ref('dawerapp/Admin');
-//console.log("here to print query "+query);
-//query.once("value").then( function(snapshot) {
-  //console.log("inside query "+snapshot.val()+"  hh "+snapshot);
-  //snapshot.forEach(function(Usersnapshot) {
-    //console.log(Usersnapshot.key+": "+Usersnapshot.val());
-  //});
-//})
-var query = firebase.database().ref('Admin');
-
-query.once('value',function(snapshot){
-  console.log(snapshot.val());
-  console.log("جوا الكويري");
-}
-);
-  
-console.log('cant find admin');
-console.log("after");
-console.log(isAdmin);
-
-    /*
-    var index=data.UserName.indexOf("@");
-        if (index > -1){ 
-            data.UserName=data.UserName.substring(0,index)
-            data.UserName=data.UserName.concat("@gmail.com")
-        }else{
-            data.UserName=data.UserName.concat("@gmail.com")
-        }*/
-
-        // real auth
-        try{
-          if ((isAdmin.toString).equalTo(data.UserName.toString)){
-            console.log('inside if');
-            firebase.auth().signInWithEmailAndPassword(data.UserName.concat("@gmail.com"),data.password)
-            .then(user => {
-            setData({
-                ...data,
-                isLoading:false
-            });
-            navigation.navigate("AdminHomePage")
-            }).catch((error) => {
+    //
+    firebase.app().database().ref("Admin").orderByChild("UserName")
+      .equalTo(data.UserName).once("value", snapshot => {
+          const userData = snapshot.val();  
+          // Check if the Admin  exist.
+        if (userData) {
+          console.log("Admin exist!");
+          snapshot.forEach(function(snapshot){
+            try{
+              firebase.auth().signInWithEmailAndPassword(snapshot.val().Email,data.password)
+              .then(user => {
                 setData({
-                ...data,
-                isValidUser: true,
-                isValidPassword: true,
-                isValidUserAndPassword:false,
-                isLoading:false,
-            });
-            })
-          }
-        }catch(error){
+                  ...data,
+                  isLoading:false
+                });
+              navigation.navigate("AdminHomePage")
+              }).catch((error) => {
+                  setData({
+                    ...data,
+                    isValidUser: true,
+                    isValidPassword: true,
+                    isValidUserAndPassword:false,
+                    isLoading:false,
+                  });
+                  console.log(error);
+                })
+              }catch(error){
+                setData({
+                  ...data,
+                  isValidUser: true,
+                  isValidPassword: true,
+                  isValidUserAndPassword:true,
+                  isLoading:false
+                });
+                console.log(error);
+              }
+          });
+          // Check if the admin doesnt exist.
+        } else {
+            console.log("Admin doesn't exist!");
             setData({
-            ...data,
-            isValidUser: true,
-            isValidPassword: true,
-            isValidUserAndPassword:true,
-            isLoading:false
-            });
-            Alert.alert(error)
-         }
+              ...data,
+              isValidUser: true,
+              isValidPassword: true,
+              isValidUserAndPassword:false,
+              isLoading:false
+          });
+          }
+      });
     }
 }
   
