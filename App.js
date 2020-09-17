@@ -38,7 +38,7 @@ function App() {
   return (
     <View style={styles.container}>
         <Stack.Navigator>
-        {/* <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/> */}
+          <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
           <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
           <Stack.Screen name="HomeScreen" component={Root} options={myOptions}/>
