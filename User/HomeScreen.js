@@ -25,7 +25,8 @@ const HomeScreen = ({navigation})=>{
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-    },  textInput: {
+    },  
+    textInput: {
         textAlign: 'center', 
         marginTop: 20,  
     }

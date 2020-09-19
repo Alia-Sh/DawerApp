@@ -1,11 +1,19 @@
 import React from 'react';
 import { StyleSheet, View, Image}from 'react-native';
 import {DrawerContentScrollView,DrawerItem} from '@react-navigation/drawer';
-import {Title,Drawer,Avatar,Caption,Paragraph,Text,TouchableRipple,Switch}from 'react-native-paper';
+import {Drawer,Avatar,Caption,Paragraph,Text,TouchableRipple,Switch}from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as Animatable from 'react-native-animatable';
+import firebase from '../Database/firebase';
 
 export function DrawerContent(props){
+
+    const logout=()=>{
+        firebase.auth().signOut().then(function() {
+            props.navigation.navigate("DriverLogin")
+          }).catch(function(error) {
+              console.log(error)
+          });
+    }
     return(
        <View style={{flex:1}}>
            <DrawerContentScrollView {... props}>
@@ -28,7 +36,7 @@ export function DrawerContent(props){
                         size={size}/>
                     )}
                     label="الملف الشخصي "
-                    onPress={() =>{props.navigation.navigate("UserViewProfile")}}/>
+                    onPress={() =>{props.navigation.navigate("DriverViewProfile")}}/>
 
                     <DrawerItem
                     icon={({color,size})=> (
@@ -38,7 +46,7 @@ export function DrawerContent(props){
                         size={size}/>
                     )}
                     label="تسجيل الخروج"
-                    onPress={() =>{}}/> 
+                    onPress={logout}/> 
            </Drawer.Section>
            </DrawerContentScrollView>
        </View> 

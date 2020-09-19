@@ -8,12 +8,16 @@ import AdminHomePage from './Admin/AdminHomePage' ;
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import DrawerContent from './User/DrawerContent';
+import DriverDrawerContent from './Driver/DrawerContent';
 import UserViewProfile from './User/UserViewProfile' ;
 import UserEditProfile from './User/UserEditProfile' ;
 import EditPassword from './User/EditPassword';
 import GoogleMap from './User/GoogleMap';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import HomeScreen from './User/HomeScreen';
+import DriverViewProfile from './Driver/DriverViewProfile';
+import DriverEditProfile from './Driver/DriverEditProfile';
+import DriverEditPassword from './Driver/DriverEditPassword';
 
 
 const Stack = createStackNavigator();
@@ -22,9 +26,10 @@ const myOptions={
 }
 
 const Drawer = createDrawerNavigator();
+const DriverDrawer = createDrawerNavigator();
 function Root() {
   return (
-<Drawer.Navigator initioalRouteName="HomeScreen" drawerContent={props => <DrawerContent { ... props}/>}>
+<Drawer.Navigator initioalRouteName="HomeScreen" drawerContent={props => <DrawerContent { ... props}/>} drawerPosition='right'>
           <Drawer.Screen name="HomeScreen" component={HomeScreen} options={myOptions}/>
           <Drawer.Screen name="UserViewProfile" component={UserViewProfile} options={myOptions}/>
           <Drawer.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
@@ -34,15 +39,28 @@ function Root() {
         </Drawer.Navigator>
   );
 }
+
+function DriverNavigation() {
+  return (
+<DriverDrawer.Navigator initioalRouteName="DriverHomePage" drawerContent={props => <DriverDrawerContent { ... props}/>} drawerPosition='right'>
+          <DriverDrawer.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverViewProfile" component={DriverViewProfile} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverEditProfile" component={DriverEditProfile} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverEditPassword" component={DriverEditPassword} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverLogin" component={App} options={myOptions}/>
+        </DriverDrawer.Navigator>
+  );
+}
 function App() {
   return (
     <View style={styles.container}>
         <Stack.Navigator>
-          <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>
+          {/* <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/> */}
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
-          <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
+          <Stack.Screen name="DriverHomePage" component={DriverNavigation} options={myOptions}/>
           <Stack.Screen name="HomeScreen" component={Root} options={myOptions}/>
           <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
+          <Stack.Screen name="DriverViewProfile" component={DriverViewProfile} options={myOptions}/>
         </Stack.Navigator>
       
     </View>

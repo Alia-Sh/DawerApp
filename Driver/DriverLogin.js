@@ -74,59 +74,83 @@ const userLogin = () => {
     });
   }else {
     setData({
-        ...data,
-        isValidUser: true,
-        isValidPassword: true,
-        isLoading:true
+      ...data,
+      isValidUser: true,
+      isValidPassword: true,
+      isLoading:true
     });
-    try{
-      firebase.auth().signInWithEmailAndPassword(data.UserName.concat("@gmail.com"),data.password)
-      .then(user => {
-        setData({
-          ...data,
-          isLoading:false
-        });
-      navigation.navigate("DriverHomePage")
-      // navigation.navigate("HomeScreen")
-      }).catch((error) => {
-          setData({
-            ...data,
-            isValidUser: true,
-            isValidPassword: true,
-            isValidUserAndPassword:false,
-            isLoading:false,
-          });
-        })
-      }catch(error){
-        setData({
-          ...data,
-          isValidUser: true,
-          isValidPassword: true,
-          isValidUserAndPassword:true,
-          isLoading:false
-        });
-        Alert.alert(error)
-      }
-  }
-}
 
+    //
+    firebase.database().ref("DeliveryDriver").orderByChild("UserName")
+      .equalTo(data.UserName).once("value", snapshot => {
+          const userData = snapshot.val();  
+          // Check if the Driver  exist.
+        if (userData) {
+          console.log("Driver exist!");
+          snapshot.forEach(function(snapshot){
+            try{
+              firebase.auth().signInWithEmailAndPassword(snapshot.val().Email,data.password)
+              .then(user => {
+                setData({
+                  UserName: "",
+                  password: "",
+                  check_textInputChange: false,
+                  secureTextEntry: true,
+                  isValidUser: true,
+                  isValidPassword: true,
+                  isValidUserAndPassword: true,
+                  isLoading:false
+                });
+              navigation.navigate("DriverHomePage")
+              }).catch((error) => {
+                  setData({
+                    ...data,
+                    isValidUser: true,
+                    isValidPassword: true,
+                    isValidUserAndPassword:false,
+                    isLoading:false,
+                  });
+                  console.log(error);
+                })
+              }catch(error){
+                setData({
+                  ...data,
+                  isValidUser: true,
+                  isValidPassword: true,
+                  isValidUserAndPassword:true,
+                  isLoading:false
+                });
+                console.log(error);
+              }
+          });
+          // Check if the Driver doesnt exist.
+        } else {
+            console.log("Driver doesn't exist!");
+            setData({
+              ...data,
+              isValidUser: true,
+              isValidPassword: true,
+              isValidUserAndPassword:false,
+              isLoading:false
+          });
+          }
+      });
+    }
+}
+// to be removed  
 const createUser =()=>{
 
   firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
     if (firebase.auth().currentUser) {
-      userId = firebase.auth().currentUser.uid;
+      var userId = firebase.auth().currentUser.uid;
       if (userId) {
-          firebase.database().ref('User/' + userId).set({
-            Email:"Hessa@gmail.com",
-            Name:"Hessa",
+          firebase.database().ref('DeliveryDriver/' + userId).set({
+            Email:data.UserName.concat("@gmail.com"),
+            Name:"Fouz Ali",
             Password:data.password,
-            PhoneNumber:"0000000000",
+            PhoneNumber:"0555555555",
             UserName:data.UserName,
-          });
-          firebase.database().ref('User/' + userId).child('Location').set({
-            address:"Riyath",
-            latitude:24.688122806487524,
-            longitude:46.729763634502895
+            DeliveryArea:"North"
           });
       }
     }
@@ -179,6 +203,7 @@ const createUser =()=>{
                 size={20}/> 
           
               <TextInput style={styles.textInput} 
+                  value={data.UserName}
                   label="UserName"
                   placeholder="ادخل اسم المستخدم"
                   autoCapitalize="none"
@@ -214,12 +239,14 @@ const createUser =()=>{
                   size={20}/> 
 
               <TextInput style={styles.textInput} 
+                  value={data.password}
                   label="Password"
                   placeholder="ادخل كلمة المرور"
                   autoCapitalize="none"
                   secureTextEntry={data.secureTextEntry?true:false}
                   onChangeText={(val)=>handlePasswordChange(val)}
-                  textAlign= 'right'>
+                  textAlign= 'right'
+                  >
                 </TextInput>  
 
               <TouchableOpacity onPress={updateSecureTextEntry}>
@@ -259,7 +286,6 @@ const createUser =()=>{
                       style={styles.signIn}> 
 
                         <Text style={[styles.textSign,{color:'#fff'}]}>تسجيل الدخول </Text>
-                    
                       </LinearGradient>
                   }      
                 </View>
