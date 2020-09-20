@@ -5,6 +5,7 @@ import {Drawer,Avatar,Caption,Paragraph,Text,TouchableRipple,Switch}from 'react-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from '../Database/firebase';
 
+
 export function DrawerContent(props){
 
     const logout=()=>{
@@ -29,24 +30,28 @@ export function DrawerContent(props){
                </View>
                <Drawer.Section style={styles.drawerSection}>
                <DrawerItem
-                    icon={({color,size})=> (
-                        <Icon
-                        name="account-outline"
-                        color={color}
-                        size={size}/>
-                    )}
-                    label="الملف الشخصي "
-                    onPress={() =>{props.navigation.navigate("DriverViewProfile")}}/>
+                        style={styles.drawerItemStyle}
+                        icon={({color,size})=> (
+                          <Icon
+                          style={{position:'absolute',right:5}}
+                          name="account-outline"
+                          color={color}
+                          size={size}/>
+                        )}
+                        label="الملف الشخصي "
+                        onPress={() =>{props.navigation.navigate("DriverViewProfile")}}/>
 
                     <DrawerItem
-                    icon={({color,size})=> (
-                        <Icon
-                        name="exit-to-app"
-                        color={color}
-                        size={size}/>
-                    )}
-                    label="تسجيل الخروج"
-                    onPress={logout}/> 
+                        style={styles.drawerItemStyle}
+                        icon={({color,size})=> (
+                          <Icon
+                          style={{position:'absolute',right:5}}
+                          name="exit-to-app"
+                          color={color}
+                          size={size}/>
+                        )}
+                        label="تسجيل الخروج"
+                        onPress={logout}/> 
            </Drawer.Section>
            </DrawerContentScrollView>
        </View> 
@@ -105,6 +110,11 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       marginTop:30
+    },
+    drawerItemStyle:{
+      flexDirection:'row-reverse',
+      borderTopColor: '#f4f4f4',
+      borderTopWidth: 1
     }
   });
 

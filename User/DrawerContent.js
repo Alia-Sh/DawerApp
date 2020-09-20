@@ -21,8 +21,10 @@ export function DrawerContent(props){
                </View>
                <Drawer.Section style={styles.drawerSection}>
                <DrawerItem
+                    style={styles.drawerItemStyle}
                     icon={({color,size})=> (
                         <Icon
+                        style={{position:'absolute',right:5}}
                         name="account-outline"
                         color={color}
                         size={size}/>
@@ -30,15 +32,16 @@ export function DrawerContent(props){
                     label="الملف الشخصي "
                     onPress={() =>{props.navigation.navigate("UserViewProfile")}}/>
 
-                    <DrawerItem
+                <DrawerItem
+                    style={styles.drawerItemStyle}
                     icon={({color,size})=> (
                         <Icon
+                        style={{position:'absolute',right:5}}
                         name="exit-to-app"
                         color={color}
                         size={size}/>
                     )}
-                    label="تسجيل الخروج"
-                    onPress={() =>{}}/> 
+                    label="تسجيل الخروج" onPress={() =>{}}/> 
            </Drawer.Section>
            </DrawerContentScrollView>
        </View> 
@@ -97,6 +100,11 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       marginTop:30
+    },
+    drawerItemStyle:{
+      flexDirection:'row-reverse',
+      borderTopColor: '#f4f4f4',
+      borderTopWidth: 1
     }
   });
 

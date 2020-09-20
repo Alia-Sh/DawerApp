@@ -11,6 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DriverEditProfile  = ({navigation,route})=>{
 
+    var user = firebase.auth().currentUser;
+    var userId = user.uid;
+
     const getDetails=(type)=>{
         if(route.params){
             switch(type){
@@ -39,6 +42,21 @@ const DriverEditProfile  = ({navigation,route})=>{
         return ""
     }
 
+    const retriveImage= async ()=>{
+        var imageRef = firebase.storage().ref('images/' + userId);
+        imageRef
+          .getDownloadURL()
+          .then((url) => {
+            //from url you can fetched the uploaded image easily
+            setPicture(url)
+          })
+          .catch((e) => console.log('getting downloadURL of image error => ', e));
+      }
+
+    useEffect(()=>{
+        retriveImage()
+    },[]);
+
     const [Name,setName] = useState(getDetails("Name"))
     const [Phone,setPhone] = useState(getDetails("Phone"))
     const [UserName,setUserName] = useState(getDetails("UserName"))
@@ -47,6 +65,7 @@ const DriverEditProfile  = ({navigation,route})=>{
     const [Email,setEmail] = useState(getDetails("Email"))
     const [NewPassword,setNewPassword] = useState(getDetails(""))
     const [enableshift,setAnbleshift]=useState(false)
+    const [Picture,setPicture] = useState("")
     const [data,setData] = React.useState({
         isLoading:false
       });
@@ -59,8 +78,6 @@ const DriverEditProfile  = ({navigation,route})=>{
             ... data,
             isLoading: true,
           });
-        var user = firebase.auth().currentUser;
-        var userId = user.uid;
             user.updateEmail(Email)
                 .then(function() {
                     firebase.database().ref('DeliveryDriver/' + userId).update({
@@ -72,7 +89,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                         ... data,
                         isLoading: false,
                       });
-                    navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password})
+                    navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password,Picture})
                 })
                 .catch(function(error){
                     setData({
@@ -90,6 +107,46 @@ const DriverEditProfile  = ({navigation,route})=>{
                 Alert.alert(error.message)
                 console.log(error)
               }); 
+    }
+
+    const selectImage = async () => {
+        try {
+          let response = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3]
+          })
+          if (!response.cancelled) {
+            setData({
+                ...data,
+                isLoading:true
+            });
+            uploadImage(response.uri,userId)
+            .then(()=> {
+                setData({
+                    ...data,
+                    isLoading:false
+                });
+               retriveImage();
+            }).catch((error)=> {
+                setData({
+                    ...data,
+                    isLoading:false
+                });
+                Alert.alert(error.message);
+            });
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+    const uploadImage= async (uri,imageName)=>{
+        const response = await fetch(uri);
+        const blob = await response.blob();
+
+        var ref = firebase.storage().ref().child("images/"+imageName);
+        return ref.put(blob);
     }
 
     return(
@@ -110,13 +167,22 @@ const DriverEditProfile  = ({navigation,route})=>{
                 <View style={styles.footer}>
                 <View style={{alignItems:"center"}}>
             
-                        <Image
-                            style={styles.profile_image}
-                            source={require('../assets/DriverProfile2.png')}
+                <View style={{alignItems:"center"}}>
+                        {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> : 
+                            <Image style={styles.profile_image} 
+                            source={Picture==""?require('../assets/DefaultImage.png'):{uri:Picture}}
                             />
+                        }
+                        <FAB  
+                            onPress={() =>selectImage ()}
+                            small
+                            icon="plus"
+                            theme={{colors:{accent:"#C0CA33"}}}
+                            style={{marginLeft:90,marginTop:-23}}/>
+                    </View>
                         
                         <Image
-                            style={{width:'80%'}}
+                            style={{width:'70%',marginTop:15}}
                             source={require('../assets/line.png')}
                             />
                     
@@ -183,7 +249,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                     <Card style={styles.action}>
                         <View style={styles.cardContent}>
                             <Text style={styles.textStyle}>منطقة التوصيل</Text>
-                    <Text style={styles.textInput}>{Location}</Text> 
+                    <Text style={styles.textInput,{color: '#757575',fontSize:16}}>{Location}</Text> 
                         </View>  
                     </Card> 
 
@@ -218,7 +284,7 @@ const styles=StyleSheet.create({
         width:150,
         height:150,
         borderRadius:150/2,
-        marginTop:-30 
+        marginTop:-20 
     },
     action: {
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',

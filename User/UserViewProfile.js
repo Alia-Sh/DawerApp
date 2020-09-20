@@ -87,7 +87,7 @@ const UserViewProfile = ({navigation})=>{
                             source={{uri:Picture}}
                             />
                     }
-                    </View>
+                </View>
                 <View style={{alignItems:"center",margin:15}}>
                     <Title>{UserName}</Title>
                 </View>

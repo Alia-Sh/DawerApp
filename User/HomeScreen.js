@@ -12,7 +12,7 @@ const HomeScreen = ({navigation})=>{
         <View style={styles.container}>
             <SafeAreaView style={{flex:1}}>
                 <TouchableOpacity
-                    style={{margin: 16}}
+                    style={{margin: 16,flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse'}}
                     onPress={Open}>  
                     <FontAwesome5 name="bars" size={24} color="#161924"/>
                 </TouchableOpacity>

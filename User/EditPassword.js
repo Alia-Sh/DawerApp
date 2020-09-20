@@ -1,5 +1,5 @@
 import React, {useState}from 'react';
-import { StyleSheet, Text, View,KeyboardAvoidingView,TextInput, Alert} from 'react-native';
+import { StyleSheet, Text, View,KeyboardAvoidingView,TextInput, Alert,Image} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient'; 
@@ -10,7 +10,8 @@ import * as Animatable from 'react-native-animatable';
 import { NativeModules } from 'react-native';
 
 const EditPassword = ({navigation})=>{
-    var userId = firebase.auth().currentUser.uid;
+    var user = firebase.auth().currentUser;
+    var userId = user.uid;
     var query = firebase.database().ref('User/' + userId);
     query.once("value").then(function(result) {
       const userData = result.val();
@@ -20,13 +21,13 @@ const EditPassword = ({navigation})=>{
     const [Password,setPassword] = useState('')
     const [CurrentPassword,setCurrentPassword] = useState('')
     const [NewPassword,setNewPassword] = useState('')
-    const [CinfirmPassword,setConfirmPassword] = useState('')
+    const [ConfirmPassword,setConfirmPassword] = useState('')
     const [enableshift,setAnbleshift]=useState(false)
     const [data,setData] = React.useState({
         secureTextEntry: true,
         isValidPassword:true,
         isValidNewPassword:true,
-        isValidCinfirmPassword: true,
+        isValidConfirmPassword: true,
         isEmpty:true
       });
 
@@ -38,27 +39,27 @@ const EditPassword = ({navigation})=>{
     }
 
     const checkValidPassword =()=>{
-        if(CurrentPassword.length<1){
+        if(CurrentPassword==''){
             setData({
                 ... data,
-                isEmpty:false
-                })  
-        }else{
-            setData({
-                ... data,
-                isEmpty:true
-                })               
-        }
-        if(CurrentPassword!=Password){
-            setData({
-                ... data,
-                isValidPassword:false
+                isEmpty:false,
+                isValidPassword:true,
                 }) 
+                return false; 
+        }else if(CurrentPassword!=Password){
+            setData({
+                ... data,
+                isValidPassword:false,
+                isEmpty:true
+                }) 
+                return false;               
         }else{
             setData({
                 ... data,
-                isValidPassword:true
-                })   
+                isValidPassword:true,
+                isEmpty:true
+                }) 
+                return true;    
         }
     }
 
@@ -67,78 +68,78 @@ const EditPassword = ({navigation})=>{
             setData({
                 ... data,
                 isValidNewPassword:false
-                })    
+                })
+                return false;     
         }else{
             setData({
                 ... data,
                 isValidNewPassword:true
-                })   
+                })
+                return true;    
         }
     }
-    const checkCinfirmPassword =()=>{
-        if(NewPassword!=CinfirmPassword){
+    const checkConfirmPassword =()=>{
+        if(NewPassword!=ConfirmPassword){
             setData({
                 ... data,
-                isValidCinfirmPassword:false
-                })    
+                isValidConfirmPassword:false
+                })
+                return false;     
         }else{
             setData({
                 ... data,
-                isValidCinfirmPassword:true
-                })   
+                isValidConfirmPassword:true
+                })
+                return true;    
         }
     }
 
     const updatePassword=()=>{
-        if(CurrentPassword!=Password){
+
+        if (checkValidPassword() && checkValidNewPassword() && checkConfirmPassword() ){
             setData({
                 ... data,
-                isValidPassword:false
-              }); 
-          }else{
-            setData({
-                ... data,
-                isValidPassword:true
+                isLoading: true,
               });
-              if(NewPassword.length<8){
-                setData({
-                    ... data,
-                    isValidNewPassword:false
-                  });  
-              }else{
-                setData({
-                    ... data,
-                    isValidNewPassword:true
-                  });
-                  if(NewPassword!=CinfirmPassword){
-                    setData({
-                        ... data,
-                        isValidCinfirmPassword:false
-                      });   
-                  }else{
-                    var user = firebase.auth().currentUser;
-                    var userId = user.uid;
+                user.updatePassword(NewPassword).then(function() {
                     firebase.database().ref('User/' + userId).update({
                         Password: NewPassword,
-                    });
-                    user.updatePassword(NewPassword).then(function() {
-                      }).catch(function(error) {
-                        // An error happened.
-                        console.log("error")
-                        console.log(error)
-                        Alert.alert("error")
-                      });
+                        }).then(function(){
+                            setPassword(NewPassword);
+                            resetData();
+                        }).catch(function(error){
+                            setData({
+                                ... data,
+                                isLoading: false,
+                              });
+                            console.log(error)                          
+                        });
+                }).catch(function(error) {
+                    // An error happened.
                     setData({
                         ... data,
-                        isValidCinfirmPassword:true
+                        isLoading: false,
                       });
-                      setCurrentPassword("")
-                      setNewPassword("")
-                      setConfirmPassword("")
-                      navigation.navigate("UserEditProfile")  
-                  }     
-              }    
-          }                 
+                    console.log(error)
+                    }); 
+        }
+
+    }
+
+    const resetData=()=>{
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+        setData({
+            ... data,
+            secureTextEntry: true,
+            isValidPassword:true,
+            isValidNewPassword:true,
+            isValidConfirmPassword: true,
+            isEmpty:true,
+            isLoading: false,
+          });
+            navigation.navigate("UserEditProfile")  
     }
     return(
         <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
@@ -148,9 +149,9 @@ const EditPassword = ({navigation})=>{
                     style={{height:"40%"}}>
                     <View style={styles.header}>
                         <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
-                            onPress={()=>{
-                                navigation.navigate("UserEditProfile")
-                        }}/>
+                            onPress={
+                                resetData
+                            }/>
                         <View>
                             <Text style={styles.headerText}>تحديث كلمة المرور</Text>
                         </View>
@@ -158,6 +159,20 @@ const EditPassword = ({navigation})=>{
                 </LinearGradient>
 
                 <View style={styles.footer}>
+
+                    <View style={{alignItems:"center"}}>
+                
+                        <Image
+                            style={styles.profile_image}
+                            source={require('../assets/resetPassword.png')}
+                            />
+                        
+                        <Image
+                            style={{width:'80%',margin:10}}
+                            source={require('../assets/line.png')}
+                            />
+
+                    </View>
 
                     <View style={styles.action}>
                         <Text style={styles.textStyle}>كلمة المرور الحالية</Text>
@@ -236,13 +251,13 @@ const EditPassword = ({navigation})=>{
                         <Text style={styles.textStyle}>تأكيد كلمة المرور</Text>
                         <TextInput style={styles.textInput} 
                             label="Password"
-                            value={CinfirmPassword}
+                            value={ConfirmPassword}
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
                             onFocus={()=>setAnbleshift(false)}  
                             onChangeText={text => setConfirmPassword(text)}
-                            onEndEditing={() => checkCinfirmPassword()}>
+                            onEndEditing={() => checkConfirmPassword()}>
                         </TextInput>  
                         <TouchableOpacity onPress={updateSecureTextEntry}>
                             {data.secureTextEntry?
@@ -259,7 +274,7 @@ const EditPassword = ({navigation})=>{
                         </TouchableOpacity>   
                     </View>
 
-                    {data.isValidCinfirmPassword ? null : 
+                    {data.isValidConfirmPassword ? null : 
                         <Animatable.View animation="fadeInRight" duration={500}>
                             <Text style={styles.errorMsg}> كلمتا المرور غير متطابقتان</Text>
                         </Animatable.View>
@@ -321,7 +336,7 @@ const styles=StyleSheet.create({
         borderBottomRightRadius:30,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-20,
+        marginTop:-50,
         margin:20
     },
     button:{
@@ -355,6 +370,12 @@ const styles=StyleSheet.create({
         color: '#FF0000',
         fontSize: 14,
         textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',  
+    },
+    profile_image:{
+        width:140,
+        height:150,
+        marginTop:-100,
+        marginBottom: 15
     }
 })
 export default EditPassword

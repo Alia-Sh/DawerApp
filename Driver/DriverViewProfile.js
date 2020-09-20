@@ -22,6 +22,7 @@ const DriverViewProfile = ({navigation})=>{
       setLocation(userData.DeliveryArea)
       setEmail(userData.Email)
       setPassword(userData.Password)
+      retriveImage();
  
     });
 
@@ -31,7 +32,23 @@ const DriverViewProfile = ({navigation})=>{
     const [Location,setLocation] = useState("")
     const [Email,setEmail] = useState("")
     const [Password,setPassword] = useState("")
+    const [Picture,setPicture] = useState("")
     const [SecureTextEntry,setSecureTextEntry] = useState(true)
+
+    const retriveImage= async ()=>{
+        var imageRef = firebase.storage().ref('images/' + userId);
+        imageRef
+          .getDownloadURL()
+          .then((url) => {
+            //from url you can fetched the uploaded image easily
+            setPicture(url);
+          })
+          .catch((e) => console.log('getting downloadURL of image error => ', e));
+      }
+
+    useEffect(()=>{
+        retriveImage()
+    },[]);
 
 
     const updateSecureTextEntry=()=>{
@@ -56,17 +73,21 @@ const DriverViewProfile = ({navigation})=>{
 
             <View style={styles.footer}>
                 <View style={{alignItems:"center"}}>
-            
-                    <Image
-                        style={styles.profile_image}
-                        source={require('../assets/DriverProfile2.png')}
-                        />
-                    
-                    <Image
-                        style={{width:'80%'}}
-                        source={require('../assets/line.png')}
-                        />
-                    
+                    {Picture==""?
+                        <Image
+                            style={styles.profile_image}
+                            source={require('../assets/DefaultImage.png')}
+                            />
+                        :
+                        <Image
+                            style={styles.profile_image}
+                            source={{uri:Picture}}
+                            />
+                    }
+                        <Image
+                            style={{width:'70%',marginTop:15}}
+                            source={require('../assets/line.png')}
+                            />
                 </View>
 
                 <View style={{alignItems:"center",margin:15}}>
@@ -103,7 +124,7 @@ const DriverViewProfile = ({navigation})=>{
                     </View>  
                 </Card>  
 
-                <Card style={styles.mycard}>
+                {/* <Card style={styles.mycard}>
                     <View style={styles.cardContent}>
                         <Feather
                             name="lock"
@@ -134,7 +155,7 @@ const DriverViewProfile = ({navigation})=>{
                         size={15}/> 
                   }
               </TouchableOpacity>  
-                </Card>  
+                </Card>   */}
 
                 <Card style={styles.mycard}>
                     <View style={styles.cardContent}>
@@ -149,7 +170,7 @@ const DriverViewProfile = ({navigation})=>{
                 <View style={styles.button}> 
                     <Button icon="account-edit" mode="contained" theme={theme }
                         onPress={() => {
-                            navigation.navigate("DriverEditProfile",{UserName,Name,Phone,Location,Password,Email})
+                            navigation.navigate("DriverEditProfile",{UserName,Name,Phone,Location,Password,Email,Picture})
                         }}>
                         تحديث
                     </Button>
@@ -189,7 +210,7 @@ const styles=StyleSheet.create({
         width:150,
         height:150,
         borderRadius:150/2,
-        marginTop:-30 
+        marginTop:-20 
     },
     footer: {
         paddingHorizontal: 20,

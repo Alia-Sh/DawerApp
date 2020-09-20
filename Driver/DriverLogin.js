@@ -81,7 +81,7 @@ const userLogin = () => {
     });
 
     //
-    firebase.database().ref("DeliveryDriver").orderByChild("UserName")
+    firebase.database().ref("User").orderByChild("UserName")
       .equalTo(data.UserName).once("value", snapshot => {
           const userData = snapshot.val();  
           // Check if the Driver  exist.
@@ -101,7 +101,7 @@ const userLogin = () => {
                   isValidUserAndPassword: true,
                   isLoading:false
                 });
-              navigation.navigate("DriverHomePage")
+              navigation.navigate("HomeScreen")
               }).catch((error) => {
                   setData({
                     ...data,
@@ -138,7 +138,7 @@ const userLogin = () => {
     }
 }
 // to be removed  
-const createUser =()=>{
+const createDriver=()=>{
 
   firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
     if (firebase.auth().currentUser) {
@@ -151,6 +151,33 @@ const createUser =()=>{
             PhoneNumber:"0555555555",
             UserName:data.UserName,
             DeliveryArea:"North"
+          });
+      }
+    }
+  }).catch(function(error) {
+    // Handle Errors here.
+      console.log('Register!');
+      console.log(error);
+  })
+}
+
+// to be removed  
+const createUser=()=>{
+
+  firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
+    if (firebase.auth().currentUser) {
+      var userId = firebase.auth().currentUser.uid;
+      if (userId) {
+          firebase.database().ref('User/' + userId).set({
+            Name:"Fouz Ali",
+            Password:data.password,
+            PhoneNumber:"0555555555",
+            UserName:data.UserName,
+          });
+          firebase.database().ref('User/' + userId+'/Location').set({
+            address:"2672 Al Buhturi, Az Zahra, Riyadh 12811 6993, Saudi Arabia",
+            latitude:24.688122806487524,
+            longitude:46.729763634502895
           });
       }
     }

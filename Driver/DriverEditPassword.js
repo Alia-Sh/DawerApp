@@ -101,6 +101,7 @@ const DriverEditPassword = ({navigation,route})=>{
                     firebase.database().ref('DeliveryDriver/' + userId).update({
                         Password: NewPassword,
                         }).then(function(){
+                            setPassword(NewPassword);
                             resetData();
                         }).catch(function(error){
                             setData({
@@ -122,22 +123,19 @@ const DriverEditPassword = ({navigation,route})=>{
     }
 
     const resetData=()=>{
-        setData({
-            secureTextEntry: true,
-            isValidPassword:true,
-            isValidNewPassword:true,
-            isValidConfirmPassword: true,
-            isEmpty:true
-            })
-            setPassword(NewPassword) 
             setCurrentPassword("")
             setNewPassword("")
             setConfirmPassword("")
             setData({
                 ... data,
+                secureTextEntry: true,
+                isValidPassword:true,
+                isValidNewPassword:true,
+                isValidConfirmPassword: true,
+                isEmpty:true,
                 isLoading: false,
               });
-            navigation.navigate("DriverEditProfile",{NewPassword})  
+            navigation.navigate("DriverEditProfile",{Password})  
     }
     return(
         <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
@@ -155,19 +153,19 @@ const DriverEditPassword = ({navigation,route})=>{
                 </SafeAreaView>
 
                 <View style={styles.footer}>
-                <View style={{alignItems:"center"}}>
+                    <View style={{alignItems:"center"}}>
+                
+                        <Image
+                            style={styles.profile_image}
+                            source={require('../assets/resetPassword.png')}
+                            />
+                        
+                        <Image
+                            style={{width:'80%',margin:10}}
+                            source={require('../assets/line.png')}
+                            />
             
-            <Image
-                style={styles.profile_image}
-                source={require('../assets/restPassword.jpg')}
-                />
-            
-            <Image
-                style={{width:'80%',margin:10}}
-                source={require('../assets/line.png')}
-                />
-        
-        </View>
+                    </View>
 
                     <View style={styles.action}>
                         <Text style={styles.textStyle}>كلمة المرور الحالية</Text>
