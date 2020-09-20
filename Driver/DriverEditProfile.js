@@ -266,7 +266,7 @@ const styles=StyleSheet.create({
         fontSize: 18,      
         letterSpacing: 1, 
         textAlign:'center',
-        color: '#212121'
+        color: '#9E9D24'
     },
     icon:{
         position: 'absolute',
