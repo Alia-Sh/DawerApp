@@ -137,20 +137,20 @@ const AdminHomePage = ({navigation})=>{
             </View>
         </View>
         <View style={styles.communityStuff}>
-          
+         <TouchableOpacity  onPress={()=> openRightPage("community")}>
         <Image
           source={require('../assets/AdminIcons/communityBack.png')}
           style={styles.communityB}
           resizeMode="stretch"
           />
-
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={()=> openRightPage("community")}>
         <Image
           source={require('../assets/AdminIcons/communityIcon.png')}
           style={styles.communityA}
           resizeMode="stretch"
-      
           />
-     
+      </TouchableOpacity>
         </View>
 
 
@@ -255,22 +255,25 @@ const styles = StyleSheet.create({
 
     communityStuff:{
       flexDirection :'row-reverse',
+      position: 'absolute',
+      top:height*.80,
       
     },
     communityB :{
-      width :80,
+      width :82,
       height :60,
-      position: 'absolute',
-      top:width*.90,
+      //position: 'absolute',
+     // top:width*.90,
       borderTopLeftRadius :5,
+      left :width *.62,
       
     },
     communityA :{
       width :75,
       height :55,
-      position: 'absolute',
-      top:width*.90,
-      left :height *.001,
+     // position: 'absolute',
+      //top:width*.90,
+      left :width *.81,
       
     }
     
