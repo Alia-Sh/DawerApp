@@ -18,6 +18,12 @@ import HomeScreen from './User/HomeScreen';
 import DriverViewProfile from './Driver/DriverViewProfile';
 import DriverEditProfile from './Driver/DriverEditProfile';
 import DriverEditPassword from './Driver/DriverEditPassword';
+import DriverHome from './Admin/DriverHome' ;
+import CategoryHome from './Admin/CategoryHome' ;
+import FacilityHome from './Admin/FacilityHome' ;
+import RequestHome from './Admin/RequestHome' ;
+import CommunityHome from './Admin/CommunityHome' ;
+
 
 
 const Stack = createStackNavigator();
@@ -55,12 +61,17 @@ function App() {
   return (
     <View style={styles.container}>
         <Stack.Navigator>
-          {/* <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/> */}
+           <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/> 
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
           <Stack.Screen name="DriverHomePage" component={DriverNavigation} options={myOptions}/>
           <Stack.Screen name="HomeScreen" component={Root} options={myOptions}/>
           <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
           <Stack.Screen name="DriverViewProfile" component={DriverViewProfile} options={myOptions}/>
+          <Stack.Screen name="DriverHome" component={DriverHome} options={myOptions}/>
+          <Stack.Screen name="RequestHome" component={RequestHome} options={myOptions}/>
+          <Stack.Screen name="CategoryHome" component={CategoryHome} options={myOptions}/>
+          <Stack.Screen name="FacilityHome" component={FacilityHome} options={myOptions}/>
+          <Stack.Screen name="CommunityHome" component={CommunityHome} options={myOptions}/>
         </Stack.Navigator>
       
     </View>

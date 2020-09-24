@@ -188,7 +188,7 @@ const adminLogin = () => {
         
                 <Text style={styles.text_header}>تسجيل الدخول</Text>
   
-                <Text style={styles.text_header}>Admin</Text>
+                
 
             </View>
 
@@ -295,6 +295,8 @@ const adminLogin = () => {
     </KeyboardAvoidingView>
   );
 }
+
+// here styles
 const {height} = Dimensions.get("screen");
 const {width} = Dimensions.get("screen");
 const height_logo = height * 0.28;
