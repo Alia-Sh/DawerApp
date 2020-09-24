@@ -128,8 +128,14 @@ const adminLogin = () => {
               firebase.auth().signInWithEmailAndPassword(snapshot.val().Email,data.password)
               .then(user => {
                 setData({
-                  ...data,
-                  isLoading:false
+                    UserName:"",
+                    password :"",
+                    check_textInputChange:false,
+                    secureTextEntry: true,
+                    isValidUser: true,
+                    isValidPassword: true,
+                    isValidUserAndPassword: true,
+                    isLoading:false
                 });
               navigation.navigate("AdminHomePage")
               }).catch((error) => {
@@ -188,8 +194,7 @@ const adminLogin = () => {
         
                 <Text style={styles.text_header}>تسجيل الدخول</Text>
   
-                
-
+  
             </View>
 
             {data.isValidUserAndPassword ? null : 
@@ -208,6 +213,7 @@ const adminLogin = () => {
                         size={20}/> 
             
                     <TextInput style={styles.textInput} 
+                        value={data.UserName}
                         label="UserName"
                         placeholder="ادخل اسم المستخدم"
                         autoCapitalize="none"
@@ -243,6 +249,7 @@ const adminLogin = () => {
                         size={20}/> 
 
                     <TextInput style={styles.textInput} 
+                        value={data.password}
                         label="Password"
                         placeholder="ادخل كلمة المرور"
                         autoCapitalize="none"
@@ -379,7 +386,7 @@ const styles = StyleSheet.create({
       marginTop: 50
   },
   signIn: {
-      width: '100%',
+      width: '40%',
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
