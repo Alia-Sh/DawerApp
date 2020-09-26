@@ -19,6 +19,7 @@ import firebase from '../Database/firebase';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AdminHomePage from './AdminHomePage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const AdminLogin =({navigation}) => {
  // to be removed  
@@ -118,7 +119,7 @@ const adminLogin = () => {
 
     //
     firebase.app().database().ref("Admin").orderByChild("UserName")
-      .equalTo(data.UserName).once("value", snapshot => {
+      .equalTo(data.UserName.toLowerCase()).once("value", snapshot => {
           const userData = snapshot.val();  
           // Check if the Admin  exist.
         if (userData) {
@@ -174,13 +175,9 @@ const adminLogin = () => {
     }
 }
   
-  return (
-
-    <KeyboardAvoidingView
-        style={styles.container}
-        behavior="padding" >
-            
+  return (            
         <View style={styles.container}>
+          <KeyboardAwareScrollView>
 
             <StatusBar backgroundColor='#009387' barStyle="light=content"/>
 
@@ -298,8 +295,8 @@ const adminLogin = () => {
                     </View>
                 </TouchableOpacity> 
             </Animatable.View>
+          </KeyboardAwareScrollView>
         </View>
-    </KeyboardAvoidingView>
   );
 }
 
