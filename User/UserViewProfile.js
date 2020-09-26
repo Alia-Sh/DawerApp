@@ -59,7 +59,6 @@ const UserViewProfile = ({navigation})=>{
     return(
 
         <View style={styles.root}>
-
             <LinearGradient
                     colors={["#827717","#AFB42B"]}
                     style={{height:"25%"}}>
@@ -129,7 +128,7 @@ const UserViewProfile = ({navigation})=>{
                         تحديث
                     </Button>
                 </View>
-            </View>   
+            </View>
         </View>
     );
 }

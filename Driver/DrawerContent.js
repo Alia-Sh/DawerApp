@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image}from 'react-native';
+import { StyleSheet, View, Image,NativeModules}from 'react-native';
 import {DrawerContentScrollView,DrawerItem} from '@react-navigation/drawer';
 import {Drawer,Avatar,Caption,Paragraph,Text,TouchableRipple,Switch}from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -33,7 +33,7 @@ export function DrawerContent(props){
                         style={styles.drawerItemStyle}
                         icon={({color,size})=> (
                           <Icon
-                          style={{position:'absolute',right:5}}
+                          style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
                           name="account-outline"
                           color={color}
                           size={size}/>
@@ -45,7 +45,7 @@ export function DrawerContent(props){
                         style={styles.drawerItemStyle}
                         icon={({color,size})=> (
                           <Icon
-                          style={{position:'absolute',right:5}}
+                          style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
                           name="exit-to-app"
                           color={color}
                           size={size}/>
@@ -112,9 +112,15 @@ const styles = StyleSheet.create({
       marginTop:30
     },
     drawerItemStyle:{
-      flexDirection:'row-reverse',
+      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
       borderTopColor: '#f4f4f4',
       borderTopWidth: 1
+    },
+    IconStyleIOS:{
+      position:'absolute',right:5
+    },
+    IconStyleAndroid:{
+      position:'absolute',left:5
     }
   });
 

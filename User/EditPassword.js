@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import firebase from '../Database/firebase';
 import * as Animatable from 'react-native-animatable';
 import { NativeModules } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const EditPassword = ({navigation})=>{
     var user = firebase.auth().currentUser;
@@ -22,7 +23,6 @@ const EditPassword = ({navigation})=>{
     const [CurrentPassword,setCurrentPassword] = useState('')
     const [NewPassword,setNewPassword] = useState('')
     const [ConfirmPassword,setConfirmPassword] = useState('')
-    const [enableshift,setAnbleshift]=useState(false)
     const [data,setData] = React.useState({
         secureTextEntry: true,
         isValidPassword:true,
@@ -142,7 +142,7 @@ const EditPassword = ({navigation})=>{
             navigation.navigate("UserEditProfile")  
     }
     return(
-        <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
+        <KeyboardAwareScrollView>
             <View>
                 <LinearGradient
                     colors={["#827717","#AFB42B"]}
@@ -182,7 +182,6 @@ const EditPassword = ({navigation})=>{
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
-                            onFocus={()=>setAnbleshift(false)}  
                             onChangeText={text => setCurrentPassword(text)}
                             onEndEditing={() => checkValidPassword()}>
                         </TextInput>  
@@ -222,7 +221,6 @@ const EditPassword = ({navigation})=>{
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
-                            onFocus={()=>setAnbleshift(false)}  
                             onChangeText={text => setNewPassword(text)}
                             onEndEditing={() => checkValidNewPassword()}>
                         </TextInput>  
@@ -255,7 +253,6 @@ const EditPassword = ({navigation})=>{
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
-                            onFocus={()=>setAnbleshift(false)}  
                             onChangeText={text => setConfirmPassword(text)}
                             onEndEditing={() => checkConfirmPassword()}>
                         </TextInput>  
@@ -289,7 +286,7 @@ const EditPassword = ({navigation})=>{
 
                 </View>
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
     );
 }
 

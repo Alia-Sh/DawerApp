@@ -8,6 +8,9 @@ import firebase from '../Database/firebase';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeModules } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Animatable from 'react-native-animatable';
+import AlertView from "../components/AlertView";
 
 const DriverEditProfile  = ({navigation,route})=>{
 
@@ -64,49 +67,130 @@ const DriverEditProfile  = ({navigation,route})=>{
     const [Password,setPassword] = useState(getDetails("Password"))
     const [Email,setEmail] = useState(getDetails("Email"))
     const [NewPassword,setNewPassword] = useState(getDetails(""))
-    const [enableshift,setAnbleshift]=useState(false)
     const [Picture,setPicture] = useState("")
     const [data,setData] = React.useState({
-        isLoading:false
+        isLoading:false,
+        isValidPhone:true,
+        PhoneErrorMessage:'',
+        isValidEmail:true,
       });
       if(NewPassword!=""){
         Password= NewPassword; 
       }
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',
+        // isLoading:false,    
+    })
+
+      const checkValidPhone=()=>{
+        if(Phone==""){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب ادخال رقم الهاتف'
+            });
+            return false; 
+        }else if(Phone.length<10){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب ان يتكون رقم الهاتف من ١٠ ارقام'
+            });
+            return false;       
+        }else{
+            if(!data.isValidPhone){   
+                setData({
+                    ...data,
+                    isValidPhone:true,
+                    PhoneErrorMessage:''
+                });                 
+            }
+            return true;         
+        }
+    }
+
+    const checkValidEmail=()=>{
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if(Email==""){
+            setData({
+                ...data,
+                isValidEmail:false,
+                EmailErrorMessage:'يجب ادخال البريد الإلكتروني'
+            });
+            return false; 
+        }else if(reg.test(Email) === false){
+            setData({
+                ...data,
+                isValidEmail:false,
+                EmailErrorMessage:'يحب ادخال الايميل بالشكل الصحيح'
+            });
+            return false; 
+        }else{
+            if(!data.isValidEmail){   
+                setData({
+                    ...data,
+                    isValidEmail:true,
+                    EmailErrorMessage:''
+                });                 
+            }
+            return true;         
+        }
+    }
 
     const updateUserInfo=()=>{
-        setData({
-            ... data,
-            isLoading: true,
-          });
-            user.updateEmail(Email)
-                .then(function() {
-                    firebase.database().ref('DeliveryDriver/' + userId).update({
-                        Name: Name,
-                        PhoneNumber: Phone, 
-                        Email: Email
-                }).then(function(){
+        if(checkValidPhone() && checkValidEmail()){
+            setData({
+                ... data,
+                isLoading: true,
+              });
+                user.updateEmail(Email)
+                    .then(function() {
+                        firebase.database().ref('DeliveryDriver/' + userId).update({
+                            Name: Name,
+                            PhoneNumber: Phone, 
+                            Email: Email
+                    }).then(function(){
+                        setData({
+                            ... data,
+                            isLoading: false,
+                          });
+                        navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password,Picture})
+                    })
+                    .catch(function(error){
+                        setData({
+                            ... data,
+                            isLoading: false,
+                          });
+                        console.log(error)
+                    });
+                  }).catch(function(error) {
+                    // An error happened.
                     setData({
                         ... data,
                         isLoading: false,
                       });
-                    navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password,Picture})
-                })
-                .catch(function(error){
-                    setData({
-                        ... data,
-                        isLoading: false,
-                      });
-                    console.log(error)
-                });
-              }).catch(function(error) {
-                // An error happened.
-                setData({
-                    ... data,
-                    isLoading: false,
-                  });
-                Alert.alert(error.message)
-                console.log(error)
-              }); 
+                    console.log(error.message);
+                    if(error.message==="The email address is already in use by another account."){
+                        setAlert({
+                            ...alert,
+                            Title:'البريد الإلكتروني',
+                            Message:'عنوان البريد الإلكتروني قيد الإستخدام بالفعل من قبل حساب آخر',
+                            jsonPath:"Error",
+                            alertVisible:true,
+                        });
+                        setTimeout(() => {
+                            setAlert({
+                                ...alert,
+                                alertVisible:false,
+                            });
+                        }, 4000)
+                    }else{
+                    Alert.alert(error.message);}
+                  }); 
+        }
     }
 
     const selectImage = async () => {
@@ -150,8 +234,8 @@ const DriverEditProfile  = ({navigation,route})=>{
     }
 
     return(
-        <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
-            <View>
+        <KeyboardAwareScrollView style={styles.root}>
+            <View style={styles.root}>
             <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
@@ -178,7 +262,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                             small
                             icon="plus"
                             theme={{colors:{accent:"#C0CA33"}}}
-                            style={{marginLeft:90,marginTop:-23}}/>
+                            style={Platform.OS === 'android'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
                     </View>
                         
                         <Image
@@ -213,13 +297,21 @@ const DriverEditProfile  = ({navigation,route})=>{
                             value={Phone}
                             autoCapitalize="none"
                             textAlign= 'right'
-                            onFocus={()=>setAnbleshift(true)}
                             keyboardType="number-pad" //number Input
                             onChangeText={text => setPhone(text)}
+                            onEndEditing={() => checkValidPhone()}
                             maxLength={10}>
                         </TextInput>  
                         </View>  
                     </Card>  
+
+                    {data.isValidPhone ?
+                        null 
+                        : 
+                        <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.PhoneErrorMessage}</Text>
+                        </Animatable.View>
+                    }
 
                     <Card style={styles.action}>
                         <View style={styles.cardContent}>
@@ -229,11 +321,19 @@ const DriverEditProfile  = ({navigation,route})=>{
                                 value={Email}
                                 autoCapitalize="none"
                                 textAlign= 'right'
-                                onFocus={()=>setAnbleshift(true)}
+                                onEndEditing={() => checkValidEmail()}
                                 onChangeText={text => setEmail(text)}>
                             </TextInput>  
                         </View>  
-                    </Card>  
+                    </Card> 
+
+                    {data.isValidEmail ?
+                    null 
+                    : 
+                        <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.EmailErrorMessage}</Text>
+                        </Animatable.View>
+                    } 
 
                     <Card style={styles.action} onPress={()=>navigation.navigate("DriverEditPassword",{Password})} >
                         <View style={styles.cardContent}>
@@ -264,8 +364,13 @@ const DriverEditProfile  = ({navigation,route})=>{
                         } 
                     </View>
                 </View>
+                {alert.alertVisible?
+                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+                    :
+                        null
+                    }
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
     );
 }
 
@@ -341,6 +446,21 @@ const styles=StyleSheet.create({
     cardContent:{
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
         padding:10,
+    },
+    FABStyleAndroid:{
+        marginLeft:90,
+        marginTop:-23,
+        flexDirection:'row-reverse' 
+    },
+    FABStyleIOS:{
+        marginLeft:90,
+        marginTop:-23,
+    },
+    errorMsg: {
+        color: '#FF0000',
+        fontSize: 14,
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+        paddingRight:20
     }
 })
 

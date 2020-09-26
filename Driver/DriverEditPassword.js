@@ -8,6 +8,7 @@ import firebase from '../Database/firebase';
 import * as Animatable from 'react-native-animatable';
 import { NativeModules } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const DriverEditPassword = ({navigation,route})=>{
 
@@ -138,8 +139,8 @@ const DriverEditPassword = ({navigation,route})=>{
             navigation.navigate("DriverEditProfile",{Password})  
     }
     return(
-        <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
-            <View>
+        <KeyboardAwareScrollView>
+            <View style={styles.root}>
                 <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
@@ -175,7 +176,6 @@ const DriverEditPassword = ({navigation,route})=>{
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
-                            onFocus={()=>setAnbleshift(false)}  
                             onChangeText={text => setCurrentPassword(text)}
                             onEndEditing={() => checkValidPassword()}>
                         </TextInput>  
@@ -215,7 +215,6 @@ const DriverEditPassword = ({navigation,route})=>{
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
-                            onFocus={()=>setAnbleshift(true)}  
                             onChangeText={text => setNewPassword(text)}
                             onEndEditing={() => checkValidNewPassword()}>
                         </TextInput>  
@@ -248,7 +247,6 @@ const DriverEditPassword = ({navigation,route})=>{
                             autoCapitalize="none"
                             textAlign= 'right'
                             secureTextEntry={data.secureTextEntry?true:false} 
-                            onFocus={()=>setAnbleshift(true)}  
                             onChangeText={text => setConfirmPassword(text)}
                             onEndEditing={() => checkConfirmPassword()}>
                         </TextInput>  
@@ -286,7 +284,7 @@ const DriverEditPassword = ({navigation,route})=>{
 
                 </View>
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
     );
 }
 

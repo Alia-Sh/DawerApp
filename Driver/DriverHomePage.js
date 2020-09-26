@@ -10,11 +10,12 @@ const DriverHomePage = ({navigation})=>{
 }
     return (
         <View style={styles.container}>
+          <View style={{flex:1.5}}>
             <Image 
             source={require('../assets/DriverHomePageTop.png')}
             style={styles.imageTop}
-            resizeMode="stretch"/>
-
+            resizeMode="stretch"
+            />
             <SafeAreaView style={{flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse'}}>
                 <TouchableOpacity
                     style={{margin: 16}}
@@ -24,7 +25,8 @@ const DriverHomePage = ({navigation})=>{
 
                 </TouchableOpacity>
             </SafeAreaView>
-            
+          </View>
+          <View style={{flex:4}}>
             <View style={styles.viewImage}>
               <TouchableOpacity style={styles.TouchableOpacityStyle}>
 
@@ -43,12 +45,13 @@ const DriverHomePage = ({navigation})=>{
               </TouchableOpacity>
 
             </View>
-
+          </View>
+          <View style={{flex:1.5}}>
             <Image 
               source={require('../assets/DriverHomePageButtom.png')}
               style={styles.imageButtom}
               resizeMode="stretch"/>
-
+          </View>
         </View>
       );
 }
@@ -68,26 +71,27 @@ const styles = StyleSheet.create({
   },
   imageButtom: {
     width: "100%" ,
-    height: height_logo,
+    height:"100%" ,
     position: 'absolute', 
     bottom: 0,
   },    
   imageTop: {
     width: "100%" ,
-    height: height_logo2,
+    height:"100%" ,
     position: 'absolute'
   },
   imageCenter: {
     width: 150 ,
-    height: 130,
-    marginTop: 15 ,
+    height: 140,
+    // marginTop: 15 ,
     alignItems: 'center',
     justifyContent: 'center',
   },
   viewImage:{
-    marginTop: 33,
+    // marginTop: 33,
     alignItems: 'center',
     justifyContent: 'center',
+    flex:3
   },
   profileImage:{
     width: 50,
@@ -101,7 +105,9 @@ const styles = StyleSheet.create({
   },
   TouchableOpacityStyle:{
     alignItems: 'center',
-    marginTop: 10
+    justifyContent: 'center',
+    // marginTop: 10,
+    flex:1
   }
   });
 

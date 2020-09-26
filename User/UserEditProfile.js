@@ -7,6 +7,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import firebase from '../Database/firebase';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeModules } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Animatable from 'react-native-animatable';
 
 const UserEditProfile  = ({navigation,route})=>{
 
@@ -60,17 +62,46 @@ const UserEditProfile  = ({navigation,route})=>{
     const [UserName,setUserName] = useState(getDetails("UserName"))
     const [Location,setLocation] = useState(getDetails("Location"))
     const [Picture,setPicture] = useState(getDetails("Picture"))
-    const [enableshift,setAnbleshift]=useState(false)
     const [data,setData] = React.useState({
-        isLoading:false
+        isLoading:false,
+        isValidPhone:true,
+        PhoneErrorMessage:''
       });
 
+    const checkValidPhone=()=>{
+        if(Phone==""){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب ادخال رقم الهاتف'
+            });
+            return false; 
+        }else if(Phone.length<10){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب ان يتكون رقم الهاتف من ١٠ ارقام'
+            });
+            return false;       
+        }else{
+            if(!data.isValidPhone){   
+                setData({
+                    ...data,
+                    isValidPhone:true,
+                    PhoneErrorMessage:''
+                });                 
+            }
+            return true;         
+        }
+    }
     const updateUserInfo=()=>{
-        firebase.database().ref('User/' + userId).update({
-            Name: Name,
-            PhoneNumber: Phone,      
-        });
-        navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+        if(checkValidPhone()){
+            firebase.database().ref('User/' + userId).update({
+                Name: Name,
+                PhoneNumber: Phone,      
+            });
+            navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+        }
     }
 
     const selectImage = async () => {
@@ -115,8 +146,8 @@ const UserEditProfile  = ({navigation,route})=>{
     }
 
     return(
-        <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
-            <View>
+        <KeyboardAwareScrollView style={styles.root}>
+            <View style={styles.root}>
                 <LinearGradient
                     colors={["#827717","#AFB42B"]}
                     style={{height:"25%"}}>
@@ -143,7 +174,7 @@ const UserEditProfile  = ({navigation,route})=>{
                             small
                             icon="plus"
                             theme={{colors:{accent:"#C0CA33"}}}
-                            style={{marginLeft:90,marginTop:-23}}/>
+                            style={Platform.OS === 'android'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
                     </View>
 
                     <View style={{alignItems:"center",margin:10}}>
@@ -171,13 +202,20 @@ const UserEditProfile  = ({navigation,route})=>{
                             value={Phone}
                             autoCapitalize="none"
                             textAlign= 'right'
-                            onFocus={()=>setAnbleshift(false)}
                             keyboardType="number-pad" //number Input
                             onChangeText={text => setPhone(text)}
+                            onEndEditing={() => checkValidPhone()}
                             maxLength={10}>
                         </TextInput>  
                         </View>  
                     </Card>  
+                    {data.isValidPhone ?
+                        null 
+                        : 
+                        <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.PhoneErrorMessage}</Text>
+                        </Animatable.View>
+                    }
 
                     <Card style={styles.action} onPress={()=>navigation.navigate("EditPassword")} >
                         <View style={styles.cardContent}>
@@ -209,7 +247,8 @@ const UserEditProfile  = ({navigation,route})=>{
                     </View>
                 </View>
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
+      
     );
 }
 
@@ -293,6 +332,21 @@ const styles=StyleSheet.create({
     cardContent:{
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
         padding:8,
+    },
+    errorMsg: {
+        color: '#FF0000',
+        fontSize: 14,
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+        paddingRight:20
+    },
+    FABStyleAndroid:{
+        marginLeft:90,
+        marginTop:-23,
+        flexDirection:'row-reverse' 
+    },
+    FABStyleIOS:{
+        marginLeft:90,
+        marginTop:-23,
     }
 })
 
