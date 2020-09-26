@@ -23,7 +23,7 @@ import CategoryHome from './Admin/CategoryHome' ;
 import FacilityHome from './Admin/FacilityHome' ;
 import RequestHome from './Admin/RequestHome' ;
 import CommunityHome from './Admin/CommunityHome' ;
-
+import DeliveryDriverOptions from './Admin/DeliveryDriverOptions';
 
 
 const Stack = createStackNavigator();
@@ -61,7 +61,7 @@ function App() {
   return (
     <View style={styles.container}>
         <Stack.Navigator>
-           <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/> 
+          {/* <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>  */}
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
           <Stack.Screen name="DriverHomePage" component={DriverNavigation} options={myOptions}/>
           <Stack.Screen name="HomeScreen" component={Root} options={myOptions}/>
@@ -72,6 +72,7 @@ function App() {
           <Stack.Screen name="CategoryHome" component={CategoryHome} options={myOptions}/>
           <Stack.Screen name="FacilityHome" component={FacilityHome} options={myOptions}/>
           <Stack.Screen name="CommunityHome" component={CommunityHome} options={myOptions}/>
+          <Stack.Screen name="DeliveryDriverOptions" component={DeliveryDriverOptions} options={myOptions}/>
         </Stack.Navigator>
       
     </View>

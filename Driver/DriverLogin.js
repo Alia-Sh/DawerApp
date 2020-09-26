@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
-import { StyleSheet, Text,View, TouchableOpacity,Platform, TextInput,Alert,StatusBar,Dimensions,KeyboardAvoidingView, ActivityIndicator} from 'react-native';
+import { StyleSheet, Text,View, TouchableOpacity,Platform, TextInput,Alert,StatusBar,Dimensions,KeyboardAvoidingView, ActivityIndicator,NativeModules} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+
 
 const DriverLogin =({navigation}) => {
   
@@ -19,6 +19,7 @@ const DriverLogin =({navigation}) => {
     isValidUserAndPassword: true,
     isLoading:false
   });
+
 
   const textInputChange= (val)=>{
     if(val.length != 0){
@@ -79,10 +80,8 @@ const userLogin = () => {
       isValidPassword: true,
       isLoading:true
     });
-
-    //
-    firebase.database().ref("User").orderByChild("UserName")
-      .equalTo(data.UserName).once("value", snapshot => {
+    firebase.database().ref("DeliveryDriver").orderByChild("UserName")
+      .equalTo(data.UserName.toLowerCase()).once("value", snapshot => {
           const userData = snapshot.val();  
           // Check if the Driver  exist.
         if (userData) {
@@ -101,7 +100,7 @@ const userLogin = () => {
                   isValidUserAndPassword: true,
                   isLoading:false
                 });
-              navigation.navigate("HomeScreen")
+              navigation.navigate("DriverHomePage")
               }).catch((error) => {
                   setData({
                     ...data,
@@ -150,7 +149,7 @@ const createDriver=()=>{
             Password:data.password,
             PhoneNumber:"0555555555",
             UserName:data.UserName,
-            DeliveryArea:"North"
+            DeliveryArea:"شرق الرياض"
           });
       }
     }
@@ -208,6 +207,7 @@ const createUser=()=>{
             resizeMode="stretch"/>
         
            <Text style={styles.text_header}>تسجيل الدخول</Text>
+            {/* <Text style={styles.text_header}>{NativeModules.I18nManager.localeIdentifier}</Text> */}
 
         </View>
 
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   text_footer: {
       color: '#9E9D24',
       fontSize: 18,
-      textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+      textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
   },
   text_forgetPass: {
     color: '#757575',

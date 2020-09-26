@@ -40,7 +40,7 @@ const AdminHomePage = ({navigation})=>{
       break;
     
     case 'driver':
-      navigation.navigate("DriverHome");
+      navigation.navigate("DeliveryDriverOptions");
       break;
 
     case 'request':
