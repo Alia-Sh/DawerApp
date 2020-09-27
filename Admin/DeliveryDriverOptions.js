@@ -341,7 +341,6 @@ import { StyleSheet,
                                     <Text style={styles.text_footer}>اسم المستخدم:</Text>
                                     <View style={styles.action}>
                                         <TextInput style={styles.textInput} 
-                                            // value={data.password}
                                             label="UserName"
                                             placeholder="ادخل اسم المستخدم"
                                             autoCapitalize="none"
@@ -363,7 +362,6 @@ import { StyleSheet,
                                     <Text style={styles.text_footer}>البريد الإلكتروني:</Text>
                                     <View style={styles.action}>
                                         <TextInput style={styles.textInput} 
-                                            // value={data.password}
                                             label="Email"
                                             placeholder="ادخل البريد الإلكتروني"
                                             autoCapitalize="none"
@@ -385,7 +383,6 @@ import { StyleSheet,
                                     <Text style={styles.text_footer}> رقم الهاتف:</Text>
                                     <View style={styles.action}>
                                         <TextInput style={styles.textInput} 
-                                            // value={data.password}
                                             label="Phone"
                                             placeholder="ادخل رقم الهاتف"
                                             autoCapitalize="none"
@@ -409,11 +406,9 @@ import { StyleSheet,
                                     <Text style={styles.text_footer}>كلمة المرور:</Text>
                                     <View style={styles.action}>
                                         <TextInput style={styles.textInput} 
-                                            // value={data.password}
                                             label="Password"
                                             placeholder="ادخل كلمة المرور"
                                             autoCapitalize="none"
-                                            // secureTextEntry={data.secureTextEntry?true:false}
                                             onChangeText={(val)=>setPassword(val)}
                                             textAlign= 'right'
                                             onEndEditing={() => checkValidPassword()}
@@ -521,7 +516,7 @@ import { StyleSheet,
     text_footer: {
         color: '#9E9D24',
         fontSize: 18,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         marginRight:'5%',
         marginTop:marginTopSpace
     },
@@ -533,7 +528,7 @@ import { StyleSheet,
         marginRight:'8%'  
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         marginTop: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -560,7 +555,7 @@ import { StyleSheet,
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         paddingRight:20
     },
   });

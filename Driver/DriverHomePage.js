@@ -46,7 +46,7 @@ const DriverHomePage = ({navigation})=>{
 
             </View>
           </View>
-          <View style={{flex:1.5}}>
+          <View style={{flex:2}}>
             <Image 
               source={require('../assets/DriverHomePageButtom.png')}
               style={styles.imageButtom}
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   TouchableOpacityStyle:{
     alignItems: 'center',
     justifyContent: 'center',
-    // marginTop: 10,
+    // marginTop: 30,
     flex:1
   }
   });
