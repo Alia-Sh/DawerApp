@@ -54,7 +54,6 @@ const DriverViewProfile = ({navigation})=>{
     const updateSecureTextEntry=()=>{
         setSecureTextEntry(!SecureTextEntry)
       }
-
     return(
 
         <View style={styles.root}>
@@ -109,7 +108,7 @@ const DriverViewProfile = ({navigation})=>{
                         <Feather
                             name="phone"
                             color="#929000"
-                            size={20}/> 
+                            size={25}/> 
                         <Text style={styles.mytext}>{Phone}</Text>
                     </View>  
                 </Card>
@@ -119,7 +118,7 @@ const DriverViewProfile = ({navigation})=>{
                         <Feather
                             name="mail"
                             color="#929000"
-                            size={20}/> 
+                            size={25}/> 
                         <Text style={styles.mytext}>{Email}</Text>
                     </View>  
                 </Card>  
@@ -162,7 +161,7 @@ const DriverViewProfile = ({navigation})=>{
                         <Feather
                             name="map-pin"
                             color="#929000"
-                            size={20}/> 
+                            size={25}/> 
                         <Text style={styles.mytext} >{Location}</Text>
                     </View>  
                 </Card> 
@@ -197,7 +196,7 @@ const styles=StyleSheet.create({
         margin:3
     },
     cardContent:{
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         padding:10,
     },
     mytext:{
@@ -228,7 +227,7 @@ const styles=StyleSheet.create({
     header:{
         width: '100%',
         height: 80,
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row-reverse' : 'row',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
     },

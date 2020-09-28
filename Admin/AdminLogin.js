@@ -19,7 +19,8 @@ import firebase from '../Database/firebase';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AdminHomePage from './AdminHomePage';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Loading from '../components/Loading'
 
 const AdminLogin =({navigation}) => {
  // to be removed  
@@ -283,7 +284,7 @@ const adminLogin = () => {
                     <View style={styles.button}>
 
                         {data.isLoading ?
-                            <ActivityIndicator size="large" color="#9E9D24" /> : 
+                            <Loading></Loading>: 
                             <LinearGradient
                                 colors={['#AFB42B','#827717']}
                                 style={styles.signIn}>   

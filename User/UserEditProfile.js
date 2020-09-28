@@ -9,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { NativeModules } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
+import Loading from '../components/Loading'
 
 const UserEditProfile  = ({navigation,route})=>{
 
@@ -41,21 +42,21 @@ const UserEditProfile  = ({navigation,route})=>{
         return ""
     }
 
-    const retriveImage= async ()=>{
-        userId = firebase.auth().currentUser.uid;
-        var imageRef = firebase.storage().ref('images/' + userId);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            //from url you can fetched the uploaded image easily
-            setPicture(url)
-          })
-          .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
+    // const retriveImage= async ()=>{
+    //     userId = firebase.auth().currentUser.uid;
+    //     var imageRef = firebase.storage().ref('images/' + userId);
+    //     imageRef
+    //       .getDownloadURL()
+    //       .then((url) => {
+    //         //from url you can fetched the uploaded image easily
+    //         setPicture(url)
+    //       })
+    //       .catch((e) => console.log('getting downloadURL of image error => ', e));
+    //   }
 
-    useEffect(()=>{
-        retriveImage()
-    },[]);
+    // useEffect(()=>{
+    //     retriveImage()
+    // },[]);
 
     const [Name,setName] = useState(getDetails("Name"))
     const [Phone,setPhone] = useState(getDetails("Phone"))
@@ -96,11 +97,30 @@ const UserEditProfile  = ({navigation,route})=>{
     }
     const updateUserInfo=()=>{
         if(checkValidPhone()){
+            setData({
+                ... data,
+                isLoading: true,
+              });
             firebase.database().ref('User/' + userId).update({
                 Name: Name,
                 PhoneNumber: Phone,      
-            });
-            navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+            }).then(function (){
+                uploadImage(Picture,userId)
+                .then(()=> {
+                    setData({
+                        ...data,
+                        isLoading:false
+                    });
+                    navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                    // retriveImage();
+                }).catch((error)=> {
+                    setData({
+                        ...data,
+                        isLoading:false
+                    });
+                    Alert.alert(error.message);
+                });
+            })
         }
     }
 
@@ -112,28 +132,30 @@ const UserEditProfile  = ({navigation,route})=>{
             aspect: [4, 3]
           })
           if (!response.cancelled) {
-            setData({
-                ...data,
-                isLoading:true
-            });
-            var userId = firebase.auth().currentUser.uid;
-            uploadImage(response.uri,userId)
-            .then(()=> {
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-               retriveImage();
-            }).catch((error)=> {
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-                Alert.alert(error.message);
-            });
+            // setData({
+            //     ...data,
+            //     isLoading:true
+            // });
+            // var userId = firebase.auth().currentUser.uid;
+            // uploadImage(response.uri,userId)
+            // .then(()=> {
+            //     setData({
+            //         ...data,
+            //         isLoading:false
+            //     });
+            //    retriveImage();
+            // }).catch((error)=> {
+            //     setData({
+            //         ...data,
+            //         isLoading:false
+            //     });
+            //     Alert.alert(error.message);
+            // });
+            setPicture(response.uri);
           }
         } catch (error) {
-          console.log(error)
+          console.log(error);
+          Alert.alert(error.message);
         }
       }
 
@@ -145,17 +167,26 @@ const UserEditProfile  = ({navigation,route})=>{
         return ref.put(blob);
     }
 
+    const resetData=()=>{
+        setName(getDetails("Name"));
+        setPhone(getDetails("Phone"));
+        setPicture(getDetails("Picture"))
+        setData({
+            ...data,
+            isLoading:false,
+            isValidPhone:true,        
+        })
+        navigation.navigate("UserViewProfile");
+    }
     return(
         <KeyboardAwareScrollView style={styles.root}>
             <View style={styles.root}>
                 <LinearGradient
                     colors={["#827717","#AFB42B"]}
-                    style={{height:"25%"}}>
+                    style={{height:200}}>
                     <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
-                        onPress={()=>{
-                            navigation.navigate("UserViewProfile")
-                        }}/>
+                        onPress={resetData}/>
                         <View>
                             <Text style={styles.headerText}>تحديث الملف الشخصي</Text>
                         </View>
@@ -164,11 +195,11 @@ const UserEditProfile  = ({navigation,route})=>{
 
                 <View style={styles.footer}>
                     <View style={{alignItems:"center"}}>
-                        {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> : 
+                        {/* {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> :  */}
                             <Image style={styles.profile_image} 
                             source={Picture==""?require('../assets/DefaultImage.png'):{uri:Picture}}
                             />
-                        }
+                        {/* } */}
                         <FAB  
                             onPress={() =>selectImage ()}
                             small
@@ -240,10 +271,14 @@ const UserEditProfile  = ({navigation,route})=>{
                     </Card>  
 
                     <View style={styles.button}> 
+                         {data.isLoading ? 
+                            <Loading></Loading>  
+                        :
                         <Button icon="content-save" mode="contained" theme={theme }
                             onPress={() => updateUserInfo()}>
                                 حفظ
                         </Button>
+                        }
                     </View>
                 </View>
             </View>
@@ -270,7 +305,7 @@ const styles=StyleSheet.create({
         marginTop:-75 
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         margin: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -299,7 +334,7 @@ const styles=StyleSheet.create({
         borderBottomRightRadius:30,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-20,
+        marginTop:-30,
         margin:20
     },
     button:{
@@ -313,7 +348,7 @@ const styles=StyleSheet.create({
     header:{
         width: '100%',
         height: 80,
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row-reverse' : 'row',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop:10,
@@ -330,13 +365,13 @@ const styles=StyleSheet.create({
         left: 16
     },
     cardContent:{
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         padding:8,
     },
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         paddingRight:20
     },
     FABStyleAndroid:{

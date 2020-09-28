@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
       marginTop:30
     },
     drawerItemStyle:{
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
       borderTopColor: '#f4f4f4',
       borderTopWidth: 1
     },

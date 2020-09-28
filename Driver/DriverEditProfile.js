@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import AlertView from "../components/AlertView";
+import Loading from '../components/Loading'
 
 const DriverEditProfile  = ({navigation,route})=>{
 
@@ -45,20 +46,20 @@ const DriverEditProfile  = ({navigation,route})=>{
         return ""
     }
 
-    const retriveImage= async ()=>{
-        var imageRef = firebase.storage().ref('images/' + userId);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            //from url you can fetched the uploaded image easily
-            setPicture(url)
-          })
-          .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
+    // const retriveImage= async ()=>{
+    //     var imageRef = firebase.storage().ref('images/' + userId);
+    //     imageRef
+    //       .getDownloadURL()
+    //       .then((url) => {
+    //         //from url you can fetched the uploaded image easily
+    //         setPicture(url)
+    //       })
+    //       .catch((e) => console.log('getting downloadURL of image error => ', e));
+    //   }
 
-    useEffect(()=>{
-        retriveImage()
-    },[]);
+    // useEffect(()=>{
+    //     retriveImage()
+    // },[]);
 
     const [Name,setName] = useState(getDetails("Name"))
     const [Phone,setPhone] = useState(getDetails("Phone"))
@@ -67,7 +68,7 @@ const DriverEditProfile  = ({navigation,route})=>{
     const [Password,setPassword] = useState(getDetails("Password"))
     const [Email,setEmail] = useState(getDetails("Email"))
     const [NewPassword,setNewPassword] = useState(getDetails(""))
-    const [Picture,setPicture] = useState("")
+    const [Picture,setPicture] = useState(getDetails("Picture"))
     const [data,setData] = React.useState({
         isLoading:false,
         isValidPhone:true,
@@ -81,8 +82,7 @@ const DriverEditProfile  = ({navigation,route})=>{
         alertVisible:false,
         Title:'',
         Message:'',
-        jsonPath:'',
-        // isLoading:false,    
+        jsonPath:'',   
     })
 
       const checkValidPhone=()=>{
@@ -153,11 +153,25 @@ const DriverEditProfile  = ({navigation,route})=>{
                             PhoneNumber: Phone, 
                             Email: Email
                     }).then(function(){
-                        setData({
-                            ... data,
-                            isLoading: false,
-                          });
-                        navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password,Picture})
+                        // setData({
+                        //     ... data,
+                        //     isLoading: false,
+                        //   });
+                        uploadImage(Picture,userId)
+                            .then(()=> {
+                                setData({
+                                    ...data,
+                                    isLoading:false
+                                });
+                                navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password,Picture})
+                                // retriveImage();
+                            }).catch((error)=> {
+                                setData({
+                                    ...data,
+                                    isLoading:false
+                                });
+                                Alert.alert(error.message);
+                            });
                     })
                     .catch(function(error){
                         setData({
@@ -201,27 +215,29 @@ const DriverEditProfile  = ({navigation,route})=>{
             aspect: [4, 3]
           })
           if (!response.cancelled) {
-            setData({
-                ...data,
-                isLoading:true
-            });
-            uploadImage(response.uri,userId)
-            .then(()=> {
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-               retriveImage();
-            }).catch((error)=> {
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-                Alert.alert(error.message);
-            });
+            // setData({
+            //     ...data,
+            //     isLoading:true
+            // });
+            setPicture(response.uri);
+            // uploadImage(response.uri,userId)
+            // .then(()=> {
+            //     setData({
+            //         ...data,
+            //         isLoading:false
+            //     });
+            //    retriveImage();
+            // }).catch((error)=> {
+            //     setData({
+            //         ...data,
+            //         isLoading:false
+            //     });
+            //     Alert.alert(error.message);
+            // });
           }
         } catch (error) {
-          console.log(error)
+          console.log(error);
+          Alert.alert(error.message);
         }
       }
 
@@ -233,15 +249,35 @@ const DriverEditProfile  = ({navigation,route})=>{
         return ref.put(blob);
     }
 
+    const resetData=()=>{
+        setName(getDetails("Name"));
+        setPhone(getDetails("Phone"))
+        setEmail(getDetails("Email"))
+        setPicture(getDetails("Picture"))
+        setData({
+            ...data,
+            isLoading:false,
+            isValidPhone:true,
+            PhoneErrorMessage:'',
+            isValidEmail:true,           
+        })
+        setAlert({
+            ...alert,
+            alertVisible:false,
+            Title:'',
+            Message:'',
+            jsonPath:'',  
+        })
+        navigation.navigate("DriverViewProfile");
+}
+
     return(
         <KeyboardAwareScrollView style={styles.root}>
             <View style={styles.root}>
             <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
-                        onPress={()=>{
-                            navigation.navigate("DriverViewProfile")
-                        }}/>
+                        onPress={resetData}/>
                     <View>
                         <Text style={styles.headerText}>تحديث الملف الشخصي</Text>
                     </View>
@@ -252,11 +288,11 @@ const DriverEditProfile  = ({navigation,route})=>{
                 <View style={{alignItems:"center"}}>
             
                 <View style={{alignItems:"center"}}>
-                        {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> : 
+                        {/* {data.isLoading ? <Loading></Loading>  :  */}
                             <Image style={styles.profile_image} 
                             source={Picture==""?require('../assets/DefaultImage.png'):{uri:Picture}}
                             />
-                        }
+                        {/* } */}
                         <FAB  
                             onPress={() =>selectImage ()}
                             small
@@ -279,7 +315,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                     <Card style={styles.action}>
                         <View style={styles.cardContent}>
                             <Text style={styles.textStyle}>  الاسم</Text>
-                            <TextInput style={styles.textInput} 
+                            <TextInput style={Platform.OS === 'android'? styles.textInputAndroid : styles.textInputIOS} 
                                 label="Name"
                                 value={Name}
                                 autoCapitalize="none"
@@ -292,7 +328,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                     <Card style={styles.action}>
                         <View style={styles.cardContent}>
                         <Text style={styles.textStyle}> رقم الهاتف</Text>
-                            <TextInput style={styles.textInput} 
+                            <TextInput style={Platform.OS === 'android'? styles.textInputAndroid : styles.textInputIOS} 
                             label="Phone"
                             value={Phone}
                             autoCapitalize="none"
@@ -316,7 +352,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                     <Card style={styles.action}>
                         <View style={styles.cardContent}>
                             <Text style={styles.textStyle}>البريد الإلكتروني</Text>
-                            <TextInput style={styles.textInput} 
+                            <TextInput style={Platform.OS === 'android'? styles.textInputAndroid : styles.textInputIOS} 
                                 label="Name"
                                 value={Email}
                                 autoCapitalize="none"
@@ -349,13 +385,13 @@ const DriverEditProfile  = ({navigation,route})=>{
                     <Card style={styles.action}>
                         <View style={styles.cardContent}>
                             <Text style={styles.textStyle}>منطقة التوصيل</Text>
-                    <Text style={styles.textInput,{color: '#757575',fontSize:16}}>{Location}</Text> 
+                    <Text style={styles.textInput,{color: '#757575',fontSize:16,marginLeft:10}}>{Location}</Text> 
                         </View>  
                     </Card> 
 
                     <View style={styles.button}> 
                         {data.isLoading ? 
-                            <ActivityIndicator size="large" color="#9E9D24" />   
+                            <Loading></Loading>  
                         : 
                         <Button icon="content-save" mode="contained" theme={theme }
                             onPress={() => updateUserInfo()}>
@@ -392,20 +428,28 @@ const styles=StyleSheet.create({
         marginTop:-20 
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         margin: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
         paddingRight:3,
         paddingLeft:3
     },  
-    textInput: {
+    textInputIOS: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
         color: '#05375a',
         textAlign: 'right',
         fontSize:16,
         marginRight:10,        
+    },
+    textInputAndroid: {
+        flex: 1,
+        marginTop: Platform.OS === 'ios' ? 0 : -1,
+        color: '#05375a',
+        textAlign: 'right',
+        fontSize:16,
+        marginLeft:10,        
     },
     textStyle:{
         color: '#9E9E9E',
@@ -428,7 +472,7 @@ const styles=StyleSheet.create({
     header:{
         width: '100%',
         height: 80,
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row-reverse' : 'row',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -444,7 +488,7 @@ const styles=StyleSheet.create({
         left: 16
     },
     cardContent:{
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         padding:10,
     },
     FABStyleAndroid:{
@@ -459,7 +503,7 @@ const styles=StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         paddingRight:20
     }
 })

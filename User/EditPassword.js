@@ -142,11 +142,12 @@ const EditPassword = ({navigation})=>{
             navigation.navigate("UserEditProfile")  
     }
     return(
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={styles.root}>
             <View>
                 <LinearGradient
                     colors={["#827717","#AFB42B"]}
-                    style={{height:"40%"}}>
+                    style={{height:200}}
+                    >
                     <View style={styles.header}>
                         <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
                             onPress={
@@ -157,9 +158,8 @@ const EditPassword = ({navigation})=>{
                         </View>
                     </View>
                 </LinearGradient>
-
                 <View style={styles.footer}>
-
+                
                     <View style={{alignItems:"center"}}>
                 
                         <Image
@@ -173,7 +173,7 @@ const EditPassword = ({navigation})=>{
                             />
 
                     </View>
-
+                    
                     <View style={styles.action}>
                         <Text style={styles.textStyle}>كلمة المرور الحالية</Text>
                         <TextInput style={styles.textInput} 
@@ -283,10 +283,35 @@ const EditPassword = ({navigation})=>{
                                 حفظ
                         </Button>
                     </View>
-
-                </View>
+                </View>          
             </View>
-        </KeyboardAwareScrollView>
+            {/* <View style={styles.root}>
+            <Text style={{fontSize:50}}>hhhe
+
+            </Text>
+            <Text style={{fontSize:50}}>hhhe
+
+</Text>
+<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
+
+</Text>
+<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
+
+</Text>
+<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
+
+</Text>
+<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
+
+</Text>
+<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
+
+</Text>
+<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
+
+</Text>
+</View> */}
+        </KeyboardAwareScrollView>   
     );
 }
 
@@ -302,7 +327,7 @@ const styles=StyleSheet.create({
         backgroundColor: '#F5F5F5',       
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         margin: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -333,8 +358,8 @@ const styles=StyleSheet.create({
         borderBottomRightRadius:30,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-50,
-        margin:20
+        marginTop:-30,
+        margin:20,
     },
     button:{
         flexDirection:"row",
@@ -347,7 +372,7 @@ const styles=StyleSheet.create({
     header:{
         width: '100%',
         height: 80,
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row-reverse' : 'row',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop:10,
@@ -366,7 +391,7 @@ const styles=StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',  
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',  
     },
     profile_image:{
         width:140,

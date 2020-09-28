@@ -5,7 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import firebase from '../Database/firebase';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Loading from '../components/Loading';
 
 
 const DriverLogin =({navigation}) => {
@@ -302,7 +303,7 @@ const createUser=()=>{
                 <View style={styles.button}>
 
                   {data.isLoading ? 
-                      <ActivityIndicator size="large" color="#9E9D24" />   
+                      <Loading></Loading>  
                     : 
                       <LinearGradient
                       colors={['#AFB42B','#827717']}
