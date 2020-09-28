@@ -24,7 +24,7 @@ import FacilityHome from './Admin/FacilityHome' ;
 import RequestHome from './Admin/RequestHome' ;
 import CommunityHome from './Admin/CommunityHome' ;
 import DeliveryDriverOptions from './Admin/DeliveryDriverOptions';
-import AlertView from './components/AlertView'
+import ResetPassword from './Driver/ResetPassword'
 
 
 const Stack = createStackNavigator();
@@ -73,6 +73,7 @@ function App() {
           <Stack.Screen name="FacilityHome" component={FacilityHome} options={myOptions}/>
           <Stack.Screen name="CommunityHome" component={CommunityHome} options={myOptions}/>
           <Stack.Screen name="DeliveryDriverOptions" component={DeliveryDriverOptions} options={myOptions}/>
+          <Stack.Screen name="ResetPassword" component={ResetPassword} options={myOptions}/>
         </Stack.Navigator>
       
     </View>

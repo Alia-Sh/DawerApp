@@ -295,9 +295,11 @@ const createUser=()=>{
                     <Text style={styles.errorMsg}>يجب ادخال كلمة المرور</Text>
                 </Animatable.View>
             }
-            
+            <TouchableOpacity 
+            onPress={()=>{navigation.navigate("ResetPassword")}}
+            >
             <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل نسيت كلمة المرور؟</Text>
-          
+            </TouchableOpacity>
             
             <TouchableOpacity onPress={() => userLogin()}>
                 <View style={styles.button}>
@@ -360,7 +362,8 @@ const styles = StyleSheet.create({
   text_forgetPass: {
     color: '#757575',
     fontSize: 15,
-    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+    marginLeft:15,
+    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'right':'left',
 },
   action: {
       flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
