@@ -6,7 +6,9 @@ import { StyleSheet,
    Dimensions,
    TouchableOpacity,
     Image,
-    StatusBar, Alert
+    StatusBar,
+    Alert,
+    NativeModules
 } from 'react-native';
 import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
@@ -31,7 +33,7 @@ const AdminHomePage = ({navigation})=>{
       });
 }
 
- openRightPage=(page)=>{
+ const openRightPage=(page)=>{
 
   switch(page) {
  
@@ -67,14 +69,15 @@ const AdminHomePage = ({navigation})=>{
     return (
         <View style={styles.container}>
      
-     <StatusBar backgroundColor='#009387' barStyle="light=content"/>
-     <SafeAreaView>
+     {/* <StatusBar backgroundColor='#009387' barStyle="light=content"/> */}
+     
          <View style={styles.fixedHeader} >
          <LinearGradient
         colors={["#809d65","#9cac74"]}
-        style={{height:"100%" ,width:"100%", flexDirection: 'row',
-        justifyContent:'space-between'}}> 
-        
+        style={{height:"100%" ,width:"100%",
+        }}> 
+        <SafeAreaView>
+          <View style={styles.header}>
          <TouchableOpacity  onPress={()=> logout()} >
          <Image
           source={require('../assets/AdminIcons/shutdown.png')}
@@ -87,7 +90,10 @@ const AdminHomePage = ({navigation})=>{
           style={styles.logo}
           resizeMode="stretch"
           />
+          </View>
+           </SafeAreaView>
           </LinearGradient>
+         
          </View>
          
         {//Here to display icones
@@ -139,24 +145,24 @@ const AdminHomePage = ({navigation})=>{
         <View style={styles.communityStuff}>
          <TouchableOpacity  onPress={()=> openRightPage("community")}>
         <Image
-          source={require('../assets/AdminIcons/communityBack.png')}
+          source={require('../assets/AdminIcons/communityForm.png')}
           style={styles.communityB}
           resizeMode="stretch"
           />
           </TouchableOpacity>
-          <TouchableOpacity  onPress={()=> openRightPage("community")}>
+          {/* <TouchableOpacity  onPress={()=> openRightPage("community")}>
         <Image
           source={require('../assets/AdminIcons/communityIcon.png')}
           style={styles.communityA}
           resizeMode="stretch"
           />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
         </View>
 
 
         
           
-        </SafeAreaView>  
+        {/* </SafeAreaView>   */}
         </View>
       );
 
@@ -176,17 +182,19 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#FAFAF7',
-      width: width,
-      height:height*.3,
+      // width: width,
+      // height:height*.3,
     }, 
    
     
     logo: {
       width: width_logo ,
       height: height_logo,
-      marginTop: -18 ,
+      // marginTop: -18 ,
     // alignItems:'baseline',
      shadowColor :'#F1F1EA',
+    //  position:'absolute',
+    //  right:0
      // shadowOffset :{width:2,height:2},
      // shadowOpacity :20,
   
@@ -194,41 +202,46 @@ const styles = StyleSheet.create({
   logout: {
     width: width_logout ,
     height: height_logout,
-    marginTop: 24 ,
-    marginLeft: 20 ,
-    alignItems:'baseline',
+    // marginTop: 24 ,
+    // marginLeft: 20 ,
+    // alignItems:'baseline',
     shadowColor :'#F1F1EA',
    // shadowOffset :{width:2,height:2},
     //shadowOpacity :20,
     borderRadius :10,
+    // position:'absolute',
+    // left:0
    // padding :30,
+    margin:10
+
 
 },
 
     fixedHeader :{
-     // flex :2,
-      height:height*.30,
+     flex :1,
+      height:height*.030,
       backgroundColor :'#9E9D24',
-      flexDirection: 'row',
+      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
       justifyContent:'space-between',
       borderBottomRightRadius:150,
       borderBottomLeftRadius:150,
       overflow: 'hidden',
-      height:'55%'
+      height:'40%',
      // alignItems :'center'
     },
     containericons :{
+      flex:1,
       width : width_mid,
       height :height_mid,
       alignSelf :'center',
      // zIndex: 5,
-      position: 'absolute',
-      top:width*.45,
+      // position: 'absolute',
+      top:-40,
       
     },
 
     icon :{
-      flexDirection: 'row',
+      flexDirection:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
       justifyContent:'space-around',
       alignSelf :'center',
       
@@ -244,6 +257,7 @@ const styles = StyleSheet.create({
       shadowRadius: 4.65,
       elevation: 8,
       padding :20,
+      
      
       
     },
@@ -254,9 +268,13 @@ const styles = StyleSheet.create({
     },
 
     communityStuff:{
-      flexDirection :'row-reverse',
-      position: 'absolute',
-      top:height*.80,
+      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      // position: 'absolute',
+      // top:height*.40,
+      alignItems:'flex-start',
+      justifyContent:'flex-end',
+      top:90,
+      flex:1,
       
     },
     communityB :{
@@ -265,7 +283,7 @@ const styles = StyleSheet.create({
       //position: 'absolute',
      // top:width*.90,
       borderTopLeftRadius :5,
-      left :width *.62,
+      // left :width *.62,
       
     },
     communityA :{
@@ -275,7 +293,14 @@ const styles = StyleSheet.create({
       //top:width*.90,
       left :width *.81,
       
-    }
+    },
+    header:{
+      width: '100%',
+      height: 80,
+      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+  }
     
 
 
