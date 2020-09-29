@@ -18,27 +18,27 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 const DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'فوفو',
+    title: '1',
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'نو ون كير',
+    title: ' 2 ',
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'الكوين حصه حامية الممالك التسع',
+    title: '3',
   },
   {
     id: '5861234f-3da1-471f-bd96-145571e29d72',
-    title: 'الكوين  حامية الممالك التسع',
+    title: '4',
   },
   {
     id: '12694a0f-3da1-471f-bd96-145571e29d72',
-    title: ' الممالك التسع',
+    title: ' 4 التسع',
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d43',
-    title: 'الكوين حصه حامية الممالك التسع',
+    title: '   التسع',
   },
   {
     id: '58694f0f-3da1-471f-bd96-145571e29d72',
@@ -47,7 +47,7 @@ const DATA = [
 
   {
     id: '58694a0f-3da1-471f-1236-145571e29d43',
-    title: 'الكويhdfdsgfن حصه حامية الممالك التسع',
+    title: ' ح',
   },
   {
     id: '58694f0f-3da1-471f-bd96-148871e29d72',
