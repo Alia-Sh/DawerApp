@@ -21,6 +21,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import Loading from '../components/Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import firebase from '../Database/firebase';
+import AlertView from '../components/AlertView'
 
 const ResetPassword=({navigation})=>{
     const [data,setData] = React.useState({
@@ -30,6 +32,13 @@ const ResetPassword=({navigation})=>{
         EmailErrorMessage:'',
         isLoading:false
       });
+
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',   
+    })
 
     const textInputChange= (val)=>{
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -76,11 +85,61 @@ const ResetPassword=({navigation})=>{
         }
     }
 
-    const SendEnail=()=>{
+    const SendResetPasswordEmail=()=>{
+        setData({
+            ... data,
+            isLoading: true,
+          });
         if(checkValidEmail()){
-
+            firebase.auth().sendPasswordResetEmail(data.Email).then(()=>{
+                setData({
+                    ... data,
+                    isLoading: false,
+                  });
+                  setTimeout(()=>{
+                    setAlert({
+                        ...alert,
+                        Title:'تحقق من بريدك الوارد',
+                        Message:'لقد أرسلنا لك رسالة بريد إلكتروني للتحقق',
+                        jsonPath:"success",
+                        alertVisible:true,
+                    });
+                    setTimeout(() => {
+                        setAlert({
+                            ...alert,
+                            alertVisible:false,
+                        });
+                    }, 4000)
+                  },400) 
+            })
+            .catch((error)=>{
+                console.log(error.message);
+                if(error.message==="There is no user record corresponding to this identifier. The user may have been deleted."){
+                    setData({
+                        ... data,
+                        isLoading: false,
+                      });
+                      setTimeout(()=>{
+                        setAlert({
+                            ...alert,
+                            Title:'البريد الإلكتروني',
+                            Message:'لا يوجد البريد الإلكتروني مطابق لهذا البريد. ربما تم حذف المستخدم.',
+                            jsonPath:"Error",
+                            alertVisible:true,
+                        });
+                        setTimeout(() => {
+                            setAlert({
+                                ...alert,
+                                alertVisible:false,
+                            });
+                        }, 4000)
+                      },400) 
+                }else{
+                    Alert.alert(error.message)
+                }
+            });
         }else{
-
+Alert
         }
     }
 return(
@@ -148,7 +207,7 @@ return(
                                     }
 
                 <TouchableOpacity 
-                    onPress={() => SendEnail()}
+                    onPress={() => SendResetPasswordEmail()}
                     >
                     <View style={styles.button}>
 
@@ -166,6 +225,11 @@ return(
             
             </Animatable.View> 
         </SafeAreaView>
+        {alert.alertVisible?
+                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+                    :
+                        null
+                    }
     </View>
     </KeyboardAwareScrollView>
 )

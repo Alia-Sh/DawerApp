@@ -6,7 +6,8 @@ const AlertView = ({title,message,buttonColor,jsonPath})=>{
     const [alertVisible,setAlertVisible]= useState(true)
 
     return(
-            <Modal
+        
+        <Modal
             animationType="slide"
             transparent={true}
             visible={alertVisible}>
@@ -30,7 +31,7 @@ const AlertView = ({title,message,buttonColor,jsonPath})=>{
                     </TouchableOpacity>
                     </View>
                 </View>
-            </Modal>
+        </Modal>
     );
 
 }

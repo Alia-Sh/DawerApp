@@ -36,9 +36,6 @@ const DriverEditProfile  = ({navigation,route})=>{
                 case "Picture":
                     return route.params.Picture
 
-                case "Password":
-                    return route.params.Password
-
                 case "Email":
                     return route.params.Email
             }
@@ -46,28 +43,11 @@ const DriverEditProfile  = ({navigation,route})=>{
         return ""
     }
 
-    // const retriveImage= async ()=>{
-    //     var imageRef = firebase.storage().ref('images/' + userId);
-    //     imageRef
-    //       .getDownloadURL()
-    //       .then((url) => {
-    //         //from url you can fetched the uploaded image easily
-    //         setPicture(url)
-    //       })
-    //       .catch((e) => console.log('getting downloadURL of image error => ', e));
-    //   }
-
-    // useEffect(()=>{
-    //     retriveImage()
-    // },[]);
-
     const [Name,setName] = useState(getDetails("Name"))
     const [Phone,setPhone] = useState(getDetails("Phone"))
     const [UserName,setUserName] = useState(getDetails("UserName"))
     const [Location,setLocation] = useState(getDetails("Location"))
-    const [Password,setPassword] = useState(getDetails("Password"))
     const [Email,setEmail] = useState(getDetails("Email"))
-    const [NewPassword,setNewPassword] = useState(getDetails(""))
     const [Picture,setPicture] = useState(getDetails("Picture"))
     const [data,setData] = React.useState({
         isLoading:false,
@@ -75,9 +55,6 @@ const DriverEditProfile  = ({navigation,route})=>{
         PhoneErrorMessage:'',
         isValidEmail:true,
       });
-      if(NewPassword!=""){
-        Password= NewPassword; 
-      }
     const [alert,setAlert]=React.useState({
         alertVisible:false,
         Title:'',
@@ -153,25 +130,29 @@ const DriverEditProfile  = ({navigation,route})=>{
                             PhoneNumber: Phone, 
                             Email: Email
                     }).then(function(){
-                        // setData({
-                        //     ... data,
-                        //     isLoading: false,
-                        //   });
-                        uploadImage(Picture,userId)
-                            .then(()=> {
-                                setData({
-                                    ...data,
-                                    isLoading:false
+
+                        if(Picture!=""){
+                            uploadImage(Picture,userId)
+                                .then(()=> {
+                                    setData({
+                                        ...data,
+                                        isLoading:false
+                                    });
+                                    navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Picture})
+                                }).catch((error)=> {
+                                    setData({
+                                        ...data,
+                                        isLoading:false
+                                    });
+                                    Alert.alert(error.message);
                                 });
-                                navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Password,Picture})
-                                // retriveImage();
-                            }).catch((error)=> {
-                                setData({
-                                    ...data,
-                                    isLoading:false
-                                });
-                                Alert.alert(error.message);
+                        }else{
+                            setData({
+                                ...data,
+                                isLoading:false
                             });
+                            navigation.navigate("DriverViewProfile",{UserName,Name,Phone,Location,Email,Picture}) 
+                        }
                     })
                     .catch(function(error){
                         setData({
@@ -188,19 +169,21 @@ const DriverEditProfile  = ({navigation,route})=>{
                       });
                     console.log(error.message);
                     if(error.message==="The email address is already in use by another account."){
-                        setAlert({
-                            ...alert,
-                            Title:'البريد الإلكتروني',
-                            Message:'عنوان البريد الإلكتروني قيد الإستخدام بالفعل من قبل حساب آخر',
-                            jsonPath:"Error",
-                            alertVisible:true,
-                        });
-                        setTimeout(() => {
+                        setTimeout(()=>{
                             setAlert({
                                 ...alert,
-                                alertVisible:false,
+                                Title:'البريد الإلكتروني',
+                                Message:'عنوان البريد الإلكتروني قيد الإستخدام بالفعل من قبل حساب آخر',
+                                jsonPath:"Error",
+                                alertVisible:true,
                             });
-                        }, 4000)
+                            setTimeout(() => {
+                                setAlert({
+                                    ...alert,
+                                    alertVisible:false,
+                                });
+                            }, 4000)
+                        },400)
                     }else{
                     Alert.alert(error.message);}
                   }); 
@@ -215,25 +198,8 @@ const DriverEditProfile  = ({navigation,route})=>{
             aspect: [4, 3]
           })
           if (!response.cancelled) {
-            // setData({
-            //     ...data,
-            //     isLoading:true
-            // });
+
             setPicture(response.uri);
-            // uploadImage(response.uri,userId)
-            // .then(()=> {
-            //     setData({
-            //         ...data,
-            //         isLoading:false
-            //     });
-            //    retriveImage();
-            // }).catch((error)=> {
-            //     setData({
-            //         ...data,
-            //         isLoading:false
-            //     });
-            //     Alert.alert(error.message);
-            // });
           }
         } catch (error) {
           console.log(error);
@@ -288,11 +254,9 @@ const DriverEditProfile  = ({navigation,route})=>{
                 <View style={{alignItems:"center"}}>
             
                 <View style={{alignItems:"center"}}>
-                        {/* {data.isLoading ? <Loading></Loading>  :  */}
                             <Image style={styles.profile_image} 
                             source={Picture==""?require('../assets/DefaultImage.png'):{uri:Picture}}
                             />
-                        {/* } */}
                         <FAB  
                             onPress={() =>selectImage ()}
                             small
@@ -371,7 +335,9 @@ const DriverEditProfile  = ({navigation,route})=>{
                         </Animatable.View>
                     } 
 
-                    <Card style={styles.action} onPress={()=>navigation.navigate("DriverEditPassword",{Password})} >
+                    <Card style={styles.action} 
+                        onPress={()=>navigation.navigate("DriverEditPassword")} 
+                    >
                         <View style={styles.cardContent}>
                         <Text style={styles.textStyle}>كلمة المرور</Text>
                             <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}></Text>

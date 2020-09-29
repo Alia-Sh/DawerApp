@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   text_forgetPass: {
     color: '#757575',
     fontSize: 15,
-    marginLeft:15,
+    // marginLeft:15,
     textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'right':'left',
 },
   action: {

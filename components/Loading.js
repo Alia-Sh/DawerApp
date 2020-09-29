@@ -12,9 +12,9 @@ const Loading = ({title,message,buttonColor,jsonPath})=>{
             transparent={true}
             visible={alertVisible}>
                 <View style={styles.centeredView}>
-                    {/* <View style={styles.modalView}> */}
+                    <View style={styles.modalView}>
                     <ActivityIndicator size="large" color="#9E9D24" />
-                    {/* </View> */}
+                    </View>
                 </View>
             </Modal>
         </View>

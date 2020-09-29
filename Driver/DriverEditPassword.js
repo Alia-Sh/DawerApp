@@ -10,13 +10,11 @@ import { NativeModules } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-const DriverEditPassword = ({navigation,route})=>{
-
-    const [Password,setPassword] = useState(route.params.Password)
+const DriverEditPassword = ({navigation})=>{
+    var user = firebase.auth().currentUser;
     const [CurrentPassword,setCurrentPassword] = useState('')
     const [NewPassword,setNewPassword] = useState('')
     const [ConfirmPassword,setConfirmPassword] = useState('')
-    const [enableshift,setAnbleshift]=useState(false)
     const [data,setData] = React.useState({
         secureTextEntry: true,
         isValidPassword:true,
@@ -24,6 +22,7 @@ const DriverEditPassword = ({navigation,route})=>{
         isValidConfirmPassword: true,
         isEmpty:true,
         isLoading: false,
+        isTrue:false
       });
 
     const updateSecureTextEntry=()=>{
@@ -41,20 +40,27 @@ const DriverEditPassword = ({navigation,route})=>{
                 isValidPassword:true,
                 }) 
                 return false; 
-        }else if(CurrentPassword!=Password){
-            setData({
-                ... data,
-                isValidPassword:false,
-                isEmpty:true
-                }) 
-                return false;               
-        }else{
-            setData({
-                ... data,
-                isValidPassword:true,
-                isEmpty:true
-                }) 
-                return true;    
+        }
+        else{
+            var credential = firebase.auth.EmailAuthProvider.credential(
+                firebase.auth().currentUser.email,CurrentPassword);
+                user.reauthenticateWithCredential(credential).then(function() {
+                    setData({
+                        ... data,
+                        isValidPassword:true,
+                        isEmpty:true,
+                        isTrue:true
+                        }) 
+            }).catch(function(error) {
+                          setData({
+                            ... data,
+                            isValidPassword:false,
+                            isEmpty:true,
+                            isTrue:false
+                            }) 
+                            console.log(error.message); 
+            });
+                return data.isTrue;
         }
     }
 
@@ -91,26 +97,17 @@ const DriverEditPassword = ({navigation,route})=>{
 
     const updatePassword=()=>{
 
-        if (checkValidPassword() && checkValidNewPassword() && checkConfirmPassword() ){
+        if (checkValidNewPassword() && checkConfirmPassword() && checkValidPassword()){
             setData({
                 ... data,
                 isLoading: true,
               });
-            var user = firebase.auth().currentUser;
-            var userId = user.uid;
                 user.updatePassword(NewPassword).then(function() {
-                    firebase.database().ref('DeliveryDriver/' + userId).update({
-                        Password: NewPassword,
-                        }).then(function(){
-                            setPassword(NewPassword);
-                            resetData();
-                        }).catch(function(error){
-                            setData({
-                                ... data,
-                                isLoading: false,
-                              });
-                            console.log(error)                          
-                        });
+                    setData({
+                        ... data,
+                        isLoading: false,
+                      });
+                      resetData();
                 }).catch(function(error) {
                     // An error happened.
                     setData({
@@ -119,8 +116,7 @@ const DriverEditPassword = ({navigation,route})=>{
                       });
                     console.log(error)
                     }); 
-        }
-
+                }
     }
 
     const resetData=()=>{
@@ -136,7 +132,7 @@ const DriverEditPassword = ({navigation,route})=>{
                 isEmpty:true,
                 isLoading: false,
               });
-            navigation.navigate("DriverEditProfile",{Password})  
+            navigation.navigate("DriverEditProfile")   
     }
     return(
         <KeyboardAwareScrollView>

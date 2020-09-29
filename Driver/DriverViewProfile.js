@@ -21,7 +21,6 @@ const DriverViewProfile = ({navigation})=>{
       setUserName(userData.UserName);
       setLocation(userData.DeliveryArea)
       setEmail(userData.Email)
-      setPassword(userData.Password)
       retriveImage();
  
     });
@@ -31,9 +30,8 @@ const DriverViewProfile = ({navigation})=>{
     const [UserName,setUserName] = useState("")
     const [Location,setLocation] = useState("")
     const [Email,setEmail] = useState("")
-    const [Password,setPassword] = useState("")
     const [Picture,setPicture] = useState("")
-    const [SecureTextEntry,setSecureTextEntry] = useState(true)
+    // const [SecureTextEntry,setSecureTextEntry] = useState(true)
 
     const retriveImage= async ()=>{
         var imageRef = firebase.storage().ref('images/' + userId);
@@ -51,9 +49,9 @@ const DriverViewProfile = ({navigation})=>{
     },[]);
 
 
-    const updateSecureTextEntry=()=>{
-        setSecureTextEntry(!SecureTextEntry)
-      }
+    // const updateSecureTextEntry=()=>{
+    //     setSecureTextEntry(!SecureTextEntry)
+    //   }
     return(
 
         <View style={styles.root}>
@@ -123,39 +121,6 @@ const DriverViewProfile = ({navigation})=>{
                     </View>  
                 </Card>  
 
-                {/* <Card style={styles.mycard}>
-                    <View style={styles.cardContent}>
-                        <Feather
-                            name="lock"
-                            color="#929000"
-                            size={20}/> 
-                  <TextInput style={styles.mytext} 
-                    value={Password}
-                    label="Password"
-                    autoCapitalize="none"
-                    secureTextEntry={SecureTextEntry}
-                    textAlign= 'right'
-                    editable= {false}
-                  >
-                </TextInput>  
-
-            </View> 
-            <TouchableOpacity onPress={updateSecureTextEntry}
-            style={{justifyContent:'center',position:'absolute',padding:15}}>
-                  {SecureTextEntry?
-                      <Feather
-                        name="eye-off"
-                        color="grey"
-                        size={15}/>  
-                    :
-                      <Feather
-                        name="eye"
-                        color="grey"
-                        size={15}/> 
-                  }
-              </TouchableOpacity>  
-                </Card>   */}
-
                 <Card style={styles.mycard}>
                     <View style={styles.cardContent}>
                         <Feather
@@ -169,7 +134,7 @@ const DriverViewProfile = ({navigation})=>{
                 <View style={styles.button}> 
                     <Button icon="account-edit" mode="contained" theme={theme }
                         onPress={() => {
-                            navigation.navigate("DriverEditProfile",{UserName,Name,Phone,Location,Password,Email,Picture})
+                            navigation.navigate("DriverEditProfile",{UserName,Name,Phone,Location,Email,Picture})
                         }}>
                         تحديث
                     </Button>
