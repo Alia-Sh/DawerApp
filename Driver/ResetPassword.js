@@ -123,7 +123,7 @@ const ResetPassword=({navigation})=>{
                         setAlert({
                             ...alert,
                             Title:'البريد الإلكتروني',
-                            Message:'لا يوجد البريد الإلكتروني مطابق لهذا البريد. ربما تم حذف المستخدم.',
+                            Message:'لا يوجد بريد الإلكتروني مطابق لهذا البريد. ربما تم حذف المستخدم.',
                             jsonPath:"Error",
                             alertVisible:true,
                         });

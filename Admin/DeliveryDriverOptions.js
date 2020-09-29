@@ -13,12 +13,13 @@ import { StyleSheet,
    ActivityIndicator,
    Image
   } from 'react-native';
-  import {MaterialIcons} from '@expo/vector-icons';
-  import {Button}from 'react-native-paper';
-  import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-  import * as Animatable from 'react-native-animatable';
-  import firebase from '../Database/firebase';
-  import AlertView from "../components/AlertView";
+import {MaterialIcons} from '@expo/vector-icons';
+import {Button}from 'react-native-paper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import * as Animatable from 'react-native-animatable';
+import firebase from '../Database/firebase';
+import AlertView from "../components/AlertView";
+import Loading from '../components/Loading';
 
 
 
@@ -180,19 +181,24 @@ import { StyleSheet,
                 const userData = snapshot.val();  
                 if (userData) { 
                     setAlert({
-                        ...alert,
-                        Title:'اسم المستخدم',
-                        Message:'اسم المستخدم قيد الإستخدام بالفعل من قبل حساب آخر',
-                        jsonPath:"Error",
-                        alertVisible:true,
                         isLoading:false
                     });
-                    setTimeout(() => {
+                    setTimeout(()=>{
                         setAlert({
                             ...alert,
-                            alertVisible:false,
+                            Title:'اسم المستخدم',
+                            Message:'اسم المستخدم قيد الإستخدام بالفعل من قبل حساب آخر',
+                            jsonPath:"Error",
+                            alertVisible:true,
+                            isLoading:false
                         });
-                    }, 4000)
+                        setTimeout(() => {
+                            setAlert({
+                                ...alert,
+                                alertVisible:false,
+                            });
+                        }, 4000)
+                    },400)
                 }else{
                     firebase.auth().createUserWithEmailAndPassword(Email, Password).then((user)=>{
                         if (firebase.auth().currentUser) {
@@ -206,56 +212,71 @@ import { StyleSheet,
                                 UserName:UserName.toLowerCase(),
                                 DeliveryArea:selectedValue
                                 });
-                                setAlert({
-                                    ...alert,
-                                    Title:'',
-                                    Message:'تم إضافة السائق بنجاح',
-                                    jsonPath:"success",
-                                    alertVisible:true,
+                               setAlert({
                                     isLoading:false
                                 });
-                                setTimeout(() => {
+                                setTimeout(()=>{
                                     setAlert({
                                         ...alert,
-                                        alertVisible:false,
+                                        Title:'',
+                                        Message:'تم إضافة السائق بنجاح',
+                                        jsonPath:"success",
+                                        alertVisible:true,
+                                        isLoading:false
                                     });
-                                    resetData();
-                                }, 4000)
+                                    setTimeout(() => {
+                                        setAlert({
+                                            ...alert,
+                                            alertVisible:false,
+                                        });
+                                        resetData();
+                                    }, 4000)
+                                },400)
     
                             }else{
                                 setAlert({
-                                    ...alert,
-                                    Title:'',
-                                    Message:'لم يتم إضافة السائق بنجاح',
-                                    jsonPath:"Error",
-                                    alertVisible:true,
                                     isLoading:false
                                 });
-                                setTimeout(() => {
+                                setTimeout(()=>{
                                     setAlert({
                                         ...alert,
-                                        alertVisible:false,
+                                        Title:'',
+                                        Message:'لم يتم إضافة السائق بنجاح',
+                                        jsonPath:"Error",
+                                        alertVisible:true,
+                                        isLoading:false
                                     });
-                                }, 4000)
+                                    setTimeout(() => {
+                                        setAlert({
+                                            ...alert,
+                                            alertVisible:false,
+                                        });
+                                    }, 4000)
+                                },400)
                             }
                         }
                         }).catch(function(error) {                           
                             console.log(error.message);
                             if(error.message==="The email address is already in use by another account."){
                                 setAlert({
-                                    ...alert,
-                                    Title:'البريد الإلكتروني',
-                                    Message:'عنوان البريد الإلكتروني قيد الإستخدام بالفعل من قبل حساب آخر',
-                                    jsonPath:"Error",
-                                    alertVisible:true,
                                     isLoading:false
                                 });
-                                setTimeout(() => {
+                                setTimeout(()=>{
                                     setAlert({
                                         ...alert,
-                                        alertVisible:false,
+                                        Title:'البريد الإلكتروني',
+                                        Message:'عنوان البريد الإلكتروني قيد الإستخدام بالفعل من قبل حساب آخر',
+                                        jsonPath:"Error",
+                                        alertVisible:true,
+                                        isLoading:false
                                     });
-                                }, 4000)
+                                    setTimeout(() => {
+                                        setAlert({
+                                            ...alert,
+                                            alertVisible:false,
+                                        });
+                                    }, 4000)
+                                },400)
                             }else{
                             Alert.alert(error.message);}
                         });
@@ -437,7 +458,7 @@ import { StyleSheet,
                                 </View>
 
                                 <View style={styles.button}> 
-                                    {alert.isLoading? <ActivityIndicator size="large" color="#9E9D24" />:  
+                                    {alert.isLoading? <Loading></Loading>:  
                                         <Button 
                                             mode="contained" 
                                             color="#809d65" 

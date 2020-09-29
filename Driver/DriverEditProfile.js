@@ -184,6 +184,23 @@ const DriverEditProfile  = ({navigation,route})=>{
                                 });
                             }, 4000)
                         },400)
+
+                    }else if (error.message==="This operation is sensitive and requires recent authentication. Log in again before retrying this request."){
+                        setTimeout(()=>{
+                            setAlert({
+                                ...alert,
+                                Title:'',
+                                Message:'هذه العملية حساسة وتتطلب مصادقة حديثة. قم بتسجيل الدخول مرة أخرى قبل إعادة محاولة هذا الطلب.',
+                                jsonPath:"Error",
+                                alertVisible:true,
+                            });
+                            setTimeout(() => {
+                                setAlert({
+                                    ...alert,
+                                    alertVisible:false,
+                                });
+                            }, 4000)
+                        },400)
                     }else{
                     Alert.alert(error.message);}
                   }); 
