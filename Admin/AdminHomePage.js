@@ -36,13 +36,14 @@ const AdminHomePage = ({navigation})=>{
  const openRightPage=(page)=>{
 
   switch(page) {
- 
+ //to navigate 
     case 'facility':
       navigation.navigate("FacilityHome");
       break;
     
     case 'driver':
       navigation.navigate("DeliveryDriverOptions");
+    // navigation.navigate("DriverHome");
       break;
 
     case 'request':
