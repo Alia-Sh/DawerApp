@@ -1,4 +1,4 @@
-import React,{ useState }  from 'react';
+import React,{ useState ,useEffect }  from 'react';
 import { StyleSheet,
    Text,
    View,
@@ -14,61 +14,33 @@ import { LinearGradient } from 'expo-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Loading from '../components/Loading';
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: '1',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: ' 2 ',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: '3',
-  },
-  {
-    id: '5861234f-3da1-471f-bd96-145571e29d72',
-    title: '4',
-  },
-  {
-    id: '12694a0f-3da1-471f-bd96-145571e29d72',
-    title: ' 4 التسع',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d43',
-    title: '   التسع',
-  },
-  {
-    id: '58694f0f-3da1-471f-bd96-145571e29d72',
-    title: 'اchdsjf',
-  },
 
-  {
-    id: '58694a0f-3da1-471f-1236-145571e29d43',
-    title: ' ح',
-  },
-  {
-    id: '58694f0f-3da1-471f-bd96-148871e29d72',
-    title: 'اchdsjf',
-  },
-];
 
 const Item = ({ item, onPress, style }) => (
   
   <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <View  style={{flexDirection :'row-reverse'}}>
+    <View  style={{flexDirection :'row-reverse',height:45}}>
     <Image source={require('../assets/DriverProfile2.png')} 
-     style={{height:40 ,width:40,marginRight:-8}}
+     style={{height:60 ,width:60,marginRight:-8,marginTop:-8}}
     />
-    <Text style={styles.title}>{item.title}</Text>
+    <View >
+    <Text style={styles.title}>{item.name}</Text>
+    <Text style={styles.user}>@{item.username}</Text>
+    </View>
     </View>
   </TouchableOpacity>
  
 );
 
 const HomeScreen = ({navigation})=>{
+  
+  
+
+  const [DriverList,setDriverList] = useState([])
+  const[loading,setLoading]=useState(true)
+  
 //backend
 const back=()=>{
   
@@ -76,15 +48,46 @@ const back=()=>{
    
 }
 
+const fetchData=()=>{
+  console.log('inside fe');
+  firebase.database().ref("DeliveryDriver").orderByChild("UserName").on('value', (snapshot) =>{
+
+    var li = []
+    snapshot.forEach((child)=>{
+var temp={
+  key: child.key,
+  username:child.val().UserName,
+  name : child.val().Name
+  
+}
+     li.push(temp)
+     setLoading(false)
+    console.log(child.key);
+    console.log(child.val().UserName);
+    //setDriverList(temp)
+    setLoading(false) 
+  })
+ //this.setState({list:li})
+ 
+setDriverList(li)
+ 
+})
+
+}
+
+useEffect(()=>{
+  fetchData()
+},[])
+
 const [selectedId, setSelectedId] = useState(null);
 
 const renderItem = ({ item }) => {
-  const backgroundColor = item.id === selectedId ? "#EDEEEC" : "#FAFAF7";
+  const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#FAFAF7";
 
   return (
     <Item
       item={item}
-      onPress={() => setSelectedId(item.id)}
+      onPress={() => setSelectedId(item.key)}
       style={{ backgroundColor }}
     />
   );
@@ -122,13 +125,15 @@ const renderItem = ({ item }) => {
      
 
        <FlatList
-        data={DATA}
+        data={DriverList}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item)=>item.key}
         extraData={selectedId}
+        onRefresh={()=>fetchData()}
+        refreshing={loading}
       />
        
-
+      {/* end drivers list */}
 
 
         
@@ -212,10 +217,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
+    fontWeight: 'bold' ,
+    textAlign :'right',
+    marginRight:30,
+    marginTop:10,
+    
+   
+  },
+  user: {
+    fontSize: 12,
     //fontWeight: 'bold' ,
     textAlign :'right',
-    marginRight:10,
-    marginTop:10,
+    marginRight:30,
+    marginTop:5,
+    color :'#ADADAD',
     
    
   },
