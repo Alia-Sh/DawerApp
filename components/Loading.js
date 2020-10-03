@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import {Modal,StyleSheet,Text,TouchableOpacity,View,ActivityIndicator} from 'react-native';
 import LottieView from 'lottie-react-native';
 
-const Loading = ({title,message,buttonColor,jsonPath})=>{
+const Loading = ()=>{
     const [alertVisible,setAlertVisible]= useState(true)
 
     return(
