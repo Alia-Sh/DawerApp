@@ -9,6 +9,7 @@ import * as Animatable from 'react-native-animatable';
 import firebase from '../Database/firebase';
 import Loading from '../components/Loading';
 import AlertView from "../components/AlertView";
+import LottieView from 'lottie-react-native';
 
 const HomeScreen = ({navigation})=>{
   const [modalVisible,setModalVisible]=useState(false);
@@ -28,6 +29,11 @@ const HomeScreen = ({navigation})=>{
       Message:'',
       jsonPath:'',  
   }) 
+  const [DeleteModal,setDaleteModal]=useState({
+    IsVisible:false,
+    Name:'',
+    Id:''
+  })
 
   const fetchData=()=>{
     firebase.database().ref('/Category/').once('value').then(function(snapshot) {
@@ -37,11 +43,12 @@ const HomeScreen = ({navigation})=>{
         snapshot.forEach(function(snapshot){
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
-          var temp={CategoryId:snapshot.val().CategoryId,Name:snapshot.val().Name}
+          var temp={CategoryId:snapshot.val().CategoryId,Name:snapshot.val().Name,ID:snapshot.key}
           li.push(temp)
           setLoading(false)
         })
-        setRequestList(li) 
+        setRequestList(li)
+        console.log(li) 
       }else{
         setData({
           ...data,
@@ -63,11 +70,16 @@ const HomeScreen = ({navigation})=>{
                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
                       'row':'row-reverse'}}>
-              <Title>{item.Name}</Title>
+              <Title style={styles.title}>{item.Name}</Title>
               </View>
 
               <TouchableOpacity style={styles.EditIconStyle}
-                // onPress={()=>EditRequest(item)}
+                onPress={()=>setDaleteModal({
+                  ...DeleteModal,
+                  IsVisible:true,
+                  Name:item.Name,
+                  Id:item.ID
+                })}
                 >
                 <Image 
                     source={require('../assets/DeleteIcon.png')}
@@ -159,6 +171,15 @@ const Add=()=>{
     }
 }
 
+const Delete=(id)=>{
+  firebase.database().ref('Category/' + id).remove();
+  setDaleteModal({
+    ...DeleteModal,
+    IsVisible:false
+  })
+}
+
+
 const resetData=()=>{
     setData({
         ...data,
@@ -173,6 +194,7 @@ const resetData=()=>{
         Message:'',
         jsonPath:'',  
     })
+    setCategory('')
     setModalVisible(false);
 }
     return (
@@ -226,37 +248,36 @@ const resetData=()=>{
               /> 
                 }
             <FAB  
-            onPress={()=>setModalVisible(true)}
-              style={Platform.OS === 'android' &&
-              NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-              NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
-            styles.fabAndroid:styles.fabIOS}
+              onPress={()=>setModalVisible(true)}
+                style={Platform.OS === 'android' &&
+                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                styles.fabAndroid:styles.fabIOS}
               small={false}
               icon="plus"
               theme={{colors:{accent:"#9cac74"}}} 
             />
-{/* <KeyboardAwareScrollView >  */}
             <Modal
                 animationType="slide"
                 transparent={true}
                 visible={modalVisible}>
 
                 <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Image 
-                            source={require('../assets/RequestHeader.png')}
-                            style={styles.headerImage}
-                            resizeMode="stretch"/>
-                    
+                    <View style={styles.modalView}>                   
                         <View style={styles.header2}>
-                            <MaterialIcons style={Platform.OS === 'android' &&
-                                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 
-                                styles.iconAndroid:styles.iconIOS} 
-                                name="cancel" size={32} color="#fff" 
-                                onPress={resetData} 
-                            />
-                            <Text style={styles.text_header_modal}>إضافة فئة جديدة</Text>
+                          <LinearGradient
+                            colors={["#809d65","#9cac74"]}
+                            style={{height:"100%" ,width:"100%",alignItems:'center',
+                            justifyContent:'center',}}> 
+                              <MaterialIcons style={Platform.OS === 'android' &&
+                                  NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                  NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 
+                                  styles.iconAndroid:styles.iconIOS} 
+                                  name="cancel" size={32} color="#fff" 
+                                  onPress={resetData} 
+                              />
+                              <Text style={styles.text_header_modal}>إضافة فئة جديدة</Text>
+                            </LinearGradient>
                         </View>
                     
                         <Text style={styles.text}>اسم الفئة:</Text>
@@ -271,7 +292,7 @@ const resetData=()=>{
                                     ref={data.CategoryInput}
                                 >
                                 </TextInput>  
-                        </View>
+                            </View>
 
                         {data.isvalidCategory ?
                             null 
@@ -284,12 +305,17 @@ const resetData=()=>{
                         {data.isLoading? 
                             <Loading></Loading>
                             :  
-                            <TouchableOpacity 
-                                style={styles.openButton}
-                                onPress={Add}>
-
-                                <Text style={styles.okStyle}>اضافة</Text>
-                            </TouchableOpacity>
+                            <View style={{alignItems:'center',justifyContent:'center',margin:10}}>
+                              <TouchableOpacity 
+                                  style={styles.AddButton}
+                                  onPress={Add}>
+                                  <LinearGradient
+                                      colors={["#809d65","#9cac74"]}
+                                      style={styles.signIn}>
+                                      <Text style={styles.okStyle}>اضافة</Text>
+                                  </LinearGradient>
+                              </TouchableOpacity>
+                            </View>
                         }
                     </View>
                 
@@ -301,7 +327,48 @@ const resetData=()=>{
                     null
                 } 
             </Modal>
-       {/* </KeyboardAwareScrollView>  */}
+
+            <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={DeleteModal.IsVisible}>
+                      <View style={styles.centeredView}>
+                          <View style={styles.modalView}>
+                              <Text style={styles.modalText}>حذف فئـة</Text>
+                              <View style={{width:'100%',height:0.5,backgroundColor:"#757575",marginVertical:15}}></View>
+
+                              <View style={{justifyContent:'center',alignItems:'center'}}>
+                                <View style={{width:'50%',height:100,justifyContent:'center',alignItems:'center'}}>  
+                                  <LottieView source={require('../assets/Warning.json')}autoPlay loop/>                           
+                                </View>
+                              </View>
+
+                              <Text style={styles.textStyle}>هل انت متاكد من حذف فئـة ال{DeleteModal.Name}</Text>
+                              <View style={{flexDirection:Platform.OS === 'android' &&
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'row':'row-reverse',alignItems:'center',justifyContent:'center'}}>
+                                  <TouchableOpacity 
+                                      style={styles.okButton}
+                                      onPress={()=>{
+                                      Delete(DeleteModal.Id)
+                                  }}>
+                                    <Text style={styles.okStyle}>نعم</Text>
+                                  </TouchableOpacity>
+
+                                  <TouchableOpacity 
+                                      style={styles.cancelButton}
+                                      onPress={()=>{
+                                          setDaleteModal({
+                                            ...DeleteModal,
+                                            IsVisible:false
+                                          })
+                                      }}>
+                                          <Text style={styles.okStyle}>إلغاء</Text>
+                                  </TouchableOpacity>
+                                </View>
+                          </View>
+                      </View>
+              </Modal>
           </View>   
       </View>
     );
@@ -353,13 +420,11 @@ const styles = StyleSheet.create({
     cardContent:{
       flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
       justifyContent:'space-between'
-      // padding:8,
     },
     mycard:{
         backgroundColor: '#F3F3F3',
-        padding: 20,
-        marginVertical: 8,
-        marginHorizontal: 16,
+        marginVertical: 5,
+        marginHorizontal: 10,
         borderRadius :10,
         shadowColor :'#000',
         shadowOffset: {
@@ -369,7 +434,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.30,
         shadowRadius: 4.65,
         elevation: 5,
-        padding :15,
+        padding :12,
       },
     Delete:{
         width:30,
@@ -398,7 +463,6 @@ const styles = StyleSheet.create({
         margin:10,
         backgroundColor:"#fff",
         borderRadius:10,
-
         shadowColor:'#161924',
         shadowOffset:{
             width:0,
@@ -413,13 +477,21 @@ const styles = StyleSheet.create({
         textAlign:'center',
         fontSize:20
     },
-    openButton:{
-        backgroundColor:'#9aaa4d',
+    okButton:{
+        backgroundColor:'#558B2F',
         borderRadius:5,
         padding:10,
         elevation:2,
-        width:'100%',
-        marginTop:20
+        width:'30%',
+        margin:15,
+    },
+    cancelButton:{
+      backgroundColor:'#B71C1C',
+      borderRadius:5,
+      padding:10,
+      elevation:2,
+      width:'30%',
+      margin:15,
     },
     action: {
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
@@ -435,6 +507,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         marginRight:'5%',
+        marginLeft:'5%',
         marginTop:10
     },
     textInput: {
@@ -451,18 +524,20 @@ const styles = StyleSheet.create({
         borderTopRightRadius:5
     },
     header2:{
-        alignItems:'center',
-        justifyContent:'center',
         flexDirection:'row',
-        top:-45
+        backgroundColor:'red',
+        height:60,
+        borderTopLeftRadius:5,
+        borderTopRightRadius:5,
+        overflow: 'hidden',
     },
     iconIOS:{
         position:'absolute',
-        left:15
+        left:15,
     },
     iconAndroid:{
         position:'absolute',
-        right:15
+        right:15,
     },
     text_header_modal:{
         color: '#ffff',
@@ -475,6 +550,45 @@ const styles = StyleSheet.create({
         fontSize: 14,
         textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         paddingRight:20
-    }
-  });
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold' ,
+      textAlign :'right',
+      marginRight:15,
+      marginLeft:15
+    },
+    modalText:{
+      textAlign:'center',
+      fontWeight:'bold',
+      fontSize:25,
+      shadowColor:'#161924',
+      shadowOffset:{
+          width:0,
+          height:2
+      },
+      shadowOpacity:0.3,
+      shadowRadius:3.84,
+      elevation:5,
+      marginTop:5      
+    },
+    textStyle:{
+      color:"#161924",
+      textAlign:'center',
+      fontSize:15,
+      marginTop:20
+    },
+    AddButton:{
+      borderRadius:5,
+      elevation:2,
+      width:'50%',
+  },
+  signIn: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
+  },   
+});
 export default HomeScreen;

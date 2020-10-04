@@ -6,7 +6,8 @@ import * as Animatable from 'react-native-animatable';
 import firebase from '../Database/firebase';
 import Loading from '../components/Loading';
 import AlertView from "../components/AlertView";
-const AddCategory=()=>{
+import { LinearGradient } from 'expo-linear-gradient';
+const AddCategory=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
     const[Category,setCategory]=useState('');
     const [data,setData]=React.useState({
@@ -37,7 +38,8 @@ const AddCategory=()=>{
             })
             return true;  
         }
-    }
+      }
+      
 
     const Add=()=>{
         if(checkValidCategory()){
@@ -61,6 +63,7 @@ const AddCategory=()=>{
                 }else{
                     firebase.database().ref('Category/').push({
                         Name: Category,
+                        CategoryId:firebase.database().ref('Category/').push().getKey()
                     }).then((data)=>{
                         //success callback
                         setData({
@@ -115,6 +118,7 @@ const AddCategory=()=>{
             Message:'',
             jsonPath:'',  
         })
+        props.setModalVisible(false)
         setAlertVisible(false);
     }
 
@@ -124,15 +128,19 @@ const AddCategory=()=>{
                 animationType="slide"
                 transparent={true}
                 visible={alertVisible}>
-
+{/* <KeyboardAwareScrollView>  */}
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Image 
+                        {/* <Image 
                             source={require('../assets/RequestHeader.png')}
                             style={styles.headerImage}
-                            resizeMode="stretch"/>
+                            resizeMode="stretch"/> */}
                     
                         <View style={styles.header}>
+                        <LinearGradient
+                colors={["#809d65","#9cac74"]}
+                style={{height:"100%" ,width:"100%",alignItems:'center',
+                justifyContent:'center',}}> 
                             <MaterialIcons style={Platform.OS === 'android' &&
                                 NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 
@@ -141,6 +149,7 @@ const AddCategory=()=>{
                                 onPress={resetData} 
                             />
                             <Text style={styles.text_header_modal}>إضافة فئة جديدة</Text>
+                            </LinearGradient>
                         </View>
                     
                         <Text style={styles.text}>اسم الفئة:</Text>
@@ -168,12 +177,17 @@ const AddCategory=()=>{
                         {data.isLoading? 
                             <Loading></Loading>
                             :  
+                            <View style={{alignItems:'center',justifyContent:'center',margin:10}}>
                             <TouchableOpacity 
-                                style={styles.openButton}
+                                style={styles.AddButton}
                                 onPress={Add}>
-
+                        <LinearGradient
+                colors={["#809d65","#9cac74"]}
+                style={styles.signIn}>
                                 <Text style={styles.okStyle}>اضافة</Text>
+                                </LinearGradient>
                             </TouchableOpacity>
+                            </View>
                         }
                     </View>
                 
@@ -184,7 +198,9 @@ const AddCategory=()=>{
                     :
                     null
                 } 
+              {/* </KeyboardAwareScrollView>  */}
             </Modal>
+            {/* <CategoryHome isVisible={false}></CategoryHome> */}
        </KeyboardAwareScrollView> 
     );
 }
@@ -243,6 +259,7 @@ const styles=StyleSheet.create({
         fontSize: 18,
         textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         marginRight:'5%',
+        marginLeft:'5%',
         marginTop:10
     },
     textInput: {
@@ -259,10 +276,15 @@ const styles=StyleSheet.create({
         borderTopRightRadius:5
     },
     header:{
-        alignItems:'center',
-        justifyContent:'center',
+        // alignItems:'center',
+        // justifyContent:'center',
         flexDirection:'row',
-        top:-45
+        // top:-45,
+        backgroundColor:'red',
+        height:60,
+        borderTopLeftRadius:5,
+        borderTopRightRadius:5,
+        overflow: 'hidden',
     },
     iconIOS:{
         position:'absolute',
@@ -283,7 +305,23 @@ const styles=StyleSheet.create({
         fontSize: 14,
         textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         paddingRight:20
-    }
+    },
+    AddButton:{
+        // backgroundColor:'#809d65',
+        borderRadius:5,
+        // padding:10,
+        elevation:2,
+        width:'50%',
+        // height:'20%',
+        // marginTop:20
+    },
+    signIn: {
+      width: '100%',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10
+  },
     
 });
 export default AddCategory
