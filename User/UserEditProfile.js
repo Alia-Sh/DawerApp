@@ -162,34 +162,7 @@ const UserEditProfile  = ({navigation,route})=>{
                             </TextInput>  
                         </View>  
                     </Card>  
-
-                    <Card style={styles.action}>
-                        <View style={styles.cardContent}>
-                        <Text style={styles.textStyle}> رقم الهاتف</Text>
-                            <TextInput style={styles.textInput} 
-                            label="Phone"
-                            value={Phone}
-                            autoCapitalize="none"
-                            textAlign= 'right'
-                            onFocus={()=>setAnbleshift(false)}
-                            keyboardType="number-pad" //number Input
-                            onChangeText={text => setPhone(text)}
-                            maxLength={10}>
-                        </TextInput>  
-                        </View>  
-                    </Card>  
-
-                    <Card style={styles.action} onPress={()=>navigation.navigate("EditPassword")} >
-                        <View style={styles.cardContent}>
-                        <Text style={styles.textStyle}>كلمة المرور</Text>
-                            <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}></Text>
-                            <Feather
-                                    name="chevron-left"
-                                    color="grey"
-                                    size={23}/>  
-                        </View>  
-                    </Card>  
-                    
+  
                     <Card style={styles.action} onPress={()=>navigation.navigate("GoogleMap")} >
                         <View style={styles.cardContent}>
                         <Text style={styles.textStyle}> الموقع</Text>
@@ -297,3 +270,32 @@ const styles=StyleSheet.create({
 })
 
 export default UserEditProfile
+
+
+/*   <Card style={styles.action} onPress={()=>navigation.navigate("EditPassword")} >
+<View style={styles.cardContent}>
+<Text style={styles.textStyle}>كلمة المرور</Text>
+    <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}></Text>
+    <Feather
+            name="chevron-left"
+            color="grey"
+            size={23}/>  
+</View>  
+</Card> */ 
+
+/*  <Card style={styles.action}>
+                        <View style={styles.cardContent}>
+                        <Text style={styles.textStyle}> رقم الهاتف</Text>
+                            <TextInput style={styles.textInput} 
+                            label="Phone"
+                            value={Phone}
+                            autoCapitalize="none"
+                            textAlign= 'right'
+                            onFocus={()=>setAnbleshift(false)}
+                            keyboardType="number-pad" //number Input
+                            onChangeText={text => setPhone(text)}
+                            maxLength={10}>
+                        </TextInput>  
+                        </View>  
+                    </Card>  
+*/

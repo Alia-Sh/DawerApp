@@ -19,8 +19,8 @@ const UserViewProfile = ({navigation})=>{
       setPhone(userData.PhoneNumber);
       setUserName(userData.UserName);
       retriveImage();
- 
     });
+
     var query2 = firebase.database().ref('User/' + userId+'/Location');
     query2.once("value").then(function(result) {
         const userData = result.val();

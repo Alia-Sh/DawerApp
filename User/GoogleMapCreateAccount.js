@@ -4,14 +4,14 @@ import {
   Button,
   StyleSheet,
   Text,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import MapView from "react-native-maps";
 import {FontAwesome5} from '@expo/vector-icons';
 import { NativeModules } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
-export default class GoogleMap extends Component {
+export default class GoogleMapCreateAccount extends Component {
 
   state =  {
       focusedLocation: {
@@ -83,12 +83,10 @@ export default class GoogleMap extends Component {
     });
     const { navigation } = this.props;
     const Location=this.state.formatted_address
-    navigation.navigate("UserEditProfile",Location); 
+    navigation.navigate("CreateAccount",Location);
   }
 
-  navigatecase=()=> {
-
-  }
+  
 
   render() {
     let marker = null;
@@ -99,13 +97,14 @@ export default class GoogleMap extends Component {
     }
 
     return (
+
       <View style={styles.container}>
         <View style={styles.header}>
           <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
               onPress={()=>{
-                navigation.navigate("UserEditProfile")}}/>
+                navigation.navigate("CreateAccount")}}/>
           <View>
-              <Text style={styles.headerText}>تحديث الموقع</Text>
+              <Text style={styles.headerText}>تحديد الموقع</Text>
           </View>
         </View>  
 
@@ -124,7 +123,9 @@ export default class GoogleMap extends Component {
         </View>
         {!this.state.isVisible? null:
           <View style={styles.button}>
+      
             <Button title="اختر" onPress={this.udpateUserLocation} color="#161924" />
+      
           </View>
         }
       </View>
