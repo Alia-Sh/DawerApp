@@ -311,7 +311,7 @@ const resetData=()=>{
                                   onPress={Add}>
                                   <LinearGradient
                                       colors={["#809d65","#9cac74"]}
-                                      style={styles.signIn}>
+                                      style={styles.Add}>
                                       <Text style={styles.okStyle}>اضافة</Text>
                                   </LinearGradient>
                               </TouchableOpacity>
@@ -512,10 +512,10 @@ const styles = StyleSheet.create({
     },
     textInput: {
         marginTop: Platform.OS === 'ios' ? 0 : 0,
-        paddingLeft: 10,
+        paddingLeft: 5,
         color: '#05375a',
         textAlign: 'right',
-        marginRight:10  
+        marginRight:5  
     },
     headerImage: {
         width:'100%' ,
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
       elevation:2,
       width:'50%',
   },
-  signIn: {
+  Add: {
     width: '100%',
     height: 50,
     justifyContent: 'center',

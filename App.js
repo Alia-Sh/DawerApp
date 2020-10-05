@@ -6,8 +6,15 @@ import DriverHomePage from './Driver/DriverHomePage' ;
 import DriverViewProfile from './Driver/DriverViewProfile' ;
 import DriverEditProfile from './Driver/DriverEditProfile' ;
 import DriverEditPassword from './Driver/DriverEditPassword' ;
+import ResetPassword from './Driver/ResetPassword';
 import AdminLogin from './Admin/AdminLogin' ;
 import AdminHomePage from './Admin/AdminHomePage' ;
+import DriverHome from './Admin/DriverHome' ;
+import CategoryHome from './Admin/CategoryHome' ;
+import FacilityHome from './Admin/FacilityHome' ;
+import RequestHome from './Admin/RequestHome' ;
+import CommunityHome from './Admin/CommunityHome' ;
+import DeliveryDriverOptions from './Admin/DeliveryDriverOptions';
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -20,7 +27,9 @@ import EditPassword from './User/EditPassword';
 import GoogleMap from './User/GoogleMap';
 import UserLogin from './User/UserLogin' ;
 import CreateAccount from './User/CreateAccount';
-import GoogleMapCreateAccount from './User/GoogleMapCreateAccount'
+import GoogleMapCreateAccount from './User/GoogleMapCreateAccount';
+import NewRequestModal1 from './User/NewRequestModal1';
+import DateTimePicker from './components/DateTimePicker'
 import ChooseBetweenUsers from './Screens/ChooseBetweenUsers';
 
 
@@ -32,7 +41,6 @@ const createStack = createStackNavigator();
 
 const myOptions={
  headerShown: false,
-  
 }
 
 const Drawer = createDrawerNavigator();
@@ -77,6 +85,13 @@ function App() {
           <Stack.Screen name="DriverHomePage" component={DriverNavigation} options={myOptions}/>
           <Stack.Screen name="UserHomePage" component={Root} options={myOptions}/>
           <Stack.Screen name="GoogleMapCreateAccount" component={GoogleMapCreateAccount} options={myOptions}/>
+          <Stack.Screen name="DriverHome" component={DriverHome} options={myOptions}/>
+          <Stack.Screen name="RequestHome" component={RequestHome} options={myOptions}/>
+          <Stack.Screen name="CategoryHome" component={CategoryHome} options={myOptions}/>
+          <Stack.Screen name="FacilityHome" component={FacilityHome} options={myOptions}/>
+          <Stack.Screen name="CommunityHome" component={CommunityHome} options={myOptions}/>
+          <Stack.Screen name="DeliveryDriverOptions" component={DeliveryDriverOptions} options={myOptions}/>
+          <Stack.Screen name="ResetPassword" component={ResetPassword} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );
