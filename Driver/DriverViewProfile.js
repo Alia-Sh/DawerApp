@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react';
-import { StyleSheet, Text, View,Image,Platform}from 'react-native';
+import { StyleSheet, Text, View,Image,Platform, Alert,TextInput,TouchableOpacity}from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {Title,Card,Button,FAB}from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
@@ -7,28 +7,33 @@ import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import {FontAwesome5} from '@expo/vector-icons';
 import { YellowBox } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 YellowBox.ignoreWarnings(['Setting a timer']);
 
-const UserViewProfile = ({navigation})=>{
+const DriverViewProfile = ({navigation})=>{
 
     var userId = firebase.auth().currentUser.uid;
-    var query = firebase.database().ref('User/' + userId);
+    var query = firebase.database().ref('DeliveryDriver/' + userId);
     query.once("value").then(function(result) {
       const userData = result.val();
       setName(userData.Name);
       setPhone(userData.PhoneNumber);
       setUserName(userData.UserName);
+      setLocation(userData.DeliveryArea)
+      setEmail(userData.Email)
       retriveImage();
+ 
     });
 
-    var query2 = firebase.database().ref('User/' + userId+'/Location');
-    query2.once("value").then(function(result) {
-        const userData = result.val();
-        setLocation(userData.address);
-    });
+    const [Name,setName] = useState("")
+    const [Phone,setPhone] = useState("")
+    const [UserName,setUserName] = useState("")
+    const [Location,setLocation] = useState("")
+    const [Email,setEmail] = useState("")
+    const [Picture,setPicture] = useState("")
+    // const [SecureTextEntry,setSecureTextEntry] = useState(true)
 
     const retriveImage= async ()=>{
-        var userId = firebase.auth().currentUser.uid;
         var imageRef = firebase.storage().ref('images/' + userId);
         imageRef
           .getDownloadURL()
@@ -43,35 +48,25 @@ const UserViewProfile = ({navigation})=>{
         retriveImage()
     },[]);
 
-    const [Name,setName] = useState("")
-    const [Phone,setPhone] = useState("")
-    const [UserName,setUserName] = useState("")
-    const [Location,setLocation] = useState("")
-    const [Picture,setPicture] = useState("")
 
-    const goDoubleBack = () => {
-        setTimeout(() => {
-            navigation.goBack(null);
-            navigation.goBack(null);
-        }, 50);
-    };
-
+    // const updateSecureTextEntry=()=>{
+    //     setSecureTextEntry(!SecureTextEntry)
+    //   }
     return(
 
         <View style={styles.root}>
-            <LinearGradient
-                    colors={["#827717","#AFB42B"]}
-                    style={{height:"25%"}}>
+            <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
                         onPress={()=>{
-                            navigation.navigate("HomeScreen")
+                            navigation.navigate("DriverHomePage")
                         }}/>
                     <View>
                         <Text style={styles.headerText}>الملف الشخصي</Text>
                     </View>
-                 </View>
-            </LinearGradient>
+                </View>
+            </SafeAreaView>
+
 
             <View style={styles.footer}>
                 <View style={{alignItems:"center"}}>
@@ -86,7 +81,12 @@ const UserViewProfile = ({navigation})=>{
                             source={{uri:Picture}}
                             />
                     }
+                        <Image
+                            style={{width:'70%',marginTop:15}}
+                            source={require('../assets/line.png')}
+                            />
                 </View>
+
                 <View style={{alignItems:"center",margin:15}}>
                     <Title>{UserName}</Title>
                 </View>
@@ -95,7 +95,7 @@ const UserViewProfile = ({navigation})=>{
                     <View style={styles.cardContent}>
                         <Feather
                             name="user"
-                            color="#AFB42B"
+                            color="#929000"
                             size={25} /> 
                         <Text style={styles.mytext}>{Name}</Text>
                     </View>  
@@ -105,8 +105,8 @@ const UserViewProfile = ({navigation})=>{
                     <View style={styles.cardContent}>
                         <Feather
                             name="phone"
-                            color="#AFB42B"
-                            size={20}/> 
+                            color="#929000"
+                            size={25}/> 
                         <Text style={styles.mytext}>{Phone}</Text>
                     </View>  
                 </Card>
@@ -114,21 +114,34 @@ const UserViewProfile = ({navigation})=>{
                 <Card style={styles.mycard}>
                     <View style={styles.cardContent}>
                         <Feather
-                            name="map-pin"
-                            color="#AFB42B"
-                            size={20}/> 
-                        <Text style={{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:10}} >{Location}</Text>
+                            name="mail"
+                            color="#929000"
+                            size={25}/> 
+                        <Text style={styles.mytext}>{Email}</Text>
                     </View>  
                 </Card>  
+
+                <Card style={styles.mycard}>
+                    <View style={styles.cardContent}>
+                        <Feather
+                            name="map-pin"
+                            color="#929000"
+                            size={25}/> 
+                        <Text style={styles.mytext} >{Location}</Text>
+                    </View>  
+                </Card> 
+
                 <View style={styles.button}> 
                     <Button icon="account-edit" mode="contained" theme={theme }
                         onPress={() => {
-                            navigation.navigate("UserEditProfile",{UserName,Name,Phone,Location,Picture})
+                            navigation.navigate("DriverEditProfile",{UserName,Name,Phone,Location,Email,Picture})
                         }}>
                         تحديث
                     </Button>
                 </View>
-            </View>
+
+            </View>  
+
         </View>
     );
 }
@@ -142,7 +155,7 @@ const theme= {
 const styles=StyleSheet.create({
     root:{
         flex:1,
-        backgroundColor: '#F5F5F5',    
+        backgroundColor: '#fff',    
     },
     mycard:{
         margin:3
@@ -155,23 +168,18 @@ const styles=StyleSheet.create({
         fontSize:18,
         marginTop:3,
         marginRight:10,
+        marginLeft: 10
     },
     profile_image:{
         width:150,
         height:150,
         borderRadius:150/2,
-        marginTop:-75 
+        marginTop:-20 
     },
     footer: {
-        backgroundColor: '#ffff',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
         paddingHorizontal: 20,
         paddingVertical: 30,
         marginTop:-20,
-        margin:20
     },
     button:{
         flexDirection:"row",
@@ -187,18 +195,28 @@ const styles=StyleSheet.create({
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:10,
     },
     headerText:{
         fontWeight:'bold',
-        fontSize: 18,      
+        fontSize: 20,      
         letterSpacing: 1, 
         textAlign:'center',
-        color: '#212121'
+        color: '#9E9D24'
     },
     icon:{
         position: 'absolute',
         left: 16
+    },
+    vii:{
+        height:"25%",
+        borderBottomLeftRadius:90,
+        borderBottomRightRadius:90,
+        overflow: 'hidden',
+        backgroundColor:"red"
+    },
+    icon2:{
+        position: 'absolute',
+        right: 16
     }
 })
-export default UserViewProfile
+export default DriverViewProfile

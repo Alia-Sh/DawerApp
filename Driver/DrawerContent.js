@@ -1,23 +1,20 @@
 import React from 'react';
 import { StyleSheet, View, Image,NativeModules}from 'react-native';
 import {DrawerContentScrollView,DrawerItem} from '@react-navigation/drawer';
-import {Title,Drawer,Avatar,Caption,Paragraph,Text,TouchableRipple,Switch}from 'react-native-paper';
+import {Drawer,Avatar,Caption,Paragraph,Text,TouchableRipple,Switch}from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as Animatable from 'react-native-animatable';
 import firebase from '../Database/firebase';
 
 
 export function DrawerContent(props){
 
-const SignOut = async () => {
-  try {
-   await firebase.auth().signOut()
-   props.navigation.navigate("ChooseBetweenUsers")
-  }catch (e){
-    console.log(e)
-  }
-}
-
+    const logout=()=>{
+        firebase.auth().signOut().then(function() {
+            props.navigation.navigate("DriverLogin")
+          }).catch(function(error) {
+              console.log(error)
+          });
+    }
     return(
        <View style={{flex:1}}>
            <DrawerContentScrollView {... props}>
@@ -33,28 +30,28 @@ const SignOut = async () => {
                </View>
                <Drawer.Section style={styles.drawerSection}>
                <DrawerItem
-                    style={styles.drawerItemStyle}
-                    icon={({color,size})=> (
-                        <Icon
-                        style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
-                        name="account-outline"
-                        color={color}
-                        size={size}/>
-                    )}
-                    label="الملف الشخصي "
-                    onPress={() =>{props.navigation.navigate("UserViewProfile")}}/>
+                        style={styles.drawerItemStyle}
+                        icon={({color,size})=> (
+                          <Icon
+                          style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
+                          name="account-outline"
+                          color={color}
+                          size={size}/>
+                        )}
+                        label="الملف الشخصي "
+                        onPress={() =>{props.navigation.navigate("DriverViewProfile")}}/>
 
-                <DrawerItem
-                    style={styles.drawerItemStyle}
-                    icon={({color,size})=> (
-                        <Icon
-                        style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
-                        name="exit-to-app"
-                        color={color}
-                        size={size}/>
-                    )}
-                    label="تسجيل الخروج"
-                    onPress={() =>{SignOut()}}/> 
+                    <DrawerItem
+                        style={styles.drawerItemStyle}
+                        icon={({color,size})=> (
+                          <Icon
+                          style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
+                          name="exit-to-app"
+                          color={color}
+                          size={size}/>
+                        )}
+                        label="تسجيل الخروج"
+                        onPress={logout}/> 
            </Drawer.Section>
            </DrawerContentScrollView>
        </View> 

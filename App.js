@@ -3,11 +3,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import Contants from 'expo-constants';
 import DriverLogin from './Driver/DriverLogin' ;
 import DriverHomePage from './Driver/DriverHomePage' ;
+import AdminLogin from './Admin/AdminLogin' ;
+import AdminHomePage from './Admin/AdminHomePage' ;
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import UserHomePage from './User/UserHomePage' ;
 import DrawerContent from './User/DrawerContent';
+import DriverDrawerContent from './Driver/DrawerContent';
 import UserViewProfile from './User/UserViewProfile' ;
 import UserEditProfile from './User/UserEditProfile' ;
 import EditPassword from './User/EditPassword';
@@ -30,12 +33,12 @@ const myOptions={
 }
 
 const Drawer = createDrawerNavigator();
+const DriverDrawer = createDrawerNavigator();
 function Root() {
   return (
-<Drawer.Navigator initioalRouteName="UserHomePage" drawerContent={props => <DrawerContent { ... props}/>}>
-          <Drawer.Screen name="UserHomePage" component={UserHomePage} options={myOptions}/>
+<Drawer.Navigator initioalRouteName="HomeScreen" drawerContent={props => <DrawerContent { ... props}/>} drawerPosition='right'>
+          <Drawer.Screen name="HomeScreen" component={HomeScreen} options={myOptions}/>
           <Drawer.Screen name="UserViewProfile" component={UserViewProfile} options={myOptions}/>
-          <Drawer.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
           <Drawer.Screen name="UserEditProfile" component={UserEditProfile} options={myOptions}/>
           <Drawer.Screen name="EditPassword" component={EditPassword} options={myOptions}/>
           <Drawer.Screen name="GoogleMap" component={GoogleMap} options={myOptions}/>
@@ -49,6 +52,8 @@ function App() {
         <Stack.Navigator>
           <Stack.Screen name="ChooseBetweenUsers" component={ChooseBetweenUsers} options={myOptions}/>
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
+          <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>
+          <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
           <Stack.Screen name="CreateAccount" component={create} options={myOptions}/>
           <Stack.Screen name="UserLogin" component={UserLogin} options={myOptions}/>
           <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>

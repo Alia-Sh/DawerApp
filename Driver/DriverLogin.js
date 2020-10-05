@@ -1,11 +1,13 @@
 import React, {useEffect} from 'react';
-import { StyleSheet, Text,View, TouchableOpacity,Platform, TextInput,Alert,StatusBar,Dimensions,KeyboardAvoidingView, ActivityIndicator} from 'react-native';
+import { StyleSheet, Text,View, TouchableOpacity,Platform, TextInput,Alert,StatusBar,Dimensions,KeyboardAvoidingView, ActivityIndicator,NativeModules} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Loading from '../components/Loading';
+
 
 const DriverLogin =({navigation}) => {
   
@@ -19,6 +21,7 @@ const DriverLogin =({navigation}) => {
     isValidUserAndPassword: true,
     isLoading:false
   });
+
 
   const textInputChange= (val)=>{
     if(val.length != 0){
@@ -74,57 +77,106 @@ const userLogin = () => {
     });
   }else {
     setData({
-        ...data,
-        isValidUser: true,
-        isValidPassword: true,
-        isLoading:true
+      ...data,
+      isValidUser: true,
+      isValidPassword: true,
+      isLoading:true
     });
-    try{
-      firebase.auth().signInWithEmailAndPassword(data.UserName.concat("@gmail.com"),data.password)
-      .then(user => {
-        setData({
-          ...data,
-          isLoading:false
-        });
-      navigation.navigate("DriverHomePage")
-      // navigation.navigate("UserHomePage")
-      }).catch((error) => {
-          setData({
-            ...data,
-            isValidUser: true,
-            isValidPassword: true,
-            isValidUserAndPassword:false,
-            isLoading:false,
+    firebase.database().ref("DeliveryDriver").orderByChild("UserName")
+      .equalTo(data.UserName.toLowerCase()).once("value", snapshot => {
+          const userData = snapshot.val();  
+          // Check if the Driver  exist.
+        if (userData) {
+          console.log("Driver exist!");
+          snapshot.forEach(function(snapshot){
+            try{
+              firebase.auth().signInWithEmailAndPassword(snapshot.val().Email,data.password)
+              .then(user => {
+                setData({
+                  UserName: "",
+                  password: "",
+                  check_textInputChange: false,
+                  secureTextEntry: true,
+                  isValidUser: true,
+                  isValidPassword: true,
+                  isValidUserAndPassword: true,
+                  isLoading:false
+                });
+              navigation.navigate("DriverHomePage")
+              }).catch((error) => {
+                  setData({
+                    ...data,
+                    isValidUser: true,
+                    isValidPassword: true,
+                    isValidUserAndPassword:false,
+                    isLoading:false,
+                  });
+                  console.log(error);
+                })
+              }catch(error){
+                setData({
+                  ...data,
+                  isValidUser: true,
+                  isValidPassword: true,
+                  isValidUserAndPassword:true,
+                  isLoading:false
+                });
+                console.log(error);
+              }
           });
-        })
-      }catch(error){
-        setData({
-          ...data,
-          isValidUser: true,
-          isValidPassword: true,
-          isValidUserAndPassword:true,
-          isLoading:false
-        });
-        Alert.alert(error)
-      }
-  }
+          // Check if the Driver doesnt exist.
+        } else {
+            console.log("Driver doesn't exist!");
+            setData({
+              ...data,
+              isValidUser: true,
+              isValidPassword: true,
+              isValidUserAndPassword:false,
+              isLoading:false
+          });
+          }
+      });
+    }
 }
-
-const createUser =()=>{
+// to be removed  
+const createDriver=()=>{
 
   firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
     if (firebase.auth().currentUser) {
-      userId = firebase.auth().currentUser.uid;
+      var userId = firebase.auth().currentUser.uid;
+      if (userId) {
+          firebase.database().ref('DeliveryDriver/' + userId).set({
+            Email:data.UserName.concat("@gmail.com"),
+            Name:"Fouz Ali",
+            Password:data.password,
+            PhoneNumber:"0555555555",
+            UserName:data.UserName,
+            DeliveryArea:"شرق الرياض"
+          });
+      }
+    }
+  }).catch(function(error) {
+    // Handle Errors here.
+      console.log('Register!');
+      console.log(error);
+  })
+}
+
+// to be removed  
+const createUser=()=>{
+
+  firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
+    if (firebase.auth().currentUser) {
+      var userId = firebase.auth().currentUser.uid;
       if (userId) {
           firebase.database().ref('User/' + userId).set({
-            Email:"Hessa@gmail.com",
-            Name:"Hessa",
+            Name:"Fouz Ali",
             Password:data.password,
-            PhoneNumber:"0000000000",
+            PhoneNumber:"0555555555",
             UserName:data.UserName,
           });
-          firebase.database().ref('User/' + userId).child('Location').set({
-            address:"Riyath",
+          firebase.database().ref('User/' + userId+'/Location').set({
+            address:"2672 Al Buhturi, Az Zahra, Riyadh 12811 6993, Saudi Arabia",
             latitude:24.688122806487524,
             longitude:46.729763634502895
           });
@@ -138,12 +190,8 @@ const createUser =()=>{
 }
 
   return (
-
-    <KeyboardAvoidingView
-        style={styles.container}
-        behavior="padding">
-
       <View style={styles.container}>
+        <KeyboardAwareScrollView>
 
         <StatusBar backgroundColor='#009387' barStyle="light=content"/>
 
@@ -179,6 +227,7 @@ const createUser =()=>{
                 size={20}/> 
           
               <TextInput style={styles.textInput} 
+                  value={data.UserName}
                   label="UserName"
                   placeholder="ادخل اسم المستخدم"
                   autoCapitalize="none"
@@ -214,12 +263,14 @@ const createUser =()=>{
                   size={20}/> 
 
               <TextInput style={styles.textInput} 
+                  value={data.password}
                   label="Password"
                   placeholder="ادخل كلمة المرور"
                   autoCapitalize="none"
                   secureTextEntry={data.secureTextEntry?true:false}
                   onChangeText={(val)=>handlePasswordChange(val)}
-                  textAlign= 'right'>
+                  textAlign= 'right'
+                  >
                 </TextInput>  
 
               <TouchableOpacity onPress={updateSecureTextEntry}>
@@ -244,29 +295,30 @@ const createUser =()=>{
                     <Text style={styles.errorMsg}>يجب ادخال كلمة المرور</Text>
                 </Animatable.View>
             }
-            
+            <TouchableOpacity 
+            onPress={()=>{navigation.navigate("ResetPassword")}}
+            >
             <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل نسيت كلمة المرور؟</Text>
-          
+            </TouchableOpacity>
             
             <TouchableOpacity onPress={() => userLogin()}>
                 <View style={styles.button}>
 
                   {data.isLoading ? 
-                      <ActivityIndicator size="large" color="#9E9D24" />   
+                      <Loading></Loading>  
                     : 
                       <LinearGradient
                       colors={['#AFB42B','#827717']}
                       style={styles.signIn}> 
 
                         <Text style={[styles.textSign,{color:'#fff'}]}>تسجيل الدخول </Text>
-                    
                       </LinearGradient>
                   }      
                 </View>
             </TouchableOpacity> 
         </Animatable.View>
+        </KeyboardAwareScrollView>
       </View>
-    </KeyboardAvoidingView>
   );
 }
 const {height} = Dimensions.get("screen");
@@ -305,15 +357,16 @@ const styles = StyleSheet.create({
   text_footer: {
       color: '#9E9D24',
       fontSize: 18,
-      textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+      textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
   },
   text_forgetPass: {
     color: '#757575',
     fontSize: 15,
-    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+    // marginLeft:15,
+    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'right':'left',
 },
   action: {
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
       marginTop: 10,
       borderBottomWidth: 1,
       borderBottomColor: '#f2f2f2',
@@ -339,7 +392,7 @@ const styles = StyleSheet.create({
   errorMsg: {
       color: '#FF0000',
       fontSize: 14,
-    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
   },
   errorMsg2: {
     color: '#FF0000',

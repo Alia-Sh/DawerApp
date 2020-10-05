@@ -7,8 +7,19 @@ import Feather from 'react-native-vector-icons/Feather';
 import firebase from '../Database/firebase';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeModules } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Animatable from 'react-native-animatable';
+import Loading from '../components/Loading'
 
 const UserEditProfile  = ({navigation,route})=>{
+
+    var userId = firebase.auth().currentUser.uid;
+    var query = firebase.database().ref('User/' + userId+'/Location');
+    query.once("value").then(function(result) {
+        const userData = result.val();
+        setLocation(userData.address);
+    });
+
     const getDetails=(type)=>{
         if(route.params){
             switch(type){
@@ -31,46 +42,86 @@ const UserEditProfile  = ({navigation,route})=>{
         return ""
     }
 
-    retriveImage= async ()=>{
-        var userId = firebase.auth().currentUser.uid;
-        var imageRef = firebase.storage().ref('images/' + userId);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            //from url you can fetched the uploaded image easily
-            setPicture(url)
-          })
-          .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
+    // const retriveImage= async ()=>{
+    //     userId = firebase.auth().currentUser.uid;
+    //     var imageRef = firebase.storage().ref('images/' + userId);
+    //     imageRef
+    //       .getDownloadURL()
+    //       .then((url) => {
+    //         //from url you can fetched the uploaded image easily
+    //         setPicture(url)
+    //       })
+    //       .catch((e) => console.log('getting downloadURL of image error => ', e));
+    //   }
 
-    useEffect(()=>{
-        retriveImage()
-    },[]);
+    // useEffect(()=>{
+    //     retriveImage()
+    // },[]);
 
     const [Name,setName] = useState(getDetails("Name"))
     const [Phone,setPhone] = useState(getDetails("Phone"))
     const [UserName,setUserName] = useState(getDetails("UserName"))
     const [Location,setLocation] = useState(getDetails("Location"))
     const [Picture,setPicture] = useState(getDetails("Picture"))
-    const [enableshift,setAnbleshift]=useState(false)
     const [data,setData] = React.useState({
-        isLoading:false
+        isLoading:false,
+        isValidPhone:true,
+        PhoneErrorMessage:''
       });
 
-    var userId = firebase.auth().currentUser.uid;
-    var query2 = firebase.database().ref('User/' + userId+'/Location');
-    query2.once("value").then(function(result) {
-        const userData = result.val();
-        setLocation(userData.address);
-    });
-
+    const checkValidPhone=()=>{
+        if(Phone==""){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب ادخال رقم الهاتف'
+            });
+            return false; 
+        }else if(Phone.length<10){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب ان يتكون رقم الهاتف من ١٠ ارقام'
+            });
+            return false;       
+        }else{
+            if(!data.isValidPhone){   
+                setData({
+                    ...data,
+                    isValidPhone:true,
+                    PhoneErrorMessage:''
+                });                 
+            }
+            return true;         
+        }
+    }
     const updateUserInfo=()=>{
-        var userId = firebase.auth().currentUser.uid;
-        firebase.database().ref('User/' + userId).update({
-            Name: Name,
-            PhoneNumber: Phone,      
-        });
-        navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+        if(checkValidPhone()){
+            setData({
+                ... data,
+                isLoading: true,
+              });
+            firebase.database().ref('User/' + userId).update({
+                Name: Name,
+                PhoneNumber: Phone,      
+            }).then(function (){
+                uploadImage(Picture,userId)
+                .then(()=> {
+                    setData({
+                        ...data,
+                        isLoading:false
+                    });
+                    navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                    // retriveImage();
+                }).catch((error)=> {
+                    setData({
+                        ...data,
+                        isLoading:false
+                    });
+                    Alert.alert(error.message);
+                });
+            })
+        }
     }
 
     const selectImage = async () => {
@@ -81,32 +132,34 @@ const UserEditProfile  = ({navigation,route})=>{
             aspect: [4, 3]
           })
           if (!response.cancelled) {
-            setData({
-                ...data,
-                isLoading:true
-            });
-            var userId = firebase.auth().currentUser.uid;
-            uploadImage(response.uri,userId)
-            .then(()=> {
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-               retriveImage();
-            }).catch((error)=> {
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-                Alert.alert(error);
-            });
+            // setData({
+            //     ...data,
+            //     isLoading:true
+            // });
+            // var userId = firebase.auth().currentUser.uid;
+            // uploadImage(response.uri,userId)
+            // .then(()=> {
+            //     setData({
+            //         ...data,
+            //         isLoading:false
+            //     });
+            //    retriveImage();
+            // }).catch((error)=> {
+            //     setData({
+            //         ...data,
+            //         isLoading:false
+            //     });
+            //     Alert.alert(error.message);
+            // });
+            setPicture(response.uri);
           }
         } catch (error) {
-          console.log(error)
+          console.log(error);
+          Alert.alert(error.message);
         }
       }
 
-    uploadImage= async (uri,imageName)=>{
+    const uploadImage= async (uri,imageName)=>{
         const response = await fetch(uri);
         const blob = await response.blob();
 
@@ -114,17 +167,26 @@ const UserEditProfile  = ({navigation,route})=>{
         return ref.put(blob);
     }
 
+    const resetData=()=>{
+        setName(getDetails("Name"));
+        setPhone(getDetails("Phone"));
+        setPicture(getDetails("Picture"))
+        setData({
+            ...data,
+            isLoading:false,
+            isValidPhone:true,        
+        })
+        navigation.navigate("UserViewProfile");
+    }
     return(
-        <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableshift}>
-            <View>
+        <KeyboardAwareScrollView style={styles.root}>
+            <View style={styles.root}>
                 <LinearGradient
                     colors={["#827717","#AFB42B"]}
-                    style={{height:"25%"}}>
+                    style={{height:200}}>
                     <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
-                        onPress={()=>{
-                            navigation.navigate("UserViewProfile")
-                        }}/>
+                        onPress={resetData}/>
                         <View>
                             <Text style={styles.headerText}>تحديث الملف الشخصي</Text>
                         </View>
@@ -133,17 +195,17 @@ const UserEditProfile  = ({navigation,route})=>{
 
                 <View style={styles.footer}>
                     <View style={{alignItems:"center"}}>
-                        {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> : 
+                        {/* {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> :  */}
                             <Image style={styles.profile_image} 
-                            source={{uri:Picture==""? "data:image/png;base64,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":Picture}}
+                            source={Picture==""?require('../assets/DefaultImage.png'):{uri:Picture}}
                             />
-                        }
+                        {/* } */}
                         <FAB  
                             onPress={() =>selectImage ()}
                             small
                             icon="plus"
                             theme={{colors:{accent:"#C0CA33"}}}
-                            style={{marginLeft:90,marginTop:-23}}/>
+                            style={Platform.OS === 'android'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
                     </View>
 
                     <View style={{alignItems:"center",margin:10}}>
@@ -175,14 +237,19 @@ const UserEditProfile  = ({navigation,route})=>{
                     </Card>  
 
                     <View style={styles.button}> 
+                         {data.isLoading ? 
+                            <Loading></Loading>  
+                        :
                         <Button icon="content-save" mode="contained" theme={theme }
                             onPress={() => updateUserInfo()}>
                                 حفظ
                         </Button>
+                        }
                     </View>
                 </View>
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
+      
     );
 }
 
@@ -204,7 +271,7 @@ const styles=StyleSheet.create({
         marginTop:-75 
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         margin: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -233,7 +300,7 @@ const styles=StyleSheet.create({
         borderBottomRightRadius:30,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-20,
+        marginTop:-30,
         margin:20
     },
     button:{
@@ -247,7 +314,7 @@ const styles=StyleSheet.create({
     header:{
         width: '100%',
         height: 80,
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row-reverse' : 'row',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop:10,
@@ -264,8 +331,23 @@ const styles=StyleSheet.create({
         left: 16
     },
     cardContent:{
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         padding:8,
+    },
+    errorMsg: {
+        color: '#FF0000',
+        fontSize: 14,
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        paddingRight:20
+    },
+    FABStyleAndroid:{
+        marginLeft:90,
+        marginTop:-23,
+        flexDirection:'row-reverse' 
+    },
+    FABStyleIOS:{
+        marginLeft:90,
+        marginTop:-23,
     }
 })
 

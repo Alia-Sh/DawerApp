@@ -224,5 +224,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'  
     },
   });
-
-export default UserHomePage
+export default HomeScreen;

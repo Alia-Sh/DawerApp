@@ -1,25 +1,17 @@
 import React, {useState}from 'react';
-import { StyleSheet, Text, View,KeyboardAvoidingView,TextInput, Alert,Image} from 'react-native';
+import { StyleSheet, Text, View,KeyboardAvoidingView,TextInput, Alert,Image,ActivityIndicator} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient'; 
 import {Button}from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
 import firebase from '../Database/firebase';
 import * as Animatable from 'react-native-animatable';
 import { NativeModules } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-const EditPassword = ({navigation})=>{
+const DriverEditPassword = ({navigation})=>{
     var user = firebase.auth().currentUser;
-    var userId = user.uid;
-    var query = firebase.database().ref('User/' + userId);
-    query.once("value").then(function(result) {
-      const userData = result.val();
-      setPassword(userData.Password);
- 
-  });
-    const [Password,setPassword] = useState('')
     const [CurrentPassword,setCurrentPassword] = useState('')
     const [NewPassword,setNewPassword] = useState('')
     const [ConfirmPassword,setConfirmPassword] = useState('')
@@ -28,7 +20,9 @@ const EditPassword = ({navigation})=>{
         isValidPassword:true,
         isValidNewPassword:true,
         isValidConfirmPassword: true,
-        isEmpty:true
+        isEmpty:true,
+        isLoading: false,
+        isTrue:false
       });
 
     const updateSecureTextEntry=()=>{
@@ -46,20 +40,27 @@ const EditPassword = ({navigation})=>{
                 isValidPassword:true,
                 }) 
                 return false; 
-        }else if(CurrentPassword!=Password){
-            setData({
-                ... data,
-                isValidPassword:false,
-                isEmpty:true
-                }) 
-                return false;               
-        }else{
-            setData({
-                ... data,
-                isValidPassword:true,
-                isEmpty:true
-                }) 
-                return true;    
+        }
+        else{
+            var credential = firebase.auth.EmailAuthProvider.credential(
+                firebase.auth().currentUser.email,CurrentPassword);
+                user.reauthenticateWithCredential(credential).then(function() {
+                    setData({
+                        ... data,
+                        isValidPassword:true,
+                        isEmpty:true,
+                        isTrue:true
+                        }) 
+            }).catch(function(error) {
+                          setData({
+                            ... data,
+                            isValidPassword:false,
+                            isEmpty:true,
+                            isTrue:false
+                            }) 
+                            console.log(error.message); 
+            });
+                return data.isTrue;
         }
     }
 
@@ -96,24 +97,17 @@ const EditPassword = ({navigation})=>{
 
     const updatePassword=()=>{
 
-        if (checkValidPassword() && checkValidNewPassword() && checkConfirmPassword() ){
+        if (checkValidNewPassword() && checkConfirmPassword() && checkValidPassword()){
             setData({
                 ... data,
                 isLoading: true,
               });
                 user.updatePassword(NewPassword).then(function() {
-                    firebase.database().ref('User/' + userId).update({
-                        Password: NewPassword,
-                        }).then(function(){
-                            setPassword(NewPassword);
-                            resetData();
-                        }).catch(function(error){
-                            setData({
-                                ... data,
-                                isLoading: false,
-                              });
-                            console.log(error)                          
-                        });
+                    setData({
+                        ... data,
+                        isLoading: false,
+                      });
+                      resetData();
                 }).catch(function(error) {
                     // An error happened.
                     setData({
@@ -122,44 +116,40 @@ const EditPassword = ({navigation})=>{
                       });
                     console.log(error)
                     }); 
-        }
-
+                }
     }
 
     const resetData=()=>{
-        setCurrentPassword("")
-        setNewPassword("")
-        setConfirmPassword("")
-        setData({
-            ... data,
-            secureTextEntry: true,
-            isValidPassword:true,
-            isValidNewPassword:true,
-            isValidConfirmPassword: true,
-            isEmpty:true,
-            isLoading: false,
-          });
-            navigation.navigate("UserEditProfile")  
+            setCurrentPassword("")
+            setNewPassword("")
+            setConfirmPassword("")
+            setData({
+                ... data,
+                secureTextEntry: true,
+                isValidPassword:true,
+                isValidNewPassword:true,
+                isValidConfirmPassword: true,
+                isEmpty:true,
+                isLoading: false,
+              });
+            navigation.navigate("DriverEditProfile")   
     }
     return(
-        <KeyboardAwareScrollView style={styles.root}>
-            <View>
-                <LinearGradient
-                    colors={["#827717","#AFB42B"]}
-                    style={{height:200}}
-                    >
-                    <View style={styles.header}>
-                        <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
-                            onPress={
-                                resetData
-                            }/>
-                        <View>
-                            <Text style={styles.headerText}>تحديث كلمة المرور</Text>
-                        </View>
+        <KeyboardAwareScrollView>
+            <View style={styles.root}>
+                <SafeAreaView style={{flexDirection:'row-reverse'}}>
+                <View style={styles.header}>
+                    <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
+                        onPress={
+                            resetData
+                        }/>
+                    <View>
+                    <Text style={styles.headerText}>تحديث كلمة المرور</Text>
                     </View>
-                </LinearGradient>
+                </View>
+                </SafeAreaView>
+
                 <View style={styles.footer}>
-                
                     <View style={{alignItems:"center"}}>
                 
                         <Image
@@ -171,9 +161,9 @@ const EditPassword = ({navigation})=>{
                             style={{width:'80%',margin:10}}
                             source={require('../assets/line.png')}
                             />
-
+            
                     </View>
-                    
+
                     <View style={styles.action}>
                         <Text style={styles.textStyle}>كلمة المرور الحالية</Text>
                         <TextInput style={styles.textInput} 
@@ -278,40 +268,19 @@ const EditPassword = ({navigation})=>{
                     }
 
                     <View style={styles.button}> 
+                        {data.isLoading ? 
+                            <ActivityIndicator size="large" color="#9E9D24" />   
+                        : 
                         <Button icon="content-save" mode="contained" theme={theme }
                             onPress={() => updatePassword()}>
-                                حفظ
+                            حفظ
                         </Button>
+                        } 
                     </View>
-                </View>          
+
+                </View>
             </View>
-            {/* <View style={styles.root}>
-            <Text style={{fontSize:50}}>hhhe
-
-            </Text>
-            <Text style={{fontSize:50}}>hhhe
-
-</Text>
-<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
-
-</Text>
-<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
-
-</Text>
-<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
-
-</Text>
-<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
-
-</Text>
-<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
-
-</Text>
-<Text style={{fontSize:50}}>hhheygyfhyfhddgdgdgggjjffyfhfhcgg
-
-</Text>
-</View> */}
-        </KeyboardAwareScrollView>   
+        </KeyboardAwareScrollView>
     );
 }
 
@@ -324,16 +293,14 @@ const theme= {
 const styles=StyleSheet.create({
     root:{
         flex:1,
-        backgroundColor: '#F5F5F5',       
+        backgroundColor: '#fff',       
     },
     action: {
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
         margin: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
-        paddingBottom: 5,
-        paddingRight:5,
-        paddingLeft:5
+        padding: 8
     },  
     textInput: {
         flex: 1,
@@ -351,15 +318,9 @@ const styles=StyleSheet.create({
         fontSize: 15
     },
     footer: {
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-30,
-        margin:20,
+        marginTop:-20,
     },
     button:{
         flexDirection:"row",
@@ -375,14 +336,13 @@ const styles=StyleSheet.create({
         flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:10,
     },
     headerText:{
         fontWeight:'bold',
         fontSize: 18,      
         letterSpacing: 1, 
         textAlign:'center',
-        color: '#212121'
+        color: '#9E9D24'
     },
     icon:{
         position: 'absolute',
@@ -391,13 +351,15 @@ const styles=StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',  
+        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right', 
+        paddingRight:8,
+        paddingLeft:8 
     },
     profile_image:{
         width:140,
         height:150,
-        marginTop:-100,
+        marginTop:-20,
         marginBottom: 15
     }
 })
-export default EditPassword
+export default DriverEditPassword
