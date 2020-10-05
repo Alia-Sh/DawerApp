@@ -81,7 +81,7 @@ const ChooseBetweenUsers =({navigation}) => {
   <View style={styles.action}>
     <Text></Text>
   <Animatable.View animation="bounceIn" duration={7000}  colors={['#AFB42B','#827717']}>
-    <FontAwesome onPress={() => navigation.navigate('UserLogin')}
+    <FontAwesome onPress={() => navigation.navigate('AdminLogin')}
          name="gear"
          color= '#9E9D24'
          size={28}
