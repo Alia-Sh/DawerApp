@@ -74,7 +74,7 @@ function App() {
           <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
           <Stack.Screen name="CreateAccount" component={create} options={myOptions}/>
           <Stack.Screen name="UserLogin" component={UserLogin} options={myOptions}/>
-          <Stack.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
+          <Stack.Screen name="DriverHomePage" component={DriverNavigation} options={myOptions}/>
           <Stack.Screen name="UserHomePage" component={Root} options={myOptions}/>
           <Stack.Screen name="GoogleMapCreateAccount" component={GoogleMapCreateAccount} options={myOptions}/>
         </Stack.Navigator>
