@@ -18,7 +18,7 @@ const [data, setdata]= React.useState({
     ValidUserName: true,
     LocationExisting: true,
     Valid: true,
-    visible: true
+    // visible: true
     })
 
    var userId = firebase.auth().currentUser.uid;
@@ -37,12 +37,12 @@ const [data, setdata]= React.useState({
 
      });
  
-if (Location){
-  setdata({
-    ...data,
-    visible: true
-  })
-}
+//if (Location){
+//  setdata({
+ //   ...data,
+  //  visible: true
+ // })
+//}
 
 
 const [Name,setName] = useState('')
@@ -232,7 +232,7 @@ return(
               color="#9E9D24"
               size={20}/> 
               <Text style={styles.Location}>{Location}</Text>
-             <Feather style={styles.feather} onPress={()=> navigate()}
+             <Feather style={styles.feather} onPress={()=> navigation.navigate("GoogleMapCreateAccount")}
              name="chevron-left"
              size={23}/>  
              </View>

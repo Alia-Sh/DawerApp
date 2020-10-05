@@ -3,6 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import Contants from 'expo-constants';
 import DriverLogin from './Driver/DriverLogin' ;
 import DriverHomePage from './Driver/DriverHomePage' ;
+import DriverViewProfile from './Driver/DriverViewProfile' ;
+import DriverEditProfile from './Driver/DriverEditProfile' ;
+import DriverEditPassword from './Driver/DriverEditPassword' ;
 import AdminLogin from './Admin/AdminLogin' ;
 import AdminHomePage from './Admin/AdminHomePage' ;
 import { NavigationContainer } from '@react-navigation/native';
@@ -34,10 +37,25 @@ const myOptions={
 
 const Drawer = createDrawerNavigator();
 const DriverDrawer = createDrawerNavigator();
+
+
+function DriverNavigation() {
+  return (
+<DriverDrawer.Navigator initioalRouteName="DriverHomePage" drawerContent={props => <DriverDrawerContent { ... props}/>} drawerPosition='right'>
+          <DriverDrawer.Screen name="DriverHomePage" component={DriverHomePage} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverViewProfile" component={DriverViewProfile} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverEditProfile" component={DriverEditProfile} options={myOptions}/>
+          <DriverDrawer.Screen name="DriverEditPassword" component={DriverEditPassword} options={myOptions}/>
+          {/* <DriverDrawer.Screen name="DriverLogin" component={App} options={myOptions}/> */}
+        </DriverDrawer.Navigator>
+  );
+}
+
+
 function Root() {
   return (
-<Drawer.Navigator initioalRouteName="HomeScreen" drawerContent={props => <DrawerContent { ... props}/>} drawerPosition='right'>
-          <Drawer.Screen name="HomeScreen" component={HomeScreen} options={myOptions}/>
+<Drawer.Navigator initioalRouteName="UserHomePage" drawerContent={props => <DrawerContent { ... props}/>} drawerPosition='right'>
+          <Drawer.Screen name="UserHomePage" component={UserHomePage} options={myOptions}/>
           <Drawer.Screen name="UserViewProfile" component={UserViewProfile} options={myOptions}/>
           <Drawer.Screen name="UserEditProfile" component={UserEditProfile} options={myOptions}/>
           <Drawer.Screen name="EditPassword" component={EditPassword} options={myOptions}/>

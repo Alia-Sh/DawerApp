@@ -5,19 +5,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons'
 
 const HomeScreen = ({navigation})=>{
-    const Open=()=>{
-        navigation.openDrawer()
-    }
+    
     return (
         <View style={styles.container}>
-            <SafeAreaView style={{flex:1}}>
-                <TouchableOpacity
-                    style={{margin: 16,flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse'}}
-                    onPress={Open}>  
-                    <FontAwesome5 name="bars" size={24} color="#161924"/>
-                </TouchableOpacity>
+           
                 <Text style={styles.textInput}>هنا الصفحة الرئيسية اللي فيها الخمس انواع</Text>
-            </SafeAreaView>
         </View>
       );
 }
