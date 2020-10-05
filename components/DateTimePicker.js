@@ -1,58 +1,36 @@
-import React, {useState} from 'react';
-import {View, Button, Platform,StyleSheet} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from "react";
+import { Button, View } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
- const DateTimePickerComponent = () => {
-  const [date, setDate] = useState(new Date(1598051730000));
+const DateTimePickerComponent = () => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
   };
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
   };
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
+  const handleConfirm = (date) => {
+    console.warn("A date has been picked: ", date);
+    hideDatePicker();
   };
 
   return (
-    <View style={styles.centeredView}>
-      <View>
-        <Button onPress={showDatepicker} title="Show date picker!" />
-      </View>
-      <View>
-        <Button onPress={showTimepicker} title="Show time picker!" />
-      </View>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+    <View>
+      <Button title="Show Date Picker" onPress={showDatePicker} />
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
     </View>
   );
 };
 
-const styles=StyleSheet.create({
-    centeredView:{
-        justifyContent:'center',
-        // alignItems:'center',
-        flex:1,
-    }
-});
-export default DateTimePickerComponent
+export default DateTimePickerComponent;
+

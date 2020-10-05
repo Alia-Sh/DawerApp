@@ -6,16 +6,16 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Animatable from 'react-native-animatable';
 import {Card,Button} from 'react-native-paper';
 import DateTimePicker from '../components/DateTimePicker'
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from 'moment';
  const NewRequestModal1=()=>{
+    var d = new window.Date();
+    console.log(d)
     const [alertVisible,setAlertVisible]= useState(true)
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [mode, setMode] = useState('date');
     //test data
-    const[RequestList,setRequestList]= useState([
-        // {id: 1, material: "a string", Quantity: 1},
-        // {id: 2, material: "another string", Quantity: 2},
-        // {id: 3, material: "a string", Quantity: 3},
-        // {id: 4, material: "a string", Quantity: 4},
-        // {id: 5, material: "another string", Quantity: 5},
-    ])
+    const[RequestList,setRequestList]= useState([])
     const [Material,setMaterial]=useState('');
     const [Quantity,setQantity]=useState('');
     const [data,setData]=React.useState({
@@ -25,6 +25,7 @@ import DateTimePicker from '../components/DateTimePicker'
         QuantityErrorMsg:'',
         MaterialInput: React.createRef(),
         QuantityInput: React.createRef(),
+        DateAndTimeInput: React.createRef(),
         isVisibleList:false,
         isEdit:false, 
         isEmptyList:false,
@@ -90,14 +91,14 @@ import DateTimePicker from '../components/DateTimePicker'
         }
     }
 
-    const checkData=()=>{
+    const checkDate=()=>{
         if(Date==''){
             setData({
                 ...data,
                 isValidDate:false,
-                DateErrorMsg:'يجب إدخال تاريخ الاستلام' 
+                DateErrorMsg:'يجب إدخال تاريخ و وقت الاستلام' 
             })
-            return false
+            return false         
         }else{
             setData({
                 ...data,
@@ -127,17 +128,19 @@ import DateTimePicker from '../components/DateTimePicker'
     }
 
     const ResetFalid=()=>{
-        if(checkMaterial() && checkQuantity()){
+        if(checkMaterial() && checkQuantity() && checkDate()){
             data.MaterialInput.current.clear();
             data.QuantityInput.current.clear();
+            data.DateAndTimeInput.current.clear();
             setMaterial('');
-            setQantity('')
+            setQantity('');
+            setDate('')
         }
     }
 
     const addRequest=()=>{
-        if(checkMaterial() && checkQuantity()){
-        var temp={id:counter,material:Material,Quantity:Quantity}
+        if(checkMaterial() && checkQuantity() && checkDate()){
+        var temp={id:counter,material:Material,Quantity:Quantity,DateAndTime:Date}
         RequestList.push(temp)
         setCounter(counter+1);
         ResetFalid();
@@ -166,10 +169,16 @@ import DateTimePicker from '../components/DateTimePicker'
             <Card style={styles.mycard} 
             >
             <View style={styles.cardView}>
-                 <Text style={styles.text}>نوع المواد:</Text>
+                <View>
+                    <Text style={styles.text}>نوع المواد:</Text>
                      <Text style={styles.Text}>{item.material}</Text>
                      <Text style={styles.text}> الكمية:</Text>
                      <Text style={styles.Text}>{item.Quantity}</Text>
+                     <Text style={styles.text}> تاريخ و وقت الإستلام:</Text>
+                     <Text style={styles.Text}>{item.DateAndTime}</Text>
+                </View>
+
+                <View style={{alignItems:'center',justifyContent:'center'}}>
                      <TouchableOpacity style={styles.EditIconStyle}
                      onPress={()=>EditRequest(item)}>
                      <Image 
@@ -177,6 +186,16 @@ import DateTimePicker from '../components/DateTimePicker'
                         style={styles.Edit}
                         />
                     </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.EditIconStyle}
+                     onPress={()=>EditRequest(item)}>
+                     <Image 
+                        source={require('../assets/DeleteIcon.png')}
+                        style={styles.Edit}
+                        />
+                    </TouchableOpacity>
+
+                </View>
              </View>
         </Card>
         )
@@ -191,6 +210,7 @@ import DateTimePicker from '../components/DateTimePicker'
         })
         setMaterial(item.material);
         setQantity(item.Quantity)
+        setDate(item.DateAndTime)
         setID(item.id)
     }
 
@@ -228,6 +248,20 @@ import DateTimePicker from '../components/DateTimePicker'
     const Send=()=>{
 
     }
+
+        const showDatePicker = () => {
+      setDatePickerVisibility(true);
+    };
+  
+    const hideDatePicker = () => {
+      setDatePickerVisibility(false);
+    };
+  
+    const handleConfirm = (datetime) => {
+        console.warn("A date has been picked: ", datetime);
+        setDate(moment(datetime).format('MMM, Do YYY HH:mm'))
+        hideDatePicker();
+    };
 return (
     
 <View style={styles.container}>   
@@ -249,7 +283,7 @@ return (
                     </View>
 
                     {/* الدوائر الثلاث اللي بالوسط مع الخط */}
-                    <View style={{alignItems:'center'}}>
+                    {/* <View style={{alignItems:'center'}}>
                         <Image
                             style={{width:'70%',marginTop:30}}
                             source={require('../assets/line.png')}/>
@@ -271,7 +305,7 @@ return (
                                 source={require('../assets/pin.png')}
                             />
                         </View>                   
-                    </View>
+                    </View> */}
 
                     {/* اما تعرض ليست الطلبات او ادخال الطلبات */}
                     {data.isVisibleList?
@@ -289,21 +323,21 @@ return (
                                 <TouchableOpacity onPress={() =>setData({...data,isVisibleList:false})}>
                                     <Image
                                         style={styles.ImageStyle}
-                                        source={require('../assets/pin.png')}
+                                        source={require('../assets/back.png')}
                                         resizeMethod='scale'
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() =>setData({...data,isDateAndTimeStep:true,isVisibleList:false})}>
                                 <Image     
                                     style={styles.ImageStyle}
-                                    source={require('../assets/pin.png')}
+                                    source={require('../assets/sendRequest.png')}
                                     />
                                 </TouchableOpacity>  
                             </View>
                         </View>
                     :
 
-                        // عرض فوم النوع والكمية
+                        // {/* // عرض فوم النوع والكمية */}
                         <View>
 
                             {/* شرط اذا ضغط على الليت ايكون ولببيست فاضية */}
@@ -316,18 +350,19 @@ return (
                             }
 
                             {/* اذا انتقل لفورم التاريخ والوقت */}
-                            {data.isDateAndTimeStep?
+                            {/* {data.isDateAndTimeStep?
                             
                                 <View>
                                     <Text style={styles.text}>تاريخ الإستلام:</Text>
                                     <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
                                         <View style={styles.action}>
                                             <TextInput style={styles.textInput} 
-                                                // value={Material}
+                                                value={Date}
                                                 label="Date"
                                                 placeholder="ادخل تاريخ الاستلام"
                                                 autoCapitalize="none"
                                                 onChangeText={(val)=>setData(val)}
+                                                onFocus={showDatePicker}
                                                 textAlign= 'right'
                                                 onEndEditing={() => checkDate()}
                                                 // ref={data.MaterialInput}
@@ -335,7 +370,7 @@ return (
                                             </TextInput> 
                                         </View>
                                     </View>
-                                    {/* في حالة التاريخ غلط */}
+                                    في حالة التاريخ غلط
                                     {data.isValidDate ?
                                         null 
                                         : 
@@ -359,9 +394,9 @@ return (
                                                 >
                                             </TextInput> 
                                         </View> 
-                                    </View>
+                                    </View> */}
                                     {/* في حالة التاريخ غلط */}
-                                    {data.isValidTime ?
+                                    {/* {data.isValidTime ?
                                         null 
                                         : 
                                         <Animatable.View animation="fadeInRight" duration={500}>
@@ -370,9 +405,9 @@ return (
                                     }
                                 </View>
 
-                                :
+                                : */}
 
-                                // فورم النوع والكمية
+                                {/* // فورم النوع والكمية */}
                                 <View>
                                     <Text style={styles.text}>نوع المادة:</Text>
                                     <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
@@ -433,13 +468,39 @@ return (
                                             <Text style={styles.errorMsg}>{data.QuantityErrorMsg}</Text>
                                         </Animatable.View>
                                     }
+
+                                    <Text style={styles.text}>تاريخ و وقت الإستلام:</Text>
+                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
+                                        <View style={styles.action}>
+                                            <TextInput style={styles.textInput} 
+                                                value={Date}
+                                                label="Date"
+                                                placeholder="ادخل تاريخ و وقت الاستلام"
+                                                autoCapitalize="none"
+                                                onChangeText={(val)=>setData(val)}
+                                                onFocus={showDatePicker}
+                                                textAlign= 'right'
+                                                onEndEditing={() => checkDate()}
+                                                ref={data.DateAndTimeInput}
+                                                >
+                                            </TextInput> 
+                                        </View>
+                                    </View>
+                                                                        {/* في حالة التاريخ غلط */}
+                                                                        {data.isValidDate ?
+                                        null 
+                                        : 
+                                        <Animatable.View animation="fadeInRight" duration={500}>
+                                            <Text style={styles.errorMsg}>{data.DateErrorMsg}</Text>
+                                        </Animatable.View>
+                                    }
                                 </View>
-                            }
+                            {/* // } */}
                             {/* هذي بس عشان اشوف التغير يصير او لا راح نشيلها */}
                             <View>
                                 {RequestList.map(request=> (
                                     <View key={request.id}>
-                                    <Text>{request.id} {request.material} {request.Quantity}</Text>
+                                    <Text>{request.id} {request.material} {request.Quantity} {request.DateAndTime}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -448,7 +509,7 @@ return (
                             {data.isEdit?                    
                                 <View style={styles.button}> 
                                     <Button icon="content-save" mode="contained" theme={theme }
-                                        onPress={() => UpdateRequest(id,Material,Quantity)}
+                                        onPress={() => UpdateRequest(id,Material,Quantity,Date)}
                                         >
                                     حفظ
                                     </Button>
@@ -477,20 +538,20 @@ return (
                                     <TouchableOpacity onPress={() =>addRequest ()}>
                                     <Image
                                         style={styles.ImageStyle}
-                                        source={require('../assets/pin.png')}    
+                                        source={require('../assets/addRequest.png')}    
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() =>DisplayReqests ()}>
                                     <Image
                                         style={styles.ImageStyle}
-                                        source={require('../assets/pin.png')}
+                                        source={require('../assets/RequestList.png')}
                                         resizeMethod='scale'
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() =>DateAndTimeStep()}>
                                     <Image     
                                         style={styles.ImageStyle}
-                                        source={require('../assets/pin.png')}
+                                        source={require('../assets/send.png')}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -498,10 +559,24 @@ return (
                                 </View>
                             }
                         </View>
-                    }
+                    } 
                 </View>               
             </View>
         </KeyboardAwareScrollView> 
+        <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="datetime"
+        // mode="date"
+        // onConfirm={handleConfirm}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        cancelTextIOS="الغاء"
+        confirmTextIOS="تأكيد"
+        datePickerModeAndroid={'spinner'}
+        is24Hour={false}
+        minimumDate={new window.Date()}
+        // style ={{backgroundColor: "blue"}}
+      />
     </Modal>            
 </View>
 
@@ -530,6 +605,7 @@ const styles=StyleSheet.create({
     ImageStyle:{
         width:42,
         height:39,
+        margin:5
     },
     header:{
         alignItems:'center',
@@ -585,24 +661,41 @@ const styles=StyleSheet.create({
         paddingRight:20
     },
     mycard:{
-        margin:5,// بعدها عن الحواف 
+        // margin:5,// بعدها عن الحواف 
         
     },
     cardView:{
-
         flexDirection:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'row':'row-reverse',
-        padding:6,// بعدها عن الحواف من داخل البوكس 
+        justifyContent:'space-between',
+        backgroundColor: '#F3F3F3',
+        marginVertical: 5,
+        marginHorizontal: 10,
+        borderRadius :10,
+        shadowColor :'#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.30,
+        shadowRadius: 4.65,
+        elevation: 5,
+        padding :12,
     },
     Text:{
         fontSize:18,
-        marginTop:20,
+        // marginTop:20,
         marginRight:5,
-        marginLeft:5,    
+        marginLeft:5,  
+        textAlign:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'left':'right'  
     },
     EditIconStyle:{
-        position:'absolute',
-        right:5,
-        marginTop:20,
+        // position:'absolute',
+        // right:5,
+        // marginTop:20,
+        // justifyContent:'center',
+        // alignItems:'flex-end',
+        // backgroundColor:'red'
+        margin:10
     },
     Edit:{
         width:30,
