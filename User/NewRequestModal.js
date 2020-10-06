@@ -43,8 +43,6 @@ import Loading from '../components/Loading';
         const userData = result.val();
         setLocation(userData.address);
     });
-    console.log('location');
-    console.log(Location);
 
     const [alert,setAlert]=React.useState({
         alertVisible:false,
@@ -167,7 +165,7 @@ import Loading from '../components/Loading';
 
     const renderList = ((item)=>{
         return(
-            <Card style={styles.mycard} 
+            <Card style={styles.container} 
             >
             <View style={styles.cardView}>
                 <View>
@@ -179,7 +177,7 @@ import Loading from '../components/Loading';
                      <Text style={styles.Text}>{item.DateAndTime}</Text>
                 </View>
 
-                <View style={{alignItems:'center',justifyContent:'center'}}>
+                <View style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:10}}>
                      <TouchableOpacity style={styles.EditIconStyle}
                      onPress={()=>EditRequest(item)}>
                      <Image 
@@ -379,9 +377,9 @@ return (
     
 <View style={styles.container}>   
     <Modal visible={alertVisible} transparent={true} onRequestClose={()=>{ setAlertVisible(false) }}>
-        <KeyboardAwareScrollView >
+    
             <View backgroundColor= "#000000aa" flex= {1} style={{alignItems:'center',justifyContent:'center'}} >
-                <View backgroundColor='#f6f6f7' marginTop= {100} marginBottom={100} flex= {1}>
+                <View backgroundColor='#f6f6f7' marginTop= {30} marginBottom={30} flex= {1}>
                     <Image 
                         source={require('../assets/RequestHeader.png')}
                         style={styles.headerImage}
@@ -424,8 +422,9 @@ return (
                             </View>
                         </View>
                     :
+                    <KeyboardAwareScrollView >
                         <View>
-
+                            
                             {data.isEmptyList ?
                                 <Animatable.View animation="fadeInRight" duration={500}>
                                     <Text style={styles.errorMsg2}>يجب ادخال طلب واحد على الاقل</Text>
@@ -572,11 +571,12 @@ return (
                                 </View>
                                 </View>
                             }
+                        
                         </View>
+                        </KeyboardAwareScrollView>
                     } 
                 </View>               
             </View>
-        </KeyboardAwareScrollView> 
 
         <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -692,8 +692,8 @@ const styles=StyleSheet.create({
         
     },
     cardView:{
-        flexDirection:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'row':'row-reverse',
-        justifyContent:'space-between',
+        // flexDirection:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'row':'row-reverse',
+        // justifyContent:'space-between',
         backgroundColor: '#F3F3F3',
         marginVertical: 5,
         marginHorizontal: 10,
@@ -706,7 +706,7 @@ const styles=StyleSheet.create({
         shadowOpacity: 0.30,
         shadowRadius: 4.65,
         elevation: 5,
-        padding :12,
+        // padding :12,
     },
     Text:{
         fontSize:18,
@@ -716,12 +716,6 @@ const styles=StyleSheet.create({
         textAlign:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'left':'right'  
     },
     EditIconStyle:{
-        // position:'absolute',
-        // right:5,
-        // marginTop:20,
-        // justifyContent:'center',
-        // alignItems:'flex-end',
-        // backgroundColor:'red'
         margin:10
     },
     Edit:{
