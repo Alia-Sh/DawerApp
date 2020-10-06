@@ -4,20 +4,24 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {MaterialIcons} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Animatable from 'react-native-animatable';
-import {Card,Button} from 'react-native-paper';
-import DateTimePicker from '../components/DateTimePicker'
+import {Card} from 'react-native-paper';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
- const NewRequestModal1=()=>{
-    var d = new window.Date();
-    console.log(d)
+import firebase from '../Database/firebase';
+import AlertView from "../components/AlertView";
+import Loading from '../components/Loading';
+
+ const NewRequestModal=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [mode, setMode] = useState('date');
-    //test data
     const[RequestList,setRequestList]= useState([])
     const [Material,setMaterial]=useState('');
     const [Quantity,setQantity]=useState('');
+    const[counter,setCounter]=useState(0);
+    const[id,setID]=useState('');
+    const [Location,setLocation] = useState('')
+    const [DateAndTime,setDateAndTime]= useState('');
+
     const [data,setData]=React.useState({
         isvalidMaterial:true,
         isvalidQuantity:true,
@@ -29,16 +33,26 @@ import moment from 'moment';
         isVisibleList:false,
         isEdit:false, 
         isEmptyList:false,
-        isDateAndTimeStep:false,
-        isValidDate:true,
-        isValidTime:true,
-        DateErrorMsg:'',
-        TimeErrorMsg:'',           
+        isValidDateAndTime:true,
+        DateAndTimeErrorMsg:'',
+        isLoading:false,        
+    });
+    var userId = firebase.auth().currentUser.uid;
+    var query2 = firebase.database().ref('User/' + userId+'/Location');
+    query2.once("value").then(function(result) {
+        const userData = result.val();
+        setLocation(userData.address);
+    });
+    console.log('location');
+    console.log(Location);
+
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',  
     })
-    const[counter,setCounter]=useState(0);
-    const[id,setID]=useState('');
-    const [Date,setDate]= useState('')
-    const [Time,setTime]= useState('')
+
     const selectImage = async () => {
         try {
           let response = await ImagePicker.launchImageLibraryAsync({
@@ -91,67 +105,54 @@ import moment from 'moment';
         }
     }
 
-    const checkDate=()=>{
-        if(Date==''){
+    const checkDateAndTime=()=>{
+        if(DateAndTime==''){
             setData({
                 ...data,
-                isValidDate:false,
-                DateErrorMsg:'يجب إدخال تاريخ و وقت الاستلام' 
+                isValidDateAndTime:false,
+                DateAndTimeErrorMsg:'يجب إدخال تاريخ و وقت الاستلام' 
             })
             return false         
         }else{
             setData({
                 ...data,
-                isValidDate:true,
-                DateErrorMsg:'' 
-            })
-            return true
-        }
-    }
-
-    const checkTime=()=>{
-        if(Time==''){
-            setData({
-                ...data,
-                isValidTime:false,
-                TimeErrorMsg:'يجب إدخال وقت الاستلام' 
-            })
-            return false
-        }else{
-            setData({
-                ...data,
-                isValidTime:true,
-                TimeErrorMsg:'' 
+                isValidDateAndTime:true,
+                DateAndTimeErrorMsg:'' 
             })
             return true
         }
     }
 
     const ResetFalid=()=>{
-        if(checkMaterial() && checkQuantity() && checkDate()){
+        if(checkMaterial() && checkQuantity() && checkDateAndTime()){
             data.MaterialInput.current.clear();
             data.QuantityInput.current.clear();
             data.DateAndTimeInput.current.clear();
             setMaterial('');
             setQantity('');
-            setDate('')
+            setDateAndTime('')
         }
     }
 
     const addRequest=()=>{
-        if(checkMaterial() && checkQuantity() && checkDate()){
-        var temp={id:counter,material:Material,Quantity:Quantity,DateAndTime:Date}
+        if(checkMaterial() && checkQuantity() && checkDateAndTime()){
+        var temp={id:counter,material:Material,Quantity:Quantity,DateAndTime:DateAndTime}
         RequestList.push(temp)
         setCounter(counter+1);
         ResetFalid();
+        setData({
+            ...data,
+            isEmptyList:false
+        })
         }
     }
 
-    const UpdateRequest=(id,Material,Quantity)=>{
+    const UpdateRequest=(id,Material,Quantity,DateAndTime)=>{
         for (var i in RequestList) {
             if (RequestList[i].id == id) {
                 RequestList[i].material = Material;
                 RequestList[i].Quantity = Quantity;
+                RequestList[i].DateAndTime = DateAndTime;
                break; //Stop this loop, we found it!
             }
         }
@@ -188,7 +189,7 @@ import moment from 'moment';
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.EditIconStyle}
-                     onPress={()=>EditRequest(item)}>
+                     onPress={()=>DeleteRequest(item)}>
                      <Image 
                         source={require('../assets/DeleteIcon.png')}
                         style={styles.Edit}
@@ -210,46 +211,134 @@ import moment from 'moment';
         })
         setMaterial(item.material);
         setQantity(item.Quantity)
-        setDate(item.DateAndTime)
+        setDateAndTime(item.DateAndTime)
         setID(item.id)
     }
 
     const DisplayReqests=()=>{
+        addRequest();
      if(RequestList.length==0)  {
       setData({
           ...data,
-          isEmptyList:true
+          isEmptyList:true,
+          
+          isvalidMaterial:true,
+          isvalidQuantity:true,
+          isVisibleList:false,
+          isEdit:false, 
+          isValidDateAndTime:true,
+          MaterialErrorMsg:'',
+          QuantityErrorMsg:'',
+          DateAndTimeErrorMsg:'',   
+
       })   
      }else{
        setData({
            ...data,
            isVisibleList:true,
-           isEmptyList:false
+           isEmptyList:false,
+
+           isvalidMaterial:true,
+           isvalidQuantity:true,
+           isEdit:false, 
+           isValidDateAndTime:true,
+           MaterialErrorMsg:'',
+           QuantityErrorMsg:'',
+           DateAndTimeErrorMsg:'',
        })  
      } 
     }
 
-    const DateAndTimeStep=()=>{
-        addRequest();
-        if(RequestList.length==0)  {
-            setData({
-                ...data,
-                isEmptyList:true
-            })   
-        }else{     
-            setData({
-                ...data,
-                isDateAndTimeStep:true,
-                isEmptyList:false
-            })  
+
+    const Send=()=>{
+        setData({
+            ...data,
+            isLoading:true 
+        })
+        for (var i in RequestList) {
+            var RequestId = firebase.database().ref('Category/').push().getKey();
+            firebase.database().ref('/PickupRequest/'+userId+'/DeliveryDriverId/'+RequestId).set({
+                DateAndTime:RequestList[i].DateAndTime,
+                Status:'Pending',
+                Location:Location,
+            }).then((data)=>{
+                firebase.database().ref('/Material/'+RequestId).push({
+                    MaterialType:RequestList[i].material,
+                    Quantity:RequestList[i].Quantity,
+                }).then(()=>{
+                //success callback
+                setData({
+                    ...data,
+                    isLoading:false,
+                });
+                setTimeout(()=>{
+                    setAlert({
+                        ...alert,
+                        Title:'',
+                        Message:'تمت إضافة الطلب بنجاح',
+                        jsonPath:"success",
+                        alertVisible:true,
+                    });
+                    setTimeout(() => {
+                        setAlert({
+                            ...alert,
+                            alertVisible:false,
+                        }); 
+                        resetData();
+                    }, 4000)
+                },400)
+                }).catch(()=>{
+                    //Error callback
+                    setData({
+                        ...data,
+                        isLoading:false,
+                    });
+                    setTimeout(()=>{
+                        setAlert({
+                            ...alert,
+                            Title:'',
+                            Message:'لم يتمت إضافة الطلب ',
+                            jsonPath:"Error",
+                            alertVisible:true,
+                        });
+                        setTimeout(() => {
+                            setAlert({
+                                ...alert,
+                                alertVisible:false,
+                            }); 
+                            resetData();
+                        }, 4000)
+                    },400)
+                })
+            }).catch((error)=>{
+                // error callback
+                setData({
+                    ...data,
+                    isLoading:false 
+                })
+                Alert.alert(error.message)
+                console.log('error ' , error)
+            })
         }
     }
 
-    const Send=()=>{
+    const DeleteRequest=(item)=>{
+        for (var i in RequestList) {
+            if (RequestList[i].id == item.id) {
+                RequestList.pop()
+                break; //Stop this loop, we found it!
+            }
+        }
+        ResetFalid();
+        setData({
+            ...data,
+            isVisibleList:true,
+            isEdit:false
+        })
 
     }
 
-        const showDatePicker = () => {
+    const showDatePicker = () => {
       setDatePickerVisibility(true);
     };
   
@@ -259,17 +348,40 @@ import moment from 'moment';
   
     const handleConfirm = (datetime) => {
         console.warn("A date has been picked: ", datetime);
-        setDate(moment(datetime).format('MMM, Do YYY HH:mm'))
+        // setDateAndTime(moment(datetime).format('MMM, Do YYY HH:mm'))
+        setDateAndTime(moment(datetime).format('LLLL'))
         hideDatePicker();
     };
+
+    const resetData=()=>{
+        setAlertVisible(false)
+        setDatePickerVisibility(false);
+        setRequestList([])
+        setMaterial('');
+        setQantity('');
+        setCounter(0);
+        setID('');
+        setDateAndTime('');
+        setData({
+            isvalidMaterial:true,
+            isvalidQuantity:true,
+            MaterialErrorMsg:'',
+            QuantityErrorMsg:'',
+            isVisibleList:false,
+            isEdit:false, 
+            isEmptyList:false,
+            isValidDateAndTime:true,
+            DateAndTimeErrorMsg:'',        
+        });
+        props.setAlertVisible(false);
+    }
 return (
     
 <View style={styles.container}>   
     <Modal visible={alertVisible} transparent={true} onRequestClose={()=>{ setAlertVisible(false) }}>
         <KeyboardAwareScrollView >
             <View backgroundColor= "#000000aa" flex= {1} style={{alignItems:'center',justifyContent:'center'}} >
-                <View backgroundColor ='#ffffff' marginTop= {100} marginBottom={100} flex= {1}>
-                    {/* header of modal */}
+                <View backgroundColor='#f6f6f7' marginTop= {100} marginBottom={100} flex= {1}>
                     <Image 
                         source={require('../assets/RequestHeader.png')}
                         style={styles.headerImage}
@@ -277,37 +389,11 @@ return (
 
                     <View style={styles.header}>
                         <MaterialIcons style={Platform.OS === 'android'? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff" 
-                         onPress={()=>{ setAlertVisible(false) }} 
+                         onPress={resetData} 
                          />
                         <Text style={styles.text_header_modal}>إنشاء طلب جديد</Text>
                     </View>
 
-                    {/* الدوائر الثلاث اللي بالوسط مع الخط */}
-                    {/* <View style={{alignItems:'center'}}>
-                        <Image
-                            style={{width:'70%',marginTop:30}}
-                            source={require('../assets/line.png')}/>
-
-                        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'60%',top:-20}}>
-                            <Image
-                                style={styles.ImageStyle}
-                                source={require('../assets/pin.png')}    
-                            />
-
-                            <Image
-                                style={styles.ImageStyle}
-                                source={require('../assets/pin.png')}
-                                resizeMethod='scale'
-                            />
-
-                            <Image
-                                style={styles.ImageStyle}
-                                source={require('../assets/pin.png')}
-                            />
-                        </View>                   
-                    </View> */}
-
-                    {/* اما تعرض ليست الطلبات او ادخال الطلبات */}
                     {data.isVisibleList?
                         <View style={{flex:1}}>
                             <FlatList
@@ -327,7 +413,9 @@ return (
                                         resizeMethod='scale'
                                     />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() =>setData({...data,isDateAndTimeStep:true,isVisibleList:false})}>
+                                <TouchableOpacity 
+                                onPress={Send}
+                                >
                                 <Image     
                                     style={styles.ImageStyle}
                                     source={require('../assets/sendRequest.png')}
@@ -336,11 +424,8 @@ return (
                             </View>
                         </View>
                     :
-
-                        // {/* // عرض فوم النوع والكمية */}
                         <View>
 
-                            {/* شرط اذا ضغط على الليت ايكون ولببيست فاضية */}
                             {data.isEmptyList ?
                                 <Animatable.View animation="fadeInRight" duration={500}>
                                     <Text style={styles.errorMsg2}>يجب ادخال طلب واحد على الاقل</Text>
@@ -348,66 +433,6 @@ return (
                                 :
                                 null
                             }
-
-                            {/* اذا انتقل لفورم التاريخ والوقت */}
-                            {/* {data.isDateAndTimeStep?
-                            
-                                <View>
-                                    <Text style={styles.text}>تاريخ الإستلام:</Text>
-                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
-                                        <View style={styles.action}>
-                                            <TextInput style={styles.textInput} 
-                                                value={Date}
-                                                label="Date"
-                                                placeholder="ادخل تاريخ الاستلام"
-                                                autoCapitalize="none"
-                                                onChangeText={(val)=>setData(val)}
-                                                onFocus={showDatePicker}
-                                                textAlign= 'right'
-                                                onEndEditing={() => checkDate()}
-                                                // ref={data.MaterialInput}
-                                                >
-                                            </TextInput> 
-                                        </View>
-                                    </View>
-                                    في حالة التاريخ غلط
-                                    {data.isValidDate ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                            <Text style={styles.errorMsg}>{data.DateErrorMsg}</Text>
-                                        </Animatable.View>
-                                    }
-
-                                    <Text style={styles.text}> وقت الإستلام:</Text>
-                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
-                                        <View style={styles.action}>
-                                            <TextInput style={styles.textInput} 
-                                                // value={Quantity+""}
-                                                label="Time"
-                                                placeholder="ادخل وقت الاستلام"
-                                                autoCapitalize="none"
-                                                onChangeText={(val)=>setTime(val)}
-                                                textAlign= 'right'
-                                                onEndEditing={() => checkTime()}
-                                                // ref={data.QuantityInput}
-                                                >
-                                            </TextInput> 
-                                        </View> 
-                                    </View> */}
-                                    {/* في حالة التاريخ غلط */}
-                                    {/* {data.isValidTime ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                            <Text style={styles.errorMsg}>{data.TimeErrorMsg}</Text>
-                                        </Animatable.View>
-                                    }
-                                </View>
-
-                                : */}
-
-                                {/* // فورم النوع والكمية */}
                                 <View>
                                     <Text style={styles.text}>نوع المادة:</Text>
                                     <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
@@ -434,7 +459,6 @@ return (
                                                 </TouchableOpacity>
                                         </View>
                                     </View>
-                                    {/* في حالة المادة غلط */}
                                     {data.isvalidMaterial ?
                                         null 
                                         : 
@@ -460,7 +484,6 @@ return (
                                             </TextInput> 
                                         </View> 
                                     </View>
-                                    {/* في حالة الكمية غلط */}
                                     {data.isvalidQuantity ?
                                         null 
                                         : 
@@ -473,67 +496,57 @@ return (
                                     <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
                                         <View style={styles.action}>
                                             <TextInput style={styles.textInput} 
-                                                value={Date}
+                                                value={DateAndTime}
                                                 label="Date"
                                                 placeholder="ادخل تاريخ و وقت الاستلام"
                                                 autoCapitalize="none"
-                                                onChangeText={(val)=>setData(val)}
+                                                onChangeText={(val)=>setDateAndTime(val)}
                                                 onFocus={showDatePicker}
                                                 textAlign= 'right'
-                                                onEndEditing={() => checkDate()}
+                                                onEndEditing={() => checkDateAndTime()}
                                                 ref={data.DateAndTimeInput}
                                                 >
                                             </TextInput> 
                                         </View>
                                     </View>
-                                                                        {/* في حالة التاريخ غلط */}
-                                                                        {data.isValidDate ?
+
+                                    {data.isValidDate ?
                                         null 
                                         : 
                                         <Animatable.View animation="fadeInRight" duration={500}>
-                                            <Text style={styles.errorMsg}>{data.DateErrorMsg}</Text>
+                                            <Text style={styles.errorMsg}>{data.DateAndTimeErrorMsg}</Text>
                                         </Animatable.View>
                                     }
                                 </View>
-                            {/* // } */}
-                            {/* هذي بس عشان اشوف التغير يصير او لا راح نشيلها */}
-                            <View>
+
+                            {/* <View>
                                 {RequestList.map(request=> (
                                     <View key={request.id}>
                                     <Text>{request.id} {request.material} {request.Quantity} {request.DateAndTime}</Text>
                                     </View>
                                 ))}
-                            </View>
+                            </View> */}
 
-                            {/* في حالة تعديل الطلب يشيل الدوائر اللي تحت ويعرض البوتن */}
-                            {data.isEdit?                    
-                                <View style={styles.button}> 
-                                    <Button icon="content-save" mode="contained" theme={theme }
-                                        onPress={() => UpdateRequest(id,Material,Quantity,Date)}
-                                        >
-                                    حفظ
-                                    </Button>
+                            {data.isEdit?                   
+                                <View style={{flexDirection:'row',justifyContent:'space-between',margin:15}}>
+                                <TouchableOpacity onPress={() => UpdateRequest(id,Material,Quantity,DateAndTime)}>
+                                    <Image
+                                        style={styles.ImageStyle}
+                                        source={require('../assets/back.png')}
+                                        resizeMethod='scale'
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                // onPress={() =>setData({...data,isDateAndTimeStep:true,isVisibleList:false})}
+                                >
+                                <Image     
+                                    style={styles.ImageStyle}
+                                    source={require('../assets/Save.png')}
+                                    />
+                                </TouchableOpacity>  
                                 </View>
                                 :
                             <View>
-                                {/* يغير الصور اللي تحت */}
-                             {data.isDateAndTimeStep?
-                                <View style={{flexDirection:'row',justifyContent:'space-between',margin:15}}>
-                                    <TouchableOpacity onPress={() =>setData({...data,isDateAndTimeStep:false})}>
-                                        <Image
-                                            style={styles.ImageStyle}
-                                            source={require('../assets/pin.png')}
-                                            resizeMethod='scale'
-                                        />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() =>Send()}>
-                                    <Image     
-                                        style={styles.ImageStyle}
-                                        source={require('../assets/pin.png')}
-                                        />
-                                    </TouchableOpacity>  
-                                </View>
-                                :
                                 <View style={{alignItems:Platform.OS === 'android'?'flex-start':'flex-end',padding:20}}>
                                     <TouchableOpacity onPress={() =>addRequest ()}>
                                     <Image
@@ -548,14 +561,15 @@ return (
                                         resizeMethod='scale'
                                         />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() =>DateAndTimeStep()}>
+                                    <TouchableOpacity 
+                                    onPress={() =>DisplayReqests()}
+                                    >
                                     <Image     
                                         style={styles.ImageStyle}
                                         source={require('../assets/send.png')}
                                         />
                                     </TouchableOpacity>
                                 </View>
-                            }
                                 </View>
                             }
                         </View>
@@ -563,6 +577,7 @@ return (
                 </View>               
             </View>
         </KeyboardAwareScrollView> 
+
         <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="datetime"
@@ -576,7 +591,19 @@ return (
         is24Hour={false}
         minimumDate={new window.Date()}
         // style ={{backgroundColor: "blue"}}
-      />
+        />
+        {alert.alertVisible?
+            <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+            :
+            null
+        }
+
+        {data.isLoading? 
+            <Loading></Loading>
+
+            :  
+            null
+        }
     </Modal>            
 </View>
 
@@ -596,7 +623,7 @@ const styles=StyleSheet.create({
     container: {
         flex:1,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     headerImage: {
         width:wight_logo ,
@@ -716,4 +743,4 @@ const styles=StyleSheet.create({
     }    
 });
 
-export default NewRequestModal1
+export default NewRequestModal

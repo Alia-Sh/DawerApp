@@ -161,7 +161,7 @@ const Add=()=>{
                     //error callback
                     setData({
                         ...data,
-                        isLoading:true 
+                        isLoading:false 
                     })
                     Alert.alert(error.message)
                     console.log('error ' , error)

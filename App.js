@@ -28,7 +28,7 @@ import GoogleMap from './User/GoogleMap';
 import UserLogin from './User/UserLogin' ;
 import CreateAccount from './User/CreateAccount';
 import GoogleMapCreateAccount from './User/GoogleMapCreateAccount';
-import NewRequestModal1 from './User/NewRequestModal1';
+import NewRequestModal from './User/NewRequestModal';
 import DateTimePicker from './components/DateTimePicker'
 import ChooseBetweenUsers from './Screens/ChooseBetweenUsers';
 
