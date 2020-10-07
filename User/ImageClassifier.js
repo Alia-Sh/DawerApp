@@ -1,15 +1,151 @@
 import React, { Component, useState } from 'react';
-import { StyleSheet, Text, View, StatusBar, ActivityIndicator, TouchableOpacity, Image, Button, ActionSheetIOS } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, ActivityIndicator, TouchableOpacity, Image, Button, ActionSheetIOS, NativeModules} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as tf from '@tensorflow/tfjs';
-import '@tensorflow/tfjs-react-native';
+//import '@tensorflow/tfjs-react-native';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import * as jpeg from 'jpeg-js';
 import * as ImagePicker from 'expo-image-picker';
-import { fetch } from '@tensorflow/tfjs-react-native';
+//import { fetch } from '@tensorflow/tfjs-react-native';
+import {FontAwesome5} from '@expo/vector-icons'
 
+// There is an ERROR here, so i commneted the functions below..
+
+const ImageClassifier = () => {
+
+  const [isTfReady,setIsTfReady] = useState(false)
+  const [isModelReady,setIsModelReady] = useState(false)
+  const [predictions,setPredictions] = useState(null)
+  const [image,setImage] = useState(null)
+/* 
+  componentDidMount =>  {
+    await tf.ready(); // preparing TensorFlow
+    setIsTfReady(true);
+    this.model = await mobilenet.load(); // preparing MobileNet model
+    setIsModelReady(true);
+    this.getPermissionAsync(); // get permission for accessing camera on mobile device
+  }
+
+  getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+        if (status !== 'granted') {
+            alert('فضلًا، قم بإعطاء صلاحية الدخول لألبوم الصور !')
+        }
+    }
+  }
+
+  // image classification options
+  camOptions = async () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+    {
+      options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
+      destructiveButtonIndex: 2,
+      cancelButtonIndex: 0
+    },
+    buttonIndex => {
+      if (buttonIndex === 0) {
+        // cancel action
+      } else if (buttonIndex === 1) {
+        this.pickFromCamera();
+      } else if (buttonIndex === 2) {
+        this.selectImage();
+      }
+    }
+    );
+  }
+
+  // take photo from camera
+  pickFromCamera = async ()=>{
+    const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
+    if(granted){
+        let data =  await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1,1]
+            // quality: 0.5
+          })
+        if(!data.cancelled){
+          const source = { uri: data.uri }
+          setImage(source);
+          this.classifyImage()
+        }
+    }else{
+      alert("you need to give the permission to work!")
+    }
+  }
+
+  // select image from gallery
+  selectImage = async () => {
+    try {
+      let response = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3]
+      })
+      if (!response.cancelled) {
+          const source = { uri: response.uri }
+          setImage(source);
+          this.classifyImage()
+      }
+    } catch (error) {
+      console.log(error)
+      }
+  }
+
+  classifyImage = async () => {
+    try {
+      const imageAssetPath = Image.resolveAssetSource(this.state.image)
+      const response = await fetch(imageAssetPath.uri, {}, { isBinary: true })
+      const rawImageData = await response.arrayBuffer()
+      const imageTensor = this.imageToTensor(rawImageData)
+      const predictions = await this.model.classify(imageTensor)
+      setPredictions(predictions);
+    } catch (error) {
+      console.log('Exception Error: ', error)
+    }
+  }
+
+  imageToTensor = (rawImageData)=> {
+    const TO_UINT8ARRAY = true
+    const { width, height, data } = jpeg.decode(rawImageData, TO_UINT8ARRAY)
+    // Drop the alpha channel info for mobilenet
+    const buffer = new Uint8Array(width * height * 3)
+    let offset = 0 // offset into original data
+    for (let i = 0; i < buffer.length; i += 3) {
+      buffer[i] = data[offset]
+      buffer[i + 1] = data[offset + 1]
+      buffer[i + 2] = data[offset + 2]
+      offset += 4
+    }
+    return tf.tensor3d(buffer, [height, width, 3])
+  }
+
+  // prediction
+  renderPrediction = (prediction) => {
+    return (
+      <View style={styles.welcomeContainer}>
+        <Text key={prediction.className} style={styles.text}>
+          Prediction: {prediction.className} {', '} Probability: {prediction.probability}
+        </Text>
+      </View>
+    )
+  }
+
+/*
+
+  return(
+    <Text>Hi, I am the classifier</Text>
+  );
+};
+
+//StyleSheets..
+
+export default ImageClassifier;
+
+///////////// OOOOOLLLLLLLDDDDDDDD
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -137,9 +273,23 @@ renderPrediction = (prediction) => {
 
 render() {
   const { isTfReady, isModelReady, predictions, image } = this.state
-
+*/
   return (
     <View style={styles.container}>
+       <LinearGradient
+                    colors={["#827717","#AFB42B"]}
+                    style={{height:"25%"}}>
+                <View style={styles.header}>
+                    <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
+                        onPress={()=>{
+                            navigation.navigate("HomeScreen")
+                        }}/>
+                    <View>
+                        <Text style={styles.headerText}>تصنيف الصورة</Text>
+                    </View>
+                 </View>
+            </LinearGradient>
+
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
       <View style={styles.welcomeContainer}>
@@ -163,7 +313,8 @@ render() {
 
      <TouchableOpacity
         style={styles.ButtonSty}
-        onPress={this.camOptions}>
+        //onPress={this.camOptions}
+        >
             
         <Text>تصنيف الصورة</Text>
       </TouchableOpacity>
@@ -202,9 +353,9 @@ render() {
       </View>
       </ScrollView>
     </View>
-  )
-}
-}        
+  );
+};
+       
 
 const theme = {
   colors:{
@@ -212,6 +363,25 @@ const theme = {
   }
 }
 const styles = StyleSheet.create({
+  header:{
+    width: '100%',
+    height: 80,
+    flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop:10,
+  },
+  icon:{
+    position: 'absolute',
+    left: 16
+  },
+  headerText:{
+    fontWeight:'bold',
+    fontSize: 18,      
+    letterSpacing: 1, 
+    textAlign:'center',
+    color: '#212121'
+  },
   container: {
     flex: 1,
     backgroundColor: '#171f24'
@@ -280,3 +450,4 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
 })
+export default ImageClassifier;

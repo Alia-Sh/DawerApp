@@ -31,7 +31,7 @@ import GoogleMapCreateAccount from './User/GoogleMapCreateAccount';
 import NewRequestModal from './User/NewRequestModal';
 import DateTimePicker from './components/DateTimePicker'
 import ChooseBetweenUsers from './Screens/ChooseBetweenUsers';
-
+import ImageClassifier from './User/ImageClassifier';
 
 
 const Stack = createStackNavigator();
@@ -68,6 +68,7 @@ function Root() {
           <Drawer.Screen name="UserEditProfile" component={UserEditProfile} options={myOptions}/>
           <Drawer.Screen name="EditPassword" component={EditPassword} options={myOptions}/>
           <Drawer.Screen name="GoogleMap" component={GoogleMap} options={myOptions}/>
+          <Drawer.Screen name="ImageClassifier" component={ImageClassifier} options={myOptions}/>
         </Drawer.Navigator>
   );
 }
