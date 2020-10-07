@@ -13,7 +13,7 @@ import LottieView from 'lottie-react-native';
 
 const HomeScreen = ({navigation})=>{
   const [modalVisible,setModalVisible]=useState(false);
-  const[RequestList,setRequestList]= useState([])
+  const[CategoryList,setCategoryList]= useState([])
   const[Category,setCategory]=useState('');
   const[loading,setLoading]=useState(true)
   const [data,setData]=React.useState({
@@ -47,7 +47,7 @@ const HomeScreen = ({navigation})=>{
   //         li.push(temp)
   //         setLoading(false)
   //       })
-  //       setRequestList(li)
+  //       setCategoryList(li)
   //       console.log(li) 
   //     }else{
   //       setData({
@@ -66,11 +66,11 @@ const HomeScreen = ({navigation})=>{
         snapshot.forEach(function(snapshot){
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
-          var temp={CategoryId:snapshot.val().CategoryId,Name:snapshot.val().Name,ID:snapshot.key}
+          var temp={Name:snapshot.val().Name,CategoryId:snapshot.key}
           li.push(temp)
           setLoading(false)
         })
-        setRequestList(li)
+        setCategoryList(li)
         console.log(li) 
       }else{
         setData({
@@ -101,11 +101,11 @@ const HomeScreen = ({navigation})=>{
                   ...DeleteModal,
                   IsVisible:true,
                   Name:item.Name,
-                  Id:item.ID
+                  Id:item.CategoryId
                 })}
                 >
                 <Image 
-                    source={require('../assets/DeleteIcon.png')}
+                    source={require('../assets/DeleteIconRed.png')}
                     style={styles.Delete}
                     />
               </TouchableOpacity>
@@ -154,7 +154,7 @@ const Add=()=>{
             }else{
                 firebase.database().ref('Category/').push({
                     Name: Category,
-                    CategoryId:firebase.database().ref('Category/').push().getKey()
+                    // CategoryId:firebase.database().ref('Category/').push().getKey()
                 }).then((data)=>{
                     //success callback
                     setData({
@@ -260,7 +260,7 @@ const resetData=()=>{
             {data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا يوجد فئات مدخلة</Title>:
           
             <FlatList
-                data={RequestList}
+                data={CategoryList}
                 renderItem={({item})=>{
                 return renderList(item)}}
                 keyExtractor={item=>`${item.CategoryId}`}
@@ -375,7 +375,7 @@ const resetData=()=>{
                                       onPress={()=>{
                                       Delete(DeleteModal.Id)
                                   }}>
-                                    <Text style={styles.okStyle}>نعم</Text>
+                                    <Text style={styles.okStyle}>حذف</Text>
                                   </TouchableOpacity>
 
                                   <TouchableOpacity 
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
         fontSize:20
     },
     okButton:{
-        backgroundColor:'#558B2F',
+        backgroundColor:'#B71C1C',
         borderRadius:5,
         padding:10,
         elevation:2,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
         margin:15,
     },
     cancelButton:{
-      backgroundColor:'#B71C1C',
+      backgroundColor:'#9E9E9E',
       borderRadius:5,
       padding:10,
       elevation:2,
