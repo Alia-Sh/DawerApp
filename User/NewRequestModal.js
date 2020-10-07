@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform} from 'react-native';
+import React,{useState,useEffect} from 'react';
+import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform,Picker} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {MaterialIcons} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -12,6 +12,7 @@ import AlertView from "../components/AlertView";
 import Loading from '../components/Loading';
 
  const NewRequestModal=(props)=>{
+    const[CategoryList,setCategoryList]= useState([{Name:'زجاج'}])
     const [alertVisible,setAlertVisible]= useState(true)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [RequestList,setRequestList]= useState([])
@@ -21,6 +22,7 @@ import Loading from '../components/Loading';
     const [id,setID]=useState('');
     const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
+    const [selectedValue, setSelectedValue] = useState("زجاج");
 
     const [data,setData]=React.useState({
         isvalidMaterial:true,
@@ -123,12 +125,12 @@ import Loading from '../components/Loading';
         }
     }
 
-    const ResetFalid=()=>{
+    const ResetField=()=>{
         if(checkMaterial() && checkQuantity()){
-            data.MaterialInput.current.clear();
+            // data.MaterialInput.current.clear();
             data.QuantityInput.current.clear();
             // data.DateAndTimeInput.current.clear();
-            setMaterial('');
+            setMaterial(CategoryList[0].Name);
             setQantity('');
             // setDateAndTime('')
         }
@@ -139,7 +141,7 @@ import Loading from '../components/Loading';
         var temp={id:counter,material:Material,Quantity:Quantity}
         RequestList.push(temp)
         setCounter(counter+1);
-        ResetFalid();
+        ResetField();
         setData({
             ...data,
             isEmptyList:false
@@ -155,7 +157,7 @@ import Loading from '../components/Loading';
                break; //Stop this loop, we found it!
             }
         }
-        ResetFalid();
+        ResetField();
         setData({
             ...data,
             isVisibleList:true,
@@ -365,7 +367,7 @@ import Loading from '../components/Loading';
                 break; //Stop this loop, we found it!
             }
         }
-        ResetFalid();
+        ResetField();
         setData({
             ...data,
             isVisibleList:true,
@@ -420,7 +422,7 @@ import Loading from '../components/Loading';
         setAlertVisible(false)
         setDatePickerVisibility(false);
         setRequestList([])
-        setMaterial('');
+        setMaterial(CategoryList[0].Name);
         setQantity('');
         setCounter(0);
         setID('');
@@ -444,9 +446,43 @@ import Loading from '../components/Loading';
             ...data,
             isVisibleList:false,
             isEdit:false})
-            setMaterial('');
+            setMaterial(CategoryList[0].Name);
             setQantity('');
     }
+    
+    const fetchData=()=>{
+        firebase.database().ref('/Category/').on('value',snapshot=>{
+          const Data = snapshot.val();
+          if(Data){
+            var li = []
+            snapshot.forEach(function(snapshot){
+              console.log(snapshot.key);
+              console.log(snapshot.val().Name);
+              var temp={Name:snapshot.val().Name,CategoryId:snapshot.key}
+              li.push(temp)
+            //   setLoading(false)
+            })
+            setCategoryList(li)
+            console.log(li) 
+            
+          }else{
+            setData({
+              ...data,
+              isEmptyList:true
+            })
+          }
+        })
+      }
+    
+      useEffect(()=>{
+        fetchData()
+        setTimeout(() => {
+            setMaterial(CategoryList[0].Name);
+            console.log('Material');
+            console.log(Material);
+        }, 400)
+    },[])
+    
 return (
     
 <View style={styles.container}>   
@@ -586,8 +622,8 @@ return (
                                 :
                                 <View>
                                     <Text style={styles.text}>نوع المادة:</Text>
-                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
-                                        <View style={styles.action}>
+                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse',paddingBottom:50}}>
+                                        {/* <View style={styles.action}>
                                             <TextInput style={styles.textInput} 
                                                 value={Material}
                                                 label="Material"
@@ -599,15 +635,29 @@ return (
                                                 ref={data.MaterialInput}
                                                 >
                                             </TextInput> 
-                                        </View>
+                                        </View> */}
+
+                                    <Picker
+                                        selectedValue={Material}
+                                        style={Platform.OS === 'android'? styles.pickerStyleAndroid:styles.pickerStyleIOS}
+                                        onValueChange={(itemValue, itemIndex) => setMaterial(itemValue)}>
+                                        {/* <Picker.Item label="شمال الرياض" value="شمال الرياض"  enabled={false}/> */}
+                                        {/* <Picker.Item label="شرق الرياض" value="شرق الرياض" />
+                                        <Picker.Item label="غرب الرياض" value="غرب الرياض" />
+                                        <Picker.Item label="جنوب الرياض" value="جنوب الرياض" />  */}
+                                        {CategoryList.map(element =>
+                                            <Picker.Item label={element.Name} value={element.Name} />
+                                        )}
+
+                                    </Picker>  
 
                                         <View style={{alignItems:'center',justifyContent:'center'}}>
                                             <TouchableOpacity onPress={() =>selectImage ()}>
                                                 <Image
-                                                    style={{left:0,width:40,height:40}}
+                                                    style={{right:30,width:40,height:40}}
                                                     source={require('../assets/Camera.png')}
                                                 /> 
-                                                </TouchableOpacity>
+                                            </TouchableOpacity>
                                         </View>
                                     </View>
                                     {data.isvalidMaterial ?
@@ -629,7 +679,7 @@ return (
                                                 onChangeText={(val)=>setQantity(val)}
                                                 textAlign= 'right'
                                                 onEndEditing={() => checkQuantity()}
-                                                keyboardType="number-pad" //number Input
+                                                // keyboardType="number-pad" //number Input
                                                 ref={data.QuantityInput}
                                                 >
                                             </TextInput> 
@@ -892,7 +942,18 @@ const styles=StyleSheet.create({
         color: '#FF0000',
         fontSize: 14,
         textAlign: 'center',
-    }    
+    },
+    pickerStyleIOS:{
+        height: 50,
+        width: '70%',
+        // position: 'absolute', 
+        // bottom:0,
+        top:-80
+    },
+    pickerStyleAndroid:{
+        height: 50,
+        width: '100%',
+    }   
 });
 
 export default NewRequestModal
