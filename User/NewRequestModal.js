@@ -14,11 +14,11 @@ import Loading from '../components/Loading';
  const NewRequestModal=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const[RequestList,setRequestList]= useState([])
+    const [RequestList,setRequestList]= useState([])
     const [Material,setMaterial]=useState('');
     const [Quantity,setQantity]=useState('');
-    const[counter,setCounter]=useState(0);
-    const[id,setID]=useState('');
+    const [counter,setCounter]=useState(0);
+    const [id,setID]=useState('');
     const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
 
@@ -35,7 +35,9 @@ import Loading from '../components/Loading';
         isEmptyList:false,
         isValidDateAndTime:true,
         DateAndTimeErrorMsg:'',
-        isLoading:false,        
+        isLoading:false,  
+        isDateAndTimeStep:false,
+        isDisplayRequests:false      
     });
     var userId = firebase.auth().currentUser.uid;
     var query2 = firebase.database().ref('User/' + userId+'/Location');
@@ -122,19 +124,19 @@ import Loading from '../components/Loading';
     }
 
     const ResetFalid=()=>{
-        if(checkMaterial() && checkQuantity() && checkDateAndTime()){
+        if(checkMaterial() && checkQuantity()){
             data.MaterialInput.current.clear();
             data.QuantityInput.current.clear();
-            data.DateAndTimeInput.current.clear();
+            // data.DateAndTimeInput.current.clear();
             setMaterial('');
             setQantity('');
-            setDateAndTime('')
+            // setDateAndTime('')
         }
     }
 
     const addRequest=()=>{
-        if(checkMaterial() && checkQuantity() && checkDateAndTime()){
-        var temp={id:counter,material:Material,Quantity:Quantity,DateAndTime:DateAndTime}
+        if(checkMaterial() && checkQuantity()){
+        var temp={id:counter,material:Material,Quantity:Quantity}
         RequestList.push(temp)
         setCounter(counter+1);
         ResetFalid();
@@ -145,12 +147,11 @@ import Loading from '../components/Loading';
         }
     }
 
-    const UpdateRequest=(id,Material,Quantity,DateAndTime)=>{
+    const UpdateRequest=(id,Material,Quantity)=>{
         for (var i in RequestList) {
             if (RequestList[i].id == id) {
                 RequestList[i].material = Material;
                 RequestList[i].Quantity = Quantity;
-                RequestList[i].DateAndTime = DateAndTime;
                break; //Stop this loop, we found it!
             }
         }
@@ -165,19 +166,26 @@ import Loading from '../components/Loading';
 
     const renderList = ((item)=>{
         return(
-            <Card style={styles.container} 
+            <Card 
             >
-            <View style={styles.cardView}>
+            <View style={[styles.cardView,{
+                        flexDirection:Platform.OS === 'android' && 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                        'row':'row-reverse',
+                        justifyContent:'space-between',}]}>
                 <View>
+                    <View style={{flexDirection:'row-reverse'}}>
                     <Text style={styles.text}>نوع المواد:</Text>
                      <Text style={styles.Text}>{item.material}</Text>
+                     </View>
+                     <View style={{flexDirection:'row-reverse'}}>
                      <Text style={styles.text}> الكمية:</Text>
                      <Text style={styles.Text}>{item.Quantity}</Text>
-                     <Text style={styles.text}> تاريخ و وقت الإستلام:</Text>
-                     <Text style={styles.Text}>{item.DateAndTime}</Text>
+                     </View>
                 </View>
 
-                <View style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:10}}>
+                <View style={{alignItems:'center',justifyContent:'space-between'}}>
                      <TouchableOpacity style={styles.EditIconStyle}
                      onPress={()=>EditRequest(item)}>
                      <Image 
@@ -201,6 +209,30 @@ import Loading from '../components/Loading';
 
     })
 
+    const renderRequest = ((item)=>{
+        return(
+            <Card>
+                <View style={styles.cardView}>
+                    <View style={{flexDirection:Platform.OS === 'android' &&
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        'row':'row-reverse'}}>
+                    <Text style={styles.text}>نوع المواد:</Text>
+                    <Text style={styles.Text}>{item.material}</Text>
+                    </View>
+                    <View style={{flexDirection:Platform.OS === 'android' &&
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        'row':'row-reverse'}}>
+                    <Text style={styles.text}> الكمية:</Text>
+                    <Text style={styles.Text}>{item.Quantity}</Text>
+                    </View>
+                    </View>
+            </Card>
+        )
+
+    })
+
     const EditRequest=(item)=>{
         setData({
             ...data,
@@ -209,12 +241,12 @@ import Loading from '../components/Loading';
         })
         setMaterial(item.material);
         setQantity(item.Quantity)
-        setDateAndTime(item.DateAndTime)
+        // setDateAndTime(item.DateAndTime)
         setID(item.id)
     }
 
-    const DisplayReqests=()=>{
-        addRequest();
+    const DisplayMaterials=()=>{
+        // addRequest();
      if(RequestList.length==0)  {
       setData({
           ...data,
@@ -253,61 +285,14 @@ import Loading from '../components/Loading';
             ...data,
             isLoading:true 
         })
-        for (var i in RequestList) {
+        // for (var i in RequestList) {
             var RequestId = firebase.database().ref('Category/').push().getKey();
             firebase.database().ref('/PickupRequest/'+userId+'/DeliveryDriverId/'+RequestId).set({
-                DateAndTime:RequestList[i].DateAndTime,
+                DateAndTime:DateAndTime,
                 Status:'Pending',
                 Location:Location,
             }).then((data)=>{
-                firebase.database().ref('/Material/'+RequestId).push({
-                    MaterialType:RequestList[i].material,
-                    Quantity:RequestList[i].Quantity,
-                }).then(()=>{
-                //success callback
-                setData({
-                    ...data,
-                    isLoading:false,
-                });
-                setTimeout(()=>{
-                    setAlert({
-                        ...alert,
-                        Title:'',
-                        Message:'تمت إضافة الطلب بنجاح',
-                        jsonPath:"success",
-                        alertVisible:true,
-                    });
-                    setTimeout(() => {
-                        setAlert({
-                            ...alert,
-                            alertVisible:false,
-                        }); 
-                        resetData();
-                    }, 4000)
-                },400)
-                }).catch(()=>{
-                    //Error callback
-                    setData({
-                        ...data,
-                        isLoading:false,
-                    });
-                    setTimeout(()=>{
-                        setAlert({
-                            ...alert,
-                            Title:'',
-                            Message:'لم يتمت إضافة الطلب ',
-                            jsonPath:"Error",
-                            alertVisible:true,
-                        });
-                        setTimeout(() => {
-                            setAlert({
-                                ...alert,
-                                alertVisible:false,
-                            }); 
-                            resetData();
-                        }, 4000)
-                    },400)
-                })
+                AddMaterialsToDatabase(RequestId);
             }).catch((error)=>{
                 // error callback
                 setData({
@@ -317,7 +302,60 @@ import Loading from '../components/Loading';
                 Alert.alert(error.message)
                 console.log('error ' , error)
             })
-        }
+        // }
+    }
+
+    const AddMaterialsToDatabase=(RequestId)=>{
+        for (var i in RequestList) {
+        firebase.database().ref('/Material/'+RequestId).push({
+            MaterialType:RequestList[i].material,
+            Quantity:RequestList[i].Quantity,
+        }).then(()=>{
+        //success callback
+        setData({
+            ...data,
+            isLoading:false,
+        });
+        setTimeout(()=>{
+            setAlert({
+                ...alert,
+                Title:'',
+                Message:'تمت إضافة الطلب بنجاح',
+                jsonPath:"success",
+                alertVisible:true,
+            });
+            setTimeout(() => {
+                setAlert({
+                    ...alert,
+                    alertVisible:false,
+                }); 
+                resetData();
+            }, 4000)
+        },400)
+        }).catch(()=>{
+            //Error callback
+            setData({
+                ...data,
+                isLoading:false,
+            });
+            setTimeout(()=>{
+                setAlert({
+                    ...alert,
+                    Title:'',
+                    Message:'لم يتمت إضافة الطلب ',
+                    jsonPath:"Error",
+                    alertVisible:true,
+                });
+                setTimeout(() => {
+                    setAlert({
+                        ...alert,
+                        alertVisible:false,
+                    }); 
+                    resetData();
+                }, 4000)
+            },400)
+        })
+    }
     }
 
     const DeleteRequest=(item)=>{
@@ -334,6 +372,33 @@ import Loading from '../components/Loading';
             isEdit:false
         })
 
+    }
+
+    const DateAndTimeStep=()=>{
+        // addRequest();
+        if(RequestList.length==0)  {
+        setData({
+            ...data,
+            isEmptyList:true
+        })
+        }else{
+            setData({
+                ...data,
+                isEmptyList:false,
+                isDateAndTimeStep:true,
+                isVisibleList:false,//if from edit list to date and time step
+                isEdit:false//if back in edit
+            })
+        }
+    }
+
+    const DisplayRequests=()=>{
+        if(RequestList.length!=0 && checkDateAndTime()){
+          setData({
+              ...data,
+              isDisplayRequests:true
+          })  
+        }
     }
 
     const showDatePicker = () => {
@@ -373,13 +438,22 @@ import Loading from '../components/Loading';
         });
         props.setAlertVisible(false);
     }
+
+    const goBackFromEdit=()=>{
+        setData({
+            ...data,
+            isVisibleList:false,
+            isEdit:false})
+            setMaterial('');
+            setQantity('');
+    }
 return (
     
 <View style={styles.container}>   
     <Modal visible={alertVisible} transparent={true} onRequestClose={()=>{ setAlertVisible(false) }}>
     
             <View backgroundColor= "#000000aa" flex= {1} style={{alignItems:'center',justifyContent:'center'}} >
-                <View backgroundColor='#f6f6f7' marginTop= {30} marginBottom={30} flex= {1}>
+                <View backgroundColor='#f6f6f7' marginTop= {80} marginBottom={80} flex= {1}>
                     <Image 
                         source={require('../assets/RequestHeader.png')}
                         style={styles.headerImage}
@@ -403,8 +477,13 @@ return (
                             // onRefresh={()=>fetchData()}
                             // refreshing={loading}
                             />
-                            <View style={{flexDirection:'row',justifyContent:'space-between',margin:15}}>
-                                <TouchableOpacity onPress={() =>setData({...data,isVisibleList:false})}>
+                            <View style={{flexDirection:Platform.OS === 'android' &&
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        'row-reverse':'row',
+                                        justifyContent:'space-between'
+                                        ,margin:15}}>
+                                <TouchableOpacity onPress={goBackFromEdit}>
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/back.png')}
@@ -412,6 +491,49 @@ return (
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity 
+                                 onPress={() =>DateAndTimeStep()}
+                                >
+                                <Image     
+                                    style={styles.ImageStyle}
+                                    source={require('../assets/send.png')}
+                                    />
+                                </TouchableOpacity>  
+                            </View>
+                        </View>
+                    :
+                    <View style={{flex:1}}>
+                        {data.isDisplayRequests?                      
+                        <View style={{flex:1}}>
+                            <FlatList
+                            data={RequestList}
+                            renderItem={({item})=>{
+                              return renderRequest(item)
+                            }}
+                            keyExtractor={item=>`${item.id}`}
+                            // onRefresh={()=>fetchData()}
+                            // refreshing={loading}
+                            />
+                            <Card>
+                                <View style={[styles.cardView,{backgroundColor:'#fff'}]}>
+                                    <Text style={styles.text}>تاريخ و وقت الاستلام:</Text>
+                                    <Text style={styles.Text}>{DateAndTime}</Text>
+                                </View>
+                            </Card>
+                            <View style={{flexDirection:Platform.OS === 'android' &&
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        'row-reverse':'row',
+                                        justifyContent:'space-between',
+                                        margin:15}}>
+                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false})}>
+                                    <Image
+                                        style={styles.ImageStyle}
+                                        source={require('../assets/back.png')}
+                                        resizeMethod='scale'
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                //  onPress={() =>DateAndTimeStep()}
                                 onPress={Send}
                                 >
                                 <Image     
@@ -421,7 +543,7 @@ return (
                                 </TouchableOpacity>  
                             </View>
                         </View>
-                    :
+                        :
                     <KeyboardAwareScrollView >
                         <View>
                             
@@ -432,6 +554,36 @@ return (
                                 :
                                 null
                             }
+
+                            {data.isDateAndTimeStep?
+                            <View>
+                                <Text style={styles.text}>تاريخ و وقت الإستلام:</Text>
+                                <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
+                                    <View style={[styles.action,{width:'80%'}]}>
+                                        <TextInput style={styles.textInput} 
+                                            value={DateAndTime}
+                                            label="Date"
+                                            placeholder="ادخل تاريخ و وقت الاستلام"
+                                            autoCapitalize="none"
+                                            onChangeText={(val)=>setDateAndTime(val)}
+                                            onFocus={showDatePicker}
+                                            textAlign= 'right'
+                                            onEndEditing={() => checkDateAndTime()}
+                                            ref={data.DateAndTimeInput}
+                                            >
+                                        </TextInput> 
+                                    </View>
+                                </View>
+
+                                {data.isValidDateAndTime ?
+                                    null 
+                                    : 
+                                    <Animatable.View animation="fadeInRight" duration={500}>
+                                        <Text style={styles.errorMsg}>{data.DateAndTimeErrorMsg}</Text>
+                                    </Animatable.View>
+                                }
+                                </View>
+                                :
                                 <View>
                                     <Text style={styles.text}>نوع المادة:</Text>
                                     <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
@@ -491,32 +643,8 @@ return (
                                         </Animatable.View>
                                     }
 
-                                    <Text style={styles.text}>تاريخ و وقت الإستلام:</Text>
-                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
-                                        <View style={styles.action}>
-                                            <TextInput style={styles.textInput} 
-                                                value={DateAndTime}
-                                                label="Date"
-                                                placeholder="ادخل تاريخ و وقت الاستلام"
-                                                autoCapitalize="none"
-                                                onChangeText={(val)=>setDateAndTime(val)}
-                                                onFocus={showDatePicker}
-                                                textAlign= 'right'
-                                                onEndEditing={() => checkDateAndTime()}
-                                                ref={data.DateAndTimeInput}
-                                                >
-                                            </TextInput> 
-                                        </View>
-                                    </View>
-
-                                    {data.isValidDate ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                            <Text style={styles.errorMsg}>{data.DateAndTimeErrorMsg}</Text>
-                                        </Animatable.View>
-                                    }
                                 </View>
+                                }
 
                             {/* <View>
                                 {RequestList.map(request=> (
@@ -527,8 +655,11 @@ return (
                             </View> */}
 
                             {data.isEdit?                   
-                                <View style={{flexDirection:'row',justifyContent:'space-between',margin:15}}>
-                                <TouchableOpacity onPress={() => UpdateRequest(id,Material,Quantity,DateAndTime)}>
+                                <View style={{flexDirection:Platform.OS === 'android' &&
+                                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                'row-reverse':'row',justifyContent:'space-between',margin:15}}>
+                                <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/back.png')}
@@ -536,7 +667,7 @@ return (
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity 
-                                // onPress={() =>setData({...data,isDateAndTimeStep:true,isVisibleList:false})}
+                                    onPress={() => UpdateRequest(id,Material,Quantity)}
                                 >
                                 <Image     
                                     style={styles.ImageStyle}
@@ -546,6 +677,31 @@ return (
                                 </View>
                                 :
                             <View>
+                                {data.isDateAndTimeStep?
+                                <View style={{flexDirection:Platform.OS === 'android' &&
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                            'row-reverse':'row',
+                                            justifyContent:'space-between',
+                                            margin:15}}>
+                                    <TouchableOpacity onPress={() =>setData({...data,isDateAndTimeStep:false})}>
+                                        <Image
+                                            style={styles.ImageStyle}
+                                            source={require('../assets/back.png')}
+                                            resizeMethod='scale'
+                                        />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity 
+                                    // onPress={Send}
+                                    onPress={() =>DisplayRequests()}
+                                    >
+                                <Image     
+                                    style={styles.ImageStyle}
+                                    source={require('../assets/send.png')}
+                                    />
+                                    </TouchableOpacity>  
+                                    </View>
+                                :
                                 <View style={{alignItems:Platform.OS === 'android'?'flex-start':'flex-end',padding:20}}>
                                     <TouchableOpacity onPress={() =>addRequest ()}>
                                     <Image
@@ -553,7 +709,7 @@ return (
                                         source={require('../assets/addRequest.png')}    
                                         />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() =>DisplayReqests ()}>
+                                    <TouchableOpacity onPress={() =>DisplayMaterials ()}>
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/RequestList.png')}
@@ -561,7 +717,7 @@ return (
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity 
-                                    onPress={() =>DisplayReqests()}
+                                    onPress={() =>DateAndTimeStep()}
                                     >
                                     <Image     
                                         style={styles.ImageStyle}
@@ -569,11 +725,14 @@ return (
                                         />
                                     </TouchableOpacity>
                                 </View>
-                                </View>
+                                }
+                            </View>
                             }
                         
                         </View>
                         </KeyboardAwareScrollView>
+                    }
+                        </View>
                     } 
                 </View>               
             </View>
@@ -660,7 +819,7 @@ const styles=StyleSheet.create({
         textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
         marginRight:5,
         marginLeft:5,
-        marginTop:20
+        margin:10
     },
     textInput: {
         marginTop: Platform.OS === 'ios' ? 0 : -12,
@@ -706,11 +865,10 @@ const styles=StyleSheet.create({
         shadowOpacity: 0.30,
         shadowRadius: 4.65,
         elevation: 5,
-        // padding :12,
     },
     Text:{
         fontSize:18,
-        // marginTop:20,
+        margin:10,
         marginRight:5,
         marginLeft:5,  
         textAlign:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'left':'right'  

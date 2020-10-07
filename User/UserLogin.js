@@ -58,7 +58,7 @@ const  UserLogin =({navigation}) => {
         .verifyPhoneNumber('+966'+ phoneNumber, recaptchaVerifier.current)
         .then(setVerificationId);
       } catch (err) {
-        showMessage({ text: `Error: ${err.message}`, color: "red" });
+        showMessage({ text: `Error: ${err.message}`, color: "blue" });
       } 
       setdata({
         ... data,

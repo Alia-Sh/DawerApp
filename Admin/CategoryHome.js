@@ -35,8 +35,31 @@ const HomeScreen = ({navigation})=>{
     Id:''
   })
 
+  // const fetchData=()=>{
+  //   firebase.database().ref('/Category/').once('value').then(function(snapshot) {
+  //     const Data = snapshot.val();
+  //     if(Data){
+  //       var li = []
+  //       snapshot.forEach(function(snapshot){
+  //         console.log(snapshot.key);
+  //         console.log(snapshot.val().Name);
+  //         var temp={CategoryId:snapshot.val().CategoryId,Name:snapshot.val().Name,ID:snapshot.key}
+  //         li.push(temp)
+  //         setLoading(false)
+  //       })
+  //       setRequestList(li)
+  //       console.log(li) 
+  //     }else{
+  //       setData({
+  //         ...data,
+  //         isEmptyList:true
+  //       })
+  //     }
+  //   }); 
+  // }
+
   const fetchData=()=>{
-    firebase.database().ref('/Category/').once('value').then(function(snapshot) {
+    firebase.database().ref('/Category/').on('value',snapshot=>{
       const Data = snapshot.val();
       if(Data){
         var li = []
@@ -55,7 +78,7 @@ const HomeScreen = ({navigation})=>{
           isEmptyList:true
         })
       }
-    }); 
+    })
   }
 
   useEffect(()=>{
