@@ -93,7 +93,7 @@ useEffect(()=>{
 const [selectedId, setSelectedId] = useState(null);
 
 const renderItem = ({ item }) => {
-  const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#FAFAF7";
+  const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
 
   return (
     <Item
@@ -180,7 +180,7 @@ const checkValidEmail=()=>{
         setData({
             ...data,
             isValidEmail:false,
-            EmailErrorMessage:'يحب ادخال الايميل بالشكل الصحيح'
+            EmailErrorMessage:'يحب ادخال البريد الإلكتروني بالشكل الصحيح'
         });
         return false; 
     }else{
@@ -620,7 +620,7 @@ const width_logout = width* 0.055;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#FAFAF7',
+      backgroundColor: '#F3F3F3',
      // width: width, 
     }, 
    

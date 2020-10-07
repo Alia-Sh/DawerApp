@@ -70,7 +70,7 @@ const ResetPassword=({navigation})=>{
             setData({
                 ...data,
                 isValidEmail:false,
-                EmailErrorMessage:'يحب إدخال الإيميل بالشكل الصحيح'
+                EmailErrorMessage:'يحب إدخال البريد الإلكتروني بالشكل الصحيح'
             });
             return false; 
         }else{
@@ -180,7 +180,7 @@ return(
                         <TextInput style={styles.textInput} 
                         //   value={data.UserName}
                             label="Email"
-                            placeholder="أدخل البريد الاكتروني"
+                            placeholder="أدخل البريد الإلكتروني"
                             autoCapitalize="none"
                             onChangeText={(val)=>textInputChange(val)}
                             onEndEditing={() => checkValidEmail()}>
