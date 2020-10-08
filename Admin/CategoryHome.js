@@ -98,6 +98,8 @@ const HomeScreen = ({navigation})=>{
 
                   <View style={styles.header}>
 
+                    <Text style={styles.text_header}>الفـئـــات</Text>
+                    
                     <TouchableOpacity  
                       onPress={()=>navigation.goBack()}>
                     <Image
@@ -106,14 +108,6 @@ const HomeScreen = ({navigation})=>{
                       resizeMode="stretch"
                     />
                     </TouchableOpacity>
-
-                    <Text style={styles.text_header}>الفـئـــات</Text>
-
-                    <Image
-                      source={require('../assets/AdminIcons/HomePageLogo.png')}
-                      style={styles.logo}
-                      resizeMode="stretch"
-                    />
 
                   </View>
 
@@ -185,7 +179,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 22,
       textAlign: 'center',
-      marginLeft:25,
+      marginLeft:165,
     },
     logo: {
       width: width_logo ,
@@ -225,13 +219,13 @@ const styles = StyleSheet.create({
     fabIOS: {
         position: 'absolute',
         margin: 16,
-        right: 0,
+        left: 0,
         bottom: 0,
     },
     fabAndroid: {
         position: 'absolute',
         margin: 16,
-        left: 0,
+        right: 0,
         bottom: 0,
     },
     title: {

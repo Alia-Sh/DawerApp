@@ -401,7 +401,7 @@ const resetData=()=>{
          <View style={styles.fixedHeader} >
          <LinearGradient
         colors={["#809d65","#9cac74"]}
-        style={{height:"100%" ,width:"100%", flexDirection: 'row',
+        style={{height:"100%" ,width:"100%", flexDirection: 'row-reverse',
         justifyContent:'space-between'}}> 
         
          <TouchableOpacity  onPress={()=> back()} >
@@ -412,11 +412,7 @@ const resetData=()=>{
           />
           </TouchableOpacity>
           <Text style={styles.text_header}>  سائقي التوصيل </Text>
-         <Image
-          source={require('../assets/AdminIcons/HomePageLogo.png')}
-          style={styles.logo}
-          resizeMode="stretch"
-          />
+        
           </LinearGradient>
          </View>
         {//End Header 
@@ -608,13 +604,13 @@ const resetData=()=>{
 // here styles
 const {height} = Dimensions.get("screen");
 const height_logo = height* 0.17;
-const height_logout = height* 0.04;
+const height_logout = height* 0.03;
 const marginTopSpace = height * 0.020;
 
 
 const {width} = Dimensions.get("screen");
 const width_logo = width* 0.22;
-const width_logout = width* 0.055;
+const width_logout = width* 0.045;
 
 
 const styles = StyleSheet.create({
@@ -635,8 +631,8 @@ const styles = StyleSheet.create({
   back: {
     width: width_logout ,
     height: height_logout,
-    marginTop: 28 ,
-    marginLeft: 8 ,
+    marginTop: 35 ,
+    marginRight: 8 ,
     alignItems:'baseline',
     shadowColor :'#F1F1EA',
 
@@ -657,9 +653,11 @@ const styles = StyleSheet.create({
       fontSize: 22,
       textAlign: 'center',
       marginTop:30,
-      marginRight:-70,
+      marginRight:40,
+      marginLeft:145,
       
   },
+  
   //end header
 //flatlist
   item: {
@@ -700,13 +698,13 @@ const styles = StyleSheet.create({
   fabIOS: {
     position: 'absolute',
     margin: 16,
-    right: 0,
+    left: 0,
     bottom: 0,
 },
 fabAndroid: {
     position: 'absolute',
     margin: 16,
-    left: 0,
+    right: 0,
     bottom: 0,
 },
 header:{
