@@ -150,6 +150,7 @@ import Loading from '../components/Loading';
     }
 
     const UpdateRequest=(id,Material,Quantity)=>{
+        if(checkMaterial() && checkQuantity()){
         for (var i in RequestList) {
             if (RequestList[i].id == id) {
                 RequestList[i].material = Material;
@@ -157,12 +158,14 @@ import Loading from '../components/Loading';
                break; //Stop this loop, we found it!
             }
         }
+      
         ResetField();
         setData({
             ...data,
             isVisibleList:true,
             isEdit:false
         })
+    }
         
 }
 
@@ -197,7 +200,7 @@ import Loading from '../components/Loading';
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.EditIconStyle}
-                     onPress={()=>DeleteRequest(item)}>
+                     onPress={()=>DeleteRequest(item.id)}>
                      <Image 
                         source={require('../assets/DeleteIcon.png')}
                         style={styles.Edit}
@@ -293,6 +296,7 @@ import Loading from '../components/Loading';
                 DateAndTime:DateAndTime,
                 Status:'Pending',
                 Location:Location,
+                TimeStamp: firebase.database.ServerValue.TIMESTAMP,
             }).then((data)=>{
                 AddMaterialsToDatabase(RequestId);
             }).catch((error)=>{
@@ -360,20 +364,13 @@ import Loading from '../components/Loading';
     }
     }
 
-    const DeleteRequest=(item)=>{
-        for (var i in RequestList) {
-            if (RequestList[i].id == item.id) {
-                RequestList.pop()
-                break; //Stop this loop, we found it!
-            }
-        }
-        ResetField();
+    const DeleteRequest=(id)=>{
+        setRequestList(RequestList.filter(item => item.id != id))
         setData({
             ...data,
             isVisibleList:true,
             isEdit:false
         })
-
     }
 
     const DateAndTimeStep=()=>{
