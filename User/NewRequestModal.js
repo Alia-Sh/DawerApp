@@ -181,7 +181,7 @@ import Loading from '../components/Loading';
                         justifyContent:'space-between',}]}>
                 <View>
                     <View style={{flexDirection:'row-reverse'}}>
-                    <Text style={styles.text}>نوع المواد:</Text>
+                    <Text style={styles.text}>نوع المادة:</Text>
                      <Text style={styles.Text}>{item.material}</Text>
                      </View>
                      <View style={{flexDirection:'row-reverse'}}>
@@ -222,7 +222,7 @@ import Loading from '../components/Loading';
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
                                         'row':'row-reverse'}}>
-                    <Text style={styles.text}>نوع المواد:</Text>
+                    <Text style={styles.text}>نوع المادة:</Text>
                     <Text style={styles.Text}>{item.material}</Text>
                     </View>
                     <View style={{flexDirection:Platform.OS === 'android' &&
