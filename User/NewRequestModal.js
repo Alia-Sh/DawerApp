@@ -176,7 +176,8 @@ import Loading from '../components/Loading';
             <View style={[styles.cardView,{
                         flexDirection:Platform.OS === 'android' && 
                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                         'row':'row-reverse',
                         justifyContent:'space-between',}]}>
                 <View>
@@ -220,14 +221,16 @@ import Loading from '../components/Loading';
                 <View style={styles.cardView}>
                     <View style={{flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                         'row':'row-reverse'}}>
                     <Text style={styles.text}>نوع المادة:</Text>
                     <Text style={styles.Text}>{item.material}</Text>
                     </View>
                     <View style={{flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                         'row':'row-reverse'}}>
                     <Text style={styles.text}> الكمية:</Text>
                     <Text style={styles.Text}>{item.Quantity}</Text>
@@ -326,7 +329,7 @@ import Loading from '../components/Loading';
             setAlert({
                 ...alert,
                 Title:'',
-                Message:'تمت إضافة الطلب بنجاح',
+                Message:'تمت إرسال الطلب بنجاح',
                 jsonPath:"success",
                 alertVisible:true,
             });
@@ -348,7 +351,7 @@ import Loading from '../components/Loading';
                 setAlert({
                     ...alert,
                     Title:'',
-                    Message:'لم يتمت إضافة الطلب ',
+                    Message:'لم يتم إرسال الطلب ',
                     jsonPath:"Error",
                     alertVisible:true,
                 });
@@ -512,7 +515,8 @@ return (
                             />
                             <View style={{flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                         'row-reverse':'row',
                                         justifyContent:'space-between'
                                         ,margin:15}}>
@@ -554,7 +558,8 @@ return (
                             </Card>
                             <View style={{flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                         'row-reverse':'row',
                                         justifyContent:'space-between',
                                         margin:15}}>
@@ -704,7 +709,8 @@ return (
                             {data.isEdit?                   
                                 <View style={{flexDirection:Platform.OS === 'android' &&
                                 NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 'row-reverse':'row',justifyContent:'space-between',margin:15}}>
                                 <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
                                     <Image
@@ -727,7 +733,8 @@ return (
                                 {data.isDateAndTimeStep?
                                 <View style={{flexDirection:Platform.OS === 'android' &&
                                             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                             'row-reverse':'row',
                                             justifyContent:'space-between',
                                             margin:15}}>
@@ -863,7 +870,10 @@ const styles=StyleSheet.create({
     text: {
         color: '#b2860e',
         fontSize: 18,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         marginRight:5,
         marginLeft:5,
         margin:10
@@ -890,7 +900,10 @@ const styles=StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         paddingRight:20
     },
     mycard:{
@@ -918,7 +931,10 @@ const styles=StyleSheet.create({
         margin:10,
         marginRight:5,
         marginLeft:5,  
-        textAlign:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'left':'right'  
+        textAlign:Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'left':'right'  
     },
     EditIconStyle:{
         margin:10

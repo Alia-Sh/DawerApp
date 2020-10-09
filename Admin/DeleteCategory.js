@@ -30,7 +30,9 @@ return(
                 <Text style={styles.textStyle}>هل انت متاكد من حذف فئـة ال{props.Name}</Text>
                 <View style={{flexDirection:Platform.OS === 'android' &&
                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?'row':'row-reverse',alignItems:'center',justifyContent:'center'}}>
+                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse',
+                        alignItems:'center',justifyContent:'center'}}>
                     <TouchableOpacity 
                         style={styles.okButton}
                         onPress={()=>{

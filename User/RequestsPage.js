@@ -116,7 +116,10 @@ const styles = StyleSheet.create({
     text: {
         color: '#b2860e',
         fontSize: 18,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         marginRight:10,
         marginLeft:10,
         marginTop:10

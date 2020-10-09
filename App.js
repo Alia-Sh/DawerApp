@@ -14,7 +14,7 @@ import CategoryHome from './Admin/CategoryHome' ;
 import FacilityHome from './Admin/FacilityHome' ;
 import RequestHome from './Admin/RequestHome' ;
 import CommunityHome from './Admin/CommunityHome' ;
-import DeliveryDriverOptions from './Admin/DeliveryDriverOptions';
+// import DeliveryDriverOptions from './Admin/DeliveryDriverOptions';
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -91,7 +91,7 @@ function App() {
           <Stack.Screen name="CategoryHome" component={CategoryHome} options={myOptions}/>
           <Stack.Screen name="FacilityHome" component={FacilityHome} options={myOptions}/>
           <Stack.Screen name="CommunityHome" component={CommunityHome} options={myOptions}/>
-          <Stack.Screen name="DeliveryDriverOptions" component={DeliveryDriverOptions} options={myOptions}/>
+          {/* <Stack.Screen name="DeliveryDriverOptions" component={DeliveryDriverOptions} options={myOptions}/> */}
           <Stack.Screen name="ResetPassword" component={ResetPassword} options={myOptions}/>
         </Stack.Navigator>
     </View>

@@ -64,7 +64,8 @@ const HomeScreen = ({navigation})=>{
           <View style={styles.cardContent}>
               <View style={{flexDirection:Platform.OS === 'android' &&
                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                      NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                       'row':'row-reverse'}}>
               <Title style={styles.title}>{item.Name}</Title>
               </View>
@@ -101,7 +102,8 @@ const HomeScreen = ({navigation})=>{
                     <Text style={styles.text_header}>الفـئـــات</Text>
                     
                     <TouchableOpacity  
-                      onPress={()=>navigation.goBack()}>
+                      onPress={()=>navigation.goBack()}
+                      style={{position:'absolute',left:10}}>
                     <Image
                       source={require('../assets/AdminIcons/left-arrow.png')}
                       style={styles.back}
@@ -135,7 +137,8 @@ const HomeScreen = ({navigation})=>{
               onPress={()=>setModalVisible(true)}
                 style={Platform.OS === 'android' &&
                 NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ?
+                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                 styles.fabAndroid:styles.fabIOS}
               small={false}
               icon="plus"
@@ -169,8 +172,8 @@ const styles = StyleSheet.create({
     back: {
       width: width_logout ,
       height: height_logout,
-      marginLeft: 8 ,
-      marginRight:8,
+      // marginLeft: 8 ,
+      // marginRight:8,
       alignItems:'baseline',
       shadowColor :'#F1F1EA',  
     },
@@ -179,7 +182,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 22,
       textAlign: 'center',
-      marginLeft:165,
+      // marginLeft:165,
     },
     logo: {
       width: width_logo ,
@@ -188,13 +191,19 @@ const styles = StyleSheet.create({
     header:{
       width: '100%',
       height: 80,
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' :'row-reverse',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       marginTop:Platform.OS === 'android'? 0 : -10
     },
     cardContent:{
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
       justifyContent:'space-between'
     },
     mycard:{

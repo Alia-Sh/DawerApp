@@ -16,7 +16,10 @@ const DriverHomePage = ({navigation})=>{
             style={styles.imageTop}
             resizeMode="stretch"
             />
-            <SafeAreaView style={{flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse'}}>
+            <SafeAreaView style={{flexDirection: Platform.OS === 'android' && 
+            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse'}}>
                 <TouchableOpacity
                     style={{margin: 16}}
                     onPress={Open}>  
@@ -56,8 +59,7 @@ const DriverHomePage = ({navigation})=>{
       );
 }
 const {height} = Dimensions.get("screen");
-const height_logo = height * 0.35;
-const height_logo2 = height * 0.25;
+
 
 const styles = StyleSheet.create({
   container: {

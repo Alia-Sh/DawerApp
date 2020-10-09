@@ -411,7 +411,10 @@ const styles=StyleSheet.create({
         marginTop:-20 
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
         margin: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -455,7 +458,10 @@ const styles=StyleSheet.create({
     header:{
         width: '100%',
         height: 80,
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -471,7 +477,10 @@ const styles=StyleSheet.create({
         left: 16
     },
     cardContent:{
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
         padding:10,
     },
     FABStyleAndroid:{
@@ -486,7 +495,10 @@ const styles=StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         paddingRight:20
     }
 })

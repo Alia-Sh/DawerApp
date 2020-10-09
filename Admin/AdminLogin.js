@@ -5,11 +5,8 @@ import { StyleSheet,
    TouchableOpacity,
    Platform, 
    TextInput,
-   Alert,
    StatusBar,
    Dimensions,
-   KeyboardAvoidingView, 
-   ActivityIndicator
   } from 'react-native';
 
 import * as Animatable from 'react-native-animatable';
@@ -337,15 +334,24 @@ const styles = StyleSheet.create({
   text_footer: {
       color: '#9E9D24',
       fontSize: 18,
-      textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+      textAlign: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
   },
   text_forgetPass: {
     color: '#757575',
     fontSize: 15,
-    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+    textAlign: Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
 },
   action: {
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
       marginTop: 10,
       borderBottomWidth: 1,
       borderBottomColor: '#f2f2f2',
@@ -371,7 +377,10 @@ const styles = StyleSheet.create({
   errorMsg: {
       color: '#FF0000',
       fontSize: 14,
-    textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+    textAlign: Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
 
   },
   errorMsg2: {

@@ -146,7 +146,8 @@ const AddCategory=(props)=>{
                             justifyContent:'center',}}> 
                             <MaterialIcons style={Platform.OS === 'android' &&
                                 NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 
+                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? 
                                 styles.iconAndroid:styles.iconIOS} 
                                 name="cancel" size={32} color="#fff" 
                                 onPress={resetData} 
@@ -237,7 +238,10 @@ const styles=StyleSheet.create({
         fontSize:20
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
         marginTop: 10,
         borderWidth:2,
         borderColor:'#f2f2f2',
@@ -248,7 +252,10 @@ const styles=StyleSheet.create({
     text: {
         color: '#9E9D24',
         fontSize: 18,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         marginRight:'5%',
         marginLeft:'5%',
         marginTop:10
@@ -285,7 +292,10 @@ const styles=StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         paddingRight:20
     },
     AddButton:{

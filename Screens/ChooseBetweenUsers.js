@@ -187,7 +187,10 @@ textSign: {
   fontWeight: 'bold',
 },
 action: {
-  flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'row' : 'row-reverse',
+  flexDirection: Platform.OS === 'android' && 
+  NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
+  NativeModules.I18nManager.localeIdentifier === 'ar_SA' ||
+  NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'row' : 'row-reverse',
   marginTop: 130,
   borderBottomWidth: 1,
   borderBottomColor: '#f2f2f2',
@@ -198,7 +201,10 @@ action: {
 },
 text_footer: {
   fontSize: 18,
-  textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' ? 'left' : 'right',
+  textAlign: Platform.OS === 'android' && 
+  NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
+  NativeModules.I18nManager.localeIdentifier === 'ar_SA'||
+  NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'left' : 'right',
 },
 textInput: {
   flex: 1,

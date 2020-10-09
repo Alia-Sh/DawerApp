@@ -6,10 +6,6 @@ import { StyleSheet,
     Platform, 
     TextInput,
     Alert,
-    StatusBar,
-    Dimensions,
-    KeyboardAvoidingView,
-    ActivityIndicator,
     NativeModules,
     Image} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -258,7 +254,10 @@ const styles = StyleSheet.create({
     //   marginTop:40
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
         marginTop: 50,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -317,7 +316,10 @@ const styles = StyleSheet.create({
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         paddingLeft:15,
         paddingRight:15,
     },

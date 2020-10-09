@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import { StyleSheet,
    Text,
    View, 
-   TouchableOpacity,
    Platform, 
    TextInput,
    Alert,
@@ -10,8 +9,6 @@ import { StyleSheet,
    Modal,
    Picker,
    NativeModules,
-   ActivityIndicator,
-   Image
   } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import {Button}from 'react-native-paper';
@@ -23,9 +20,9 @@ import Loading from '../components/Loading';
 
 
 
-  const DeliveryDriverOptions=({navigation})=>{
+  const AddDriver=(props)=>{
 
-    const [modal,setModal] = useState(false)
+    const [modal,setModal] = useState(true)
     const {height} = Dimensions.get("screen");
     const {width} = Dimensions.get("screen");
     const [selectedValue, setSelectedValue] = useState("شمال الرياض");
@@ -286,6 +283,7 @@ import Loading from '../components/Loading';
     }
 
     const resetData=()=>{
+        
         setName("");
         setUserName("");
         setEmail("");
@@ -303,6 +301,7 @@ import Loading from '../components/Loading';
             EmailErrorMessage:'',
             PhoneErrorMessage:'',
         });
+        props.setModalVisible(false)
         setModal(false);
         setAlert({
             ...alert,
@@ -315,178 +314,158 @@ import Loading from '../components/Loading';
     }
 
       return(
-        <View style={styles.container}>
-            <View style={{flex:1.5,alignItems:'flex-start',justifyContent:'center'}}>
-                <Image source={require('../assets/DriverOptionImage.png')} style={{width:width*.40,height:'100%',left:'-6%'}}></Image>
-            </View> 
-            <View style={styles.content}>   
-                <TouchableOpacity onPress={() => setModal(true)}>
-                    <Text style={styles.text_header}>إضافة سائق توصيل</Text>
-                </TouchableOpacity>
+        <Modal visible={modal} transparent={true} onRequestClose={()=>{ setModal(false) }}>
+        <KeyboardAwareScrollView>
+            <View backgroundColor= "#000000aa" flex= {1} style={{alignItems:'center',justifyContent:'center'}}>
+                <View backgroundColor ='#ffffff' marginTop= {40} marginBottom={100} borderRadius={30} width={width*.90} height={height*.90} >
+                    <View style={styles.header}>
+                        <MaterialIcons style={Platform.OS === 'android'? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff"  onPress={resetData} />
+                        <Text style={styles.text_header_modal}>إضافة سائق توصيل</Text>
+                    </View>
 
-                <TouchableOpacity>
-                    <Text style={styles.text_header}>حذف حساب سائق توصيل</Text>
-                </TouchableOpacity>
+                    <View>
+                        <Text style={styles.text_footer}>اسم السائق:</Text>
+                        <View style={styles.action}>
+                            <TextInput style={styles.textInput} 
+                                label="Name"
+                                placeholder="ادخل اسم السائق"
+                                autoCapitalize="none"
+                                onChangeText={(val)=>setName(val)}
+                                textAlign= 'right'
+                                onEndEditing={() => checkValidName()}
+                                >
+                            </TextInput>  
+                        </View>
 
-                <Modal visible={modal} transparent={true} onRequestClose={()=>{ setModal(false) }}>
-                    <KeyboardAwareScrollView>
-                        <View backgroundColor= "#000000aa" flex= {1} style={{alignItems:'center',justifyContent:'center'}}>
-                            <View backgroundColor ='#ffffff' marginTop= {40} marginBottom={100} borderRadius={30} width={width*.90} height={height*.90} >
-                                <View style={styles.header}>
-                                    <MaterialIcons style={Platform.OS === 'android'? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff"  onPress={resetData} />
-                                    <Text style={styles.text_header_modal}>إضافة سائق توصيل</Text>
-                                </View>
+                        {data.isValidName ?
+                            null 
+                            : 
+                            <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>يجب ادخال اسم السائق</Text>
+                            </Animatable.View>
+                        }
 
-                                <View>
-                                    <Text style={styles.text_footer}>اسم السائق:</Text>
-                                    <View style={styles.action}>
-                                        <TextInput style={styles.textInput} 
-                                            label="Name"
-                                            placeholder="ادخل اسم السائق"
-                                            autoCapitalize="none"
-                                            onChangeText={(val)=>setName(val)}
-                                            textAlign= 'right'
-                                            onEndEditing={() => checkValidName()}
-                                            >
-                                        </TextInput>  
-                                    </View>
+                        <Text style={styles.text_footer}>اسم المستخدم:</Text>
+                        <View style={styles.action}>
+                            <TextInput style={styles.textInput} 
+                                label="UserName"
+                                placeholder="ادخل اسم المستخدم"
+                                autoCapitalize="none"
+                                onChangeText={(val)=>setUserName(val)}
+                                textAlign= 'right'
+                                onEndEditing={() => checkValidUserName()}
+                                >
+                            </TextInput>  
+                        </View>
 
-                                    {data.isValidName ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                        <Text style={styles.errorMsg}>يجب ادخال اسم السائق</Text>
-                                        </Animatable.View>
-                                    }
+                        {data.isValidUserName ?
+                            null 
+                            : 
+                            <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>يجب ادخال اسم المستخدم</Text>
+                            </Animatable.View>
+                        }
 
-                                    <Text style={styles.text_footer}>اسم المستخدم:</Text>
-                                    <View style={styles.action}>
-                                        <TextInput style={styles.textInput} 
-                                            label="UserName"
-                                            placeholder="ادخل اسم المستخدم"
-                                            autoCapitalize="none"
-                                            onChangeText={(val)=>setUserName(val)}
-                                            textAlign= 'right'
-                                            onEndEditing={() => checkValidUserName()}
-                                            >
-                                        </TextInput>  
-                                    </View>
+                        <Text style={styles.text_footer}>البريد الإلكتروني:</Text>
+                        <View style={styles.action}>
+                            <TextInput style={styles.textInput} 
+                                label="Email"
+                                placeholder="ادخل البريد الإلكتروني"
+                                autoCapitalize="none"
+                                onChangeText={(val)=>setEmail(val)}
+                                textAlign= 'right'
+                                onEndEditing={() => checkValidEmail()}
+                                >
+                            </TextInput>  
+                        </View>
 
-                                    {data.isValidUserName ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                        <Text style={styles.errorMsg}>يجب ادخال اسم المستخدم</Text>
-                                        </Animatable.View>
-                                    }
+                        {data.isValidEmail ?
+                            null 
+                            : 
+                            <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.EmailErrorMessage}</Text>
+                            </Animatable.View>
+                        }
 
-                                    <Text style={styles.text_footer}>البريد الإلكتروني:</Text>
-                                    <View style={styles.action}>
-                                        <TextInput style={styles.textInput} 
-                                            label="Email"
-                                            placeholder="ادخل البريد الإلكتروني"
-                                            autoCapitalize="none"
-                                            onChangeText={(val)=>setEmail(val)}
-                                            textAlign= 'right'
-                                            onEndEditing={() => checkValidEmail()}
-                                            >
-                                        </TextInput>  
-                                    </View>
+                        <Text style={styles.text_footer}> رقم الهاتف:</Text>
+                        <View style={styles.action}>
+                            <TextInput style={styles.textInput} 
+                                label="Phone"
+                                placeholder="ادخل رقم الهاتف"
+                                autoCapitalize="none"
+                                onChangeText={(val)=>setPhone(val)}
+                                textAlign= 'right'
+                                onEndEditing={() => checkValidPhone()}
+                                keyboardType="number-pad" //number Input
+                                maxLength={10}
+                                >
+                            </TextInput>  
+                        </View>
 
-                                    {data.isValidEmail ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                        <Text style={styles.errorMsg}>{data.EmailErrorMessage}</Text>
-                                        </Animatable.View>
-                                    }
+                        {data.isValidPhone ?
+                            null 
+                            : 
+                            <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.PhoneErrorMessage}</Text>
+                            </Animatable.View>
+                        }
 
-                                    <Text style={styles.text_footer}> رقم الهاتف:</Text>
-                                    <View style={styles.action}>
-                                        <TextInput style={styles.textInput} 
-                                            label="Phone"
-                                            placeholder="ادخل رقم الهاتف"
-                                            autoCapitalize="none"
-                                            onChangeText={(val)=>setPhone(val)}
-                                            textAlign= 'right'
-                                            onEndEditing={() => checkValidPhone()}
-                                            keyboardType="number-pad" //number Input
-                                            maxLength={10}
-                                            >
-                                        </TextInput>  
-                                    </View>
+                        <Text style={styles.text_footer}>كلمة المرور:</Text>
+                        <View style={styles.action}>
+                            <TextInput style={styles.textInput} 
+                                label="Password"
+                                placeholder="ادخل كلمة المرور"
+                                autoCapitalize="none"
+                                onChangeText={(val)=>setPassword(val)}
+                                textAlign= 'right'
+                                onEndEditing={() => checkValidPassword()}
+                                >
+                            </TextInput>  
+                        </View>
 
-                                    {data.isValidPhone ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                        <Text style={styles.errorMsg}>{data.PhoneErrorMessage}</Text>
-                                        </Animatable.View>
-                                    }
+                        {data.isValidPassword ?
+                            null 
+                            : 
+                            <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.EroorMessage}</Text>
+                            </Animatable.View>
+                        }
 
-                                    <Text style={styles.text_footer}>كلمة المرور:</Text>
-                                    <View style={styles.action}>
-                                        <TextInput style={styles.textInput} 
-                                            label="Password"
-                                            placeholder="ادخل كلمة المرور"
-                                            autoCapitalize="none"
-                                            onChangeText={(val)=>setPassword(val)}
-                                            textAlign= 'right'
-                                            onEndEditing={() => checkValidPassword()}
-                                            >
-                                        </TextInput>  
-                                    </View>
+                        <Text style={styles.text_footer}>منطقة التوصيل:</Text>
+                        <Picker
+                            selectedValue={selectedValue}
+                            style={Platform.OS === 'android'? styles.pickerStyleAndroid:styles.pickerStyleIOS}
+                            onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
+                            <Picker.Item label="شمال الرياض" value="شمال الرياض" />
+                            <Picker.Item label="شرق الرياض" value="شرق الرياض" />
+                            <Picker.Item label="غرب الرياض" value="غرب الرياض" />
+                            <Picker.Item label="جنوب الرياض" value="جنوب الرياض" />
+                        </Picker>      
+                    </View>
 
-                                    {data.isValidPassword ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                        <Text style={styles.errorMsg}>{data.EroorMessage}</Text>
-                                        </Animatable.View>
-                                    }
-
-                                    <Text style={styles.text_footer}>منطقة التوصيل:</Text>
-                                    <Picker
-                                        selectedValue={selectedValue}
-                                        style={Platform.OS === 'android'? styles.pickerStyleAndroid:styles.pickerStyleIOS}
-                                        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
-                                        <Picker.Item label="شمال الرياض" value="شمال الرياض" />
-                                        <Picker.Item label="شرق الرياض" value="شرق الرياض" />
-                                        <Picker.Item label="غرب الرياض" value="غرب الرياض" />
-                                        <Picker.Item label="جنوب الرياض" value="جنوب الرياض" />
-                                    </Picker>      
-                                </View>
-
-                                <View style={styles.button}> 
-                                    {alert.isLoading? <Loading></Loading>:  
-                                        <Button 
-                                            mode="contained" 
-                                            color="#809d65" 
-                                            dark={true} 
-                                            compact={true} 
-                                            style={{width:100}} 
-                                            onPress={AddDriver}>
-                                            <Text style={{color:"#fff",fontSize:18,fontWeight: 'bold'}}>إضافة</Text>
-                                        </Button>
-                                    }
-                                </View>          
-                            </View>
-                        </View>  
-                    </KeyboardAwareScrollView> 
-
-                    {alert.alertVisible?
-                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
-                    :
-                        null
-                    }                   
-                </Modal>
-                        
-            </View>
-            <View style={{flex:1.5,bottom:0,flexDirection:'row-reverse',alignItems:'center',justifyContent:'space-between'}}>
-                <Image source={require('../assets/DriverOptionImage.png')} style={{width:width*.40,height:'100%',right:'6%'}}></Image>
-                <TouchableOpacity onPress={()=>navigation.goBack(null)}><Text style={{left:30,fontSize: 25, color:'#fff'}}>رجوع</Text></TouchableOpacity>     
+                    <View style={styles.button}> 
+                        {alert.isLoading? <Loading></Loading>:  
+                            <Button 
+                                mode="contained" 
+                                color="#809d65" 
+                                dark={true} 
+                                compact={true} 
+                                style={{width:100}} 
+                                onPress={AddDriver}>
+                                <Text style={{color:"#fff",fontSize:18,fontWeight: 'bold'}}>إضافة</Text>
+                            </Button>
+                        }
+                    </View>          
+                </View>
             </View>  
-        </View>
+        </KeyboardAwareScrollView> 
+
+        {alert.alertVisible?
+            <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+        :
+            null
+        }                   
+    </Modal>
       );
   }
 
@@ -537,7 +516,10 @@ import Loading from '../components/Loading';
     text_footer: {
         color: '#9E9D24',
         fontSize: 18,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         marginRight:'5%',
         marginTop:marginTopSpace
     },
@@ -549,7 +531,10 @@ import Loading from '../components/Loading';
         marginRight:'8%'  
     },
     action: {
-        flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
         marginTop: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
@@ -576,8 +561,11 @@ import Loading from '../components/Loading';
     errorMsg: {
         color: '#FF0000',
         fontSize: 14,
-        textAlign: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'left' : 'right',
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         paddingRight:20
     },
   });
-  export default DeliveryDriverOptions
+  export default AddDriver

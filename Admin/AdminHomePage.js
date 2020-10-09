@@ -222,7 +222,10 @@ const styles = StyleSheet.create({
      flex :1,
       height:height*.030,
       backgroundColor :'#9E9D24',
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
       justifyContent:'space-between',
       borderBottomRightRadius:150,
       borderBottomLeftRadius:150,
@@ -242,7 +245,10 @@ const styles = StyleSheet.create({
     },
 
     icon :{
-      flexDirection:Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      flexDirection:Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
       justifyContent:'space-around',
       alignSelf :'center',
       
@@ -269,7 +275,10 @@ const styles = StyleSheet.create({
     },
 
     communityStuff:{
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
       // position: 'absolute',
       // top:height*.40,
       alignItems:'flex-start',
@@ -298,7 +307,10 @@ const styles = StyleSheet.create({
     header:{
       width: '100%',
       height: 80,
-      flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
   }

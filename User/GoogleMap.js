@@ -167,7 +167,10 @@ const styles = StyleSheet.create({
   header:{
     width: '100%',
     height: 60,
-    flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row-reverse' : 'row',
+    flexDirection: Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop:15,
