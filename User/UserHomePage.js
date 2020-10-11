@@ -31,56 +31,27 @@ const UserHomePage = ({navigation, route})=>{
                     colors={["#827717","#AFB42B"]}
                     style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between'}}>
             
+                     <Image source={require('../assets/UserLogo2.png')} 
+                     style={styles.logo}
+                     resizeMode='stretch' />
+                     
                     <SimpleLineIcons name="menu" size={28} color ='#fff' style={styles.back}
                      onPress={Open}>
                      </SimpleLineIcons>  
 
-                     <Image source={require('../assets/UserLogo2.png')} 
-                     style={styles.logo}
-                     resizeMode='stretch' />
             </LinearGradient>
          
             </View>
 
           <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeScreen"
       activeColor="#f0edf6"
       inactiveColor="#808000"
       barStyle={{  backgroundColor: '#9E9D24'}}
       
     >
+      
        <Tab.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'الرئيسية',
-          tabBarIcon: ({ color}) => (
-            <FontAwesome name="home" color={color} size={26}/>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="RequestsPage"
-        component={RequestsPage}
-        options={{
-          tabBarLabel: 'الطلبات',
-          tabBarIcon: ({ color}) => (
-            <MaterialCommunityIcons name="truck-fast" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="NotificationsPage"
-        component={NotificationsPage}
-        options={{
-          tabBarLabel: 'التنبيهات',
-          tabBarIcon: ({ color}) => (
-            <Ionicons name="ios-notifications" color={color} size={26}/>
-          ),
-        }}
-      />
-        
-      <Tab.Screen 
         name="CommunityPage"
         component={CommunityPage}
         options={{
@@ -91,9 +62,41 @@ const UserHomePage = ({navigation, route})=>{
         }}
       />
       
+      <Tab.Screen
+        name="NotificationsPage"
+        component={NotificationsPage}
+        options={{
+          tabBarLabel: 'التنبيهات',
+          tabBarIcon: ({ color}) => (
+            <Ionicons name="ios-notifications" color={color} size={26}/>
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="RequestsPage"
+        component={RequestsPage}
+        options={{
+          tabBarLabel: 'الطلبات',
+          tabBarIcon: ({ color}) => (
+            <MaterialCommunityIcons name="truck-fast" color={color} size={26} />
+          ),
+        }}
+      />
+      
+      <Tab.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'الرئيسية',
+          tabBarIcon: ({ color}) => (
+            <FontAwesome name="home" color={color} size={26}/>
+          ),
+        }}
+      />
 
     </Tab.Navigator>
-    </View> 
+    </View>
    
         
       );    
@@ -132,8 +135,8 @@ const styles = StyleSheet.create({
         height: '10%'
     },
     back:{
-        marginTop: 40,
-        marginLeft: 12,
+        marginTop: 32, //was top 40
+        marginRight: 12, //was left
         alignItems: 'baseline',
         shadowColor: '#F1F1EA'
     },
@@ -226,8 +229,8 @@ const styles = StyleSheet.create({
     logo: {
         width: 90,
         height: 40,
-      marginLeft: 65 ,
-      marginTop: 36,
+      marginRight: 65 , // was left 65
+      marginTop: 28, // was top 36
       alignItems: 'center',
       justifyContent: 'center',
   },

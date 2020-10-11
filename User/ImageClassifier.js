@@ -10,20 +10,21 @@ import * as jpeg from 'jpeg-js';
 import * as ImagePicker from 'expo-image-picker';
 //import { fetch } from '@tensorflow/tfjs-react-native';
 import {FontAwesome5} from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 // There is an ERROR here, so i commneted the functions below..
 
-const ImageClassifier = () => {
+const ImageClassifier = ({navigation})=> {
 
   const [isTfReady,setIsTfReady] = useState(false)
   const [isModelReady,setIsModelReady] = useState(false)
   const [predictions,setPredictions] = useState(null)
   const [image,setImage] = useState(null)
-/* 
-  componentDidMount =>  {
+/*
+  componentDidMount = async ()  =>  {
     await tf.ready(); // preparing TensorFlow
     setIsTfReady(true);
-    this.model = await mobilenet.load(); // preparing MobileNet model
+    model = await mobilenet.load(); // preparing MobileNet model
     setIsModelReady(true);
     this.getPermissionAsync(); // get permission for accessing camera on mobile device
   }
@@ -278,7 +279,7 @@ render() {
     <View style={styles.container}>
        <LinearGradient
                     colors={["#827717","#AFB42B"]}
-                    style={{height:"25%"}}>
+                    style={{height:"12%"}}>
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
                         onPress={()=>{
@@ -296,12 +297,12 @@ render() {
       <StatusBar barStyle='light-content' />
       <View style={styles.loadingContainer}>
         <Text style={styles.text}>
-          TensorFlow.js ready? {isTfReady ? <Text>✅</Text> : ''}
+          TensorFlow.js ready? {setIsTfReady ? <Text>✅</Text> : ''}
         </Text>
 
         <View style={styles.loadingModelContainer}>
           <Text style={styles.text}>MobileNet model ready? </Text>
-          {isModelReady ? (
+          {setIsModelReady ? (
             <Text style={styles.text}>✅</Text>
           ) : (
             <ActivityIndicator size='small' />
@@ -354,7 +355,7 @@ render() {
       </ScrollView>
     </View>
   );
-};
+}
        
 
 const theme = {
