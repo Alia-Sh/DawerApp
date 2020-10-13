@@ -41,12 +41,12 @@ import Loading from '../components/Loading';
         isDateAndTimeStep:false,
         isDisplayRequests:false      
     });
-    // var userId = firebase.auth().currentUser.uid;
-    // var query2 = firebase.database().ref('User/' + userId+'/Location');
-    // query2.once("value").then(function(result) {
-    //     const userData = result.val();
-    //     setLocation(userData.address);
-    // });
+    var userId = firebase.auth().currentUser.uid;
+    var query2 = firebase.database().ref('User/' + userId+'/Location');
+    query2.once("value").then(function(result) {
+        const userData = result.val();
+        setLocation(userData.address);
+    });
 
     const [alert,setAlert]=React.useState({
         alertVisible:false,
@@ -581,7 +581,7 @@ return (
                                 </TouchableOpacity>
                                 <TouchableOpacity 
                                 //  onPress={() =>DateAndTimeStep()}
-                                // onPress={Send}
+                                onPress={Send}
                                 >
                                 <Image     
                                     style={styles.ImageStyle}
