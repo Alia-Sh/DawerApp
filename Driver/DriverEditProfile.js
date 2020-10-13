@@ -259,7 +259,7 @@ const DriverEditProfile  = ({navigation,route})=>{
             <View style={styles.root}>
             <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={styles.header}>
-                    <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
+                    <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
                         onPress={resetData}/>
                     <View>
                         <Text style={styles.headerText}>تحديث الملف الشخصي</Text>
@@ -461,7 +461,7 @@ const styles=StyleSheet.create({
         flexDirection: Platform.OS === 'android' && 
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row':'row-reverse',
         alignItems: 'center',
         justifyContent: 'center',
     },

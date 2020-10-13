@@ -41,12 +41,12 @@ import Loading from '../components/Loading';
         isDateAndTimeStep:false,
         isDisplayRequests:false      
     });
-    var userId = firebase.auth().currentUser.uid;
-    var query2 = firebase.database().ref('User/' + userId+'/Location');
-    query2.once("value").then(function(result) {
-        const userData = result.val();
-        setLocation(userData.address);
-    });
+    // var userId = firebase.auth().currentUser.uid;
+    // var query2 = firebase.database().ref('User/' + userId+'/Location');
+    // query2.once("value").then(function(result) {
+    //     const userData = result.val();
+    //     setLocation(userData.address);
+    // });
 
     const [alert,setAlert]=React.useState({
         alertVisible:false,
@@ -181,11 +181,17 @@ import Loading from '../components/Loading';
                         'row':'row-reverse',
                         justifyContent:'space-between',}]}>
                 <View>
-                    <View style={{flexDirection:'row-reverse'}}>
+                    <View style={{flexDirection:Platform.OS === 'android' && 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse'}}>
                     <Text style={styles.text}>نوع المادة:</Text>
                      <Text style={styles.Text}>{item.material}</Text>
                      </View>
-                     <View style={{flexDirection:'row-reverse'}}>
+                     <View style={{flexDirection:Platform.OS === 'android' && 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse'}}>
                      <Text style={styles.text}> الكمية:</Text>
                      <Text style={styles.Text}>{item.Quantity}</Text>
                      </View>
@@ -496,7 +502,10 @@ return (
                         resizeMode="stretch"/>
 
                     <View style={styles.header}>
-                        <MaterialIcons style={Platform.OS === 'android'? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff" 
+                        <MaterialIcons style={Platform.OS === 'android' && 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff" 
                          onPress={resetData} 
                          />
                         <Text style={styles.text_header_modal}>إنشاء طلب جديد</Text>
@@ -572,7 +581,7 @@ return (
                                 </TouchableOpacity>
                                 <TouchableOpacity 
                                 //  onPress={() =>DateAndTimeStep()}
-                                onPress={Send}
+                                // onPress={Send}
                                 >
                                 <Image     
                                     style={styles.ImageStyle}
@@ -596,7 +605,10 @@ return (
                             {data.isDateAndTimeStep?
                             <View>
                                 <Text style={styles.text}>تاريخ و وقت الإستلام:</Text>
-                                <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
+                                <View style={{flexDirection:Platform.OS === 'android' && 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse'}}>
                                     <View style={[styles.action,{width:'80%'}]}>
                                         <TextInput style={styles.textInput} 
                                             value={DateAndTime}
@@ -624,29 +636,15 @@ return (
                                 :
                                 <View>
                                     <Text style={styles.text}>نوع المادة:</Text>
-                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse',paddingBottom:50}}>
-                                        {/* <View style={styles.action}>
-                                            <TextInput style={styles.textInput} 
-                                                value={Material}
-                                                label="Material"
-                                                placeholder="ادخل نوع المواد"
-                                                autoCapitalize="none"
-                                                onChangeText={(val)=>setMaterial(val)}
-                                                textAlign= 'right'
-                                                onEndEditing={() => checkMaterial()}
-                                                ref={data.MaterialInput}
-                                                >
-                                            </TextInput> 
-                                        </View> */}
-
+                                    <View style={{flexDirection:Platform.OS === 'android' && 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse',
+                                    paddingBottom:Platform.OS? 0:50}}>
                                     <Picker
                                         selectedValue={Material}
                                         style={Platform.OS === 'android'? styles.pickerStyleAndroid:styles.pickerStyleIOS}
                                         onValueChange={(itemValue, itemIndex) => setMaterial(itemValue)}>
-                                        {/* <Picker.Item label="شمال الرياض" value="شمال الرياض"  enabled={false}/> */}
-                                        {/* <Picker.Item label="شرق الرياض" value="شرق الرياض" />
-                                        <Picker.Item label="غرب الرياض" value="غرب الرياض" />
-                                        <Picker.Item label="جنوب الرياض" value="جنوب الرياض" />  */}
                                         {CategoryList.map(element =>
                                             <Picker.Item label={element.Name} value={element.Name} />
                                         )}
@@ -656,7 +654,7 @@ return (
                                         <View style={{alignItems:'center',justifyContent:'center'}}>
                                             <TouchableOpacity onPress={() =>selectImage ()}>
                                                 <Image
-                                                    style={{right:30,width:40,height:40}}
+                                                    style={{width:40,height:40}}
                                                     source={require('../assets/Camera.png')}
                                                 /> 
                                             </TouchableOpacity>
@@ -671,7 +669,10 @@ return (
                                     }
 
                                     <Text style={styles.text}> الكمية:</Text>
-                                    <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
+                                    <View style={{flexDirection:Platform.OS === 'android' && 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse'}}>
                                         <View style={styles.action}>
                                             <TextInput style={styles.textInput} 
                                                 value={Quantity+""}
@@ -708,10 +709,10 @@ return (
 
                             {data.isEdit?                   
                                 <View style={{flexDirection:Platform.OS === 'android' &&
-                                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                                'row-reverse':'row',justifyContent:'space-between',margin:15}}>
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+                                    'row-reverse':'row',justifyContent:'space-between',margin:15}}>
                                 <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
                                     <Image
                                         style={styles.ImageStyle}
@@ -756,7 +757,10 @@ return (
                                     </TouchableOpacity>  
                                     </View>
                                 :
-                                <View style={{alignItems:Platform.OS === 'android'?'flex-start':'flex-end',padding:20}}>
+                                <View style={{alignItems:Platform.OS === 'android' && 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'flex-start':'flex-end',padding:20}}>
                                     <TouchableOpacity onPress={() =>addRequest ()}>
                                     <Image
                                         style={styles.ImageStyle}
@@ -794,8 +798,6 @@ return (
         <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="datetime"
-        // mode="date"
-        // onConfirm={handleConfirm}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
         cancelTextIOS="الغاء"
@@ -803,7 +805,6 @@ return (
         datePickerModeAndroid={'spinner'}
         is24Hour={false}
         minimumDate={new window.Date()}
-        // style ={{backgroundColor: "blue"}}
         />
         {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
@@ -861,11 +862,11 @@ const styles=StyleSheet.create({
     },
     iconIOS:{
         position:'absolute',
-        left:15
+        right:15,
     },
     iconAndroid:{
         position:'absolute',
-        right:15
+        left:15,
     },
     text: {
         color: '#b2860e',
@@ -959,13 +960,11 @@ const styles=StyleSheet.create({
     pickerStyleIOS:{
         height: 50,
         width: '70%',
-        // position: 'absolute', 
-        // bottom:0,
         top:-80
     },
     pickerStyleAndroid:{
         height: 50,
-        width: '100%',
+        width: '70%',
     }   
 });
 

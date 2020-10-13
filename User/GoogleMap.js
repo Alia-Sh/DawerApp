@@ -101,7 +101,7 @@ export default class GoogleMap extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <FontAwesome5 name="chevron-left" size={24} color="#161924" style={styles.icon}
+          <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
               onPress={()=>{
                 navigation.navigate("UserEditProfile")}}/>
           <View>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: Platform.OS === 'android' && 
     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row': 'row-reverse' ,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop:15,

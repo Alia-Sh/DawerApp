@@ -507,11 +507,11 @@ import Loading from '../components/Loading';
     },
     iconIOS:{
         position:'absolute',
-        left:15
+        right:15
     },
     iconAndroid:{
         position:'absolute',
-        right:15
+        left:15
     },
     text_footer: {
         color: '#9E9D24',

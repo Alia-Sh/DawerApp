@@ -143,9 +143,13 @@ return(
     <View style={styles.container}>
         <SafeAreaView>
             <TouchableOpacity
-                    style={{margin: 16}}
+                    style={{margin: 16,
+                    flexDirection: Platform.OS === 'android' && 
+                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row':'row-reverse',}}
                     onPress={()=>navigation.goBack(null)}>  
-                        <FontAwesome5 name="chevron-left" size={24} color="#212121"/>
+                        <FontAwesome5 name="chevron-right" size={24} color="#212121"/>
             </TouchableOpacity>
 
             <View style={styles.header}>               
@@ -311,7 +315,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         flexDirection: 'column',
         alignItems: 'center',
-        marginTop: 40
+        marginTop: 40,
     },
     errorMsg: {
         color: '#FF0000',

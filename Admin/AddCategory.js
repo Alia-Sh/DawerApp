@@ -277,11 +277,11 @@ const styles=StyleSheet.create({
     },
     iconIOS:{
         position:'absolute',
-        left:15
+        right:15
     },
     iconAndroid:{
         position:'absolute',
-        right:15
+        left:15
     },
     text_header_modal:{
         color: '#ffff',
