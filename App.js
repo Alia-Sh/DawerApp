@@ -32,6 +32,7 @@ import NewRequestModal from './User/NewRequestModal';
 import DateTimePicker from './components/DateTimePicker'
 import ChooseBetweenUsers from './Screens/ChooseBetweenUsers';
 import ImageClassifier from './User/ImageClassifier';
+import RequestsPage from './User/RequestsPage'
 
 
 

@@ -640,7 +640,7 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse',
-                                    paddingBottom:Platform.OS? 0:50}}>
+                                    paddingBottom:Platform.OS === 'android'? 0:50}}>
                                     <Picker
                                         selectedValue={Material}
                                         style={Platform.OS === 'android'? styles.pickerStyleAndroid:styles.pickerStyleIOS}
