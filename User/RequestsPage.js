@@ -84,26 +84,25 @@ const  RequestsPage= () =>{
         const StatusColor=getColor(item.Status)
         // const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
         return(
-            <View>
-                <View>
+            <View style={{flex:1}}>
                 <View style={{flexDirection:Platform.OS === 'android' &&
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
-                                    'row':'row-reverse'}}>
-                <View style={[styles.RectangleShapeView,{backgroundColor:StatusColor}]}>
-                    <Text style={[styles.text,{color:'#FAFAFA',margin:5}]}>{Status}</Text>
+                                    'row':'row-reverse',flex:1}}>
+                    <View style={[styles.RectangleShapeView,{backgroundColor:StatusColor}]}>
+                        <Text style={[styles.text,{color:'#FAFAFA',margin:5}]}>{Status}</Text>
+                    </View>
                 </View>
-                </View>
-                    <View style={styles.cardView}>
+                    <View style={[styles.cardView,{flex:1}]}>
                         <View style={{flexDirection:Platform.OS === 'android' &&
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
-                                    'row':'row-reverse'}}>
+                                    'row':'row-reverse',flex:1}}>
                             {/* <View style={{flexWrap: 'wrap'}}> */}
                             <Title style={styles.text}>تاريخ و وقت الاستلام </Title>
-                            <Title >{item.DateAndTime}</Title>
+                            <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.DateAndTime}</Title>
                             {/* </View> */}
                         </View>
                             <MaterialIcons 
@@ -115,11 +114,10 @@ const  RequestsPage= () =>{
                                     name="error" 
                                     size={32} 
                                     color="#161924"
-                                    // style={{position:'absolute',right:5}}
+                                    // style={{flex:1}}
                                     // onPress={resetData} 
                                 />
                     </View>
-                </View>
             </View>
         )
       });
