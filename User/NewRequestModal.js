@@ -551,6 +551,17 @@ return (
                     <View style={{flex:1}}>
                         {data.isDisplayRequests?                      
                         <View style={{flex:1}}>
+                            
+                            <Card>
+                                <View style={[styles.cardView,{backgroundColor:'#fff',flexDirection:Platform.OS === 'android' &&
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+                                        'row':'row-reverse'}]}>
+                                    <Text style={styles.text}>تاريخ و وقت الاستلام:</Text>
+                                    <Text style={styles.Text}>{DateAndTime}</Text>
+                                </View>
+                            </Card>
                             <FlatList
                             data={RequestList}
                             renderItem={({item})=>{
@@ -560,12 +571,6 @@ return (
                             // onRefresh={()=>fetchData()}
                             // refreshing={loading}
                             />
-                            <Card>
-                                <View style={[styles.cardView,{backgroundColor:'#fff'}]}>
-                                    <Text style={styles.text}>تاريخ و وقت الاستلام:</Text>
-                                    <Text style={styles.Text}>{DateAndTime}</Text>
-                                </View>
-                            </Card>
                             <View style={{flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
