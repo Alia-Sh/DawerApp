@@ -20,7 +20,7 @@ const  RequestsPage= () =>{
     // const [StatusColor,setStatusColor]=useState("#FFD600")
     var userId = firebase.auth().currentUser.uid;
     const fetchData=()=>{
-        firebase.database().ref("PickupRequest/"+userId+"/DeliveryDriverId").orderByChild("TimeStamp").on('value',snapshot=>{
+        firebase.database().ref("PickupRequest/"+userId+"/DeliveryDriverId").orderByChild("DateAndTime").on('value',snapshot=>{
           const Data = snapshot.val();
           if(Data){
             var li = []
@@ -112,7 +112,7 @@ const  RequestsPage= () =>{
                             //         NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? 
                             //         styles.iconAndroid:styles.iconIOS} 
                                     name="error" 
-                                    size={32} 
+                                    size={30} 
                                     color="#161924"
                                     // style={{flex:1}}
                                     // onPress={resetData} 

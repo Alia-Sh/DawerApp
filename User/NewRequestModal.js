@@ -420,7 +420,8 @@ import Loading from '../components/Loading';
     const handleConfirm = (datetime) => {
         console.warn("A date has been picked: ", datetime);
         // setDateAndTime(moment(datetime).format('MMM, Do YYY HH:mm'))
-        setDateAndTime(moment(datetime).format('LLLL'))
+        // setDateAndTime(moment(datetime).format('LLLL'))
+        setDateAndTime(moment(datetime).format('Y/M/D HH:mm'))
         hideDatePicker();
     };
 
