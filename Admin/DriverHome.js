@@ -50,6 +50,12 @@ const HomeScreen = ({navigation})=>{
         navigation.goBack()
     
     }
+    const ViewDriver=()=>{
+    
+      navigation.navigate("AdminViewDriver")
+  
+  
+  }
 
 const fetchData=()=>{
   console.log('inside fe');
@@ -85,13 +91,14 @@ useEffect(()=>{
 const [selectedId, setSelectedId] = useState(null);
 
 const renderItem = ({ item }) => {
-  const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
+  //const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
 
   return (
     <Item
       item={item}
-      onPress={() => setSelectedId(item.key)}
-      style={{ backgroundColor}}
+     // onPress={() => setSelectedId(item.key)}
+     onPress={() => ViewDriver()}
+      style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
     />
   );
 };

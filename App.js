@@ -33,6 +33,7 @@ import DateTimePicker from './components/DateTimePicker'
 import ChooseBetweenUsers from './Screens/ChooseBetweenUsers';
 import ImageClassifier from './User/ImageClassifier';
 import RequestsPage from './User/RequestsPage'
+import AdminViewDriver from './Admin/AdminViewDriver'
 
 
 
@@ -95,6 +96,7 @@ function App() {
           <Stack.Screen name="CommunityHome" component={CommunityHome} options={myOptions}/>
           {/* <Stack.Screen name="DeliveryDriverOptions" component={DeliveryDriverOptions} options={myOptions}/> */}
           <Stack.Screen name="ResetPassword" component={ResetPassword} options={myOptions}/>
+          <Stack.Screen name="AdminViewDriver" component={AdminViewDriver} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );
