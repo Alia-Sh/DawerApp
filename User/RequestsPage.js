@@ -14,6 +14,7 @@ import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import {FontAwesome5} from '@expo/vector-icons';
 import { color } from 'react-native-reanimated';
+import { ArabicNumbers } from 'react-native-arabic-numbers';
 const  RequestsPage= () =>{
     const [alertVisible,setAlertVisible]= useState(false);
     const[RequestList,setRequestList]= useState([]);
@@ -144,7 +145,7 @@ const  RequestsPage= () =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse',flex:1}}>
                     <View style={[styles.RectangleShapeView,{backgroundColor:StatusColor}]}>
-                        <Text style={[styles.text,{color:'#FAFAFA',margin:5}]}>{Status}</Text>
+                        <Text style={[styles.text,{color:'#FAFAFA',margin:5,fontSize: 16}]}>{Status}</Text>
                     </View>
                 </View>
                     <View style={[styles.cardView,{flex:1}]}>
@@ -202,7 +203,7 @@ const  RequestsPage= () =>{
                 <TouchableOpacity onPress={()=>setAlertVisible(true)}>
                     <Title style={[styles.text,{fontWeight: 'bold',marginTop:10}]}>طلب جديد</Title>
                 </TouchableOpacity>
-                <Title style={[styles.text,{marginTop:10}]}>{RequestList.length} عدد الطلبات</Title>
+                <Title style={[styles.text,{marginTop:10}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
                 <TouchableOpacity style={{margin:10}}
                     //  onPress={()=>DeleteRequest(item)}
                      >
@@ -293,14 +294,16 @@ const styles = StyleSheet.create({
     RectangleShapeView: {
         marginTop: 10,
         marginLeft:15,
-        width: 50 * 3,
-        height: 40,
+        width: 45 * 3,
+        height: 35,
         flexDirection:Platform.OS === 'android' &&
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
         'row':'row-reverse',
-        justifyContent:'center'
+        justifyContent:'center',
+        borderTopLeftRadius:5,
+        borderTopRightRadius:5
       
         },
         centeredView:{
