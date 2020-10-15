@@ -84,7 +84,7 @@ const ChooseBetweenUsers =({navigation}) => {
     <FontAwesome onPress={() => navigation.navigate('AdminLogin')}
          name="gear"
          color= '#9E9D24'
-         size={28}
+         size={30}
          />
          </Animatable.View>
          <Text>    </Text>
@@ -92,7 +92,7 @@ const ChooseBetweenUsers =({navigation}) => {
          <FontAwesome onPress={()=> navigation.navigate('UserLogin')}
          name="exclamation-circle"
          color= '#9E9D24'
-         size={28}
+         size={30}
          />
          </Animatable.View>
         <Text>    </Text>
@@ -100,7 +100,7 @@ const ChooseBetweenUsers =({navigation}) => {
          <FontAwesome onPress={()=> navigation.navigate('UserLogin')}
          name="phone"
          color= '#9E9D24'
-         size={28}
+         size={30}
         />
         </Animatable.View>
    
@@ -191,7 +191,8 @@ action: {
   NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
   NativeModules.I18nManager.localeIdentifier === 'ar_SA' ||
   NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'row' : 'row-reverse',
-  marginTop: 130,
+  marginTop: 70, // was 130
+  marginBottom: 30, // NEW
   borderBottomWidth: 1,
   borderBottomColor: '#f2f2f2',
   paddingBottom: 80,
