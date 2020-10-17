@@ -50,9 +50,9 @@ const HomeScreen = ({navigation})=>{
         navigation.goBack()
     
     }
-    const ViewDriver=()=>{
+    const ViewDriver=(driver)=>{
     
-      navigation.navigate("AdminViewDriver")
+      navigation.navigate("AdminViewDriver",driver)
   
   
   }
@@ -97,7 +97,13 @@ const renderItem = ({ item }) => {
     <Item
       item={item}
      // onPress={() => setSelectedId(item.key)}
-     onPress={() => ViewDriver()}
+     
+     onPress={() => 
+      { var ID =item.key;
+        var NAME=item.name;
+        var USER = item.username;
+        console.log(ID+'      >>>>>here in gome');
+        navigation.navigate("AdminViewDriver",{ID,NAME,USER})}}
       style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
     />
   );
