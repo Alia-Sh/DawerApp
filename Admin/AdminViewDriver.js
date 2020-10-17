@@ -63,7 +63,7 @@ const AdminViewDriver = ({navigation,route})=>{
                           navigation.navigate("DriverHome")
                         }}/>
                     <View>
-                        <Text style={styles.headerText}>{UserName}</Text>
+                        <Text style={styles.headerText}>@ {UserName}</Text>
                     </View>
                 </View>
             </SafeAreaView>
@@ -83,24 +83,14 @@ const AdminViewDriver = ({navigation,route})=>{
                             />
                     }
                         <Image
-                            style={{width:'70%',marginTop:15}}
+                            style={{width:'70%',marginTop:10}}
                             source={require('../assets/line.png')}
                             />
                 </View>
 
-                <View style={{alignItems:"center",margin:15}}>
-                    <Title>@ {UserName}</Title>
+                <View style={{alignItems:"center",margin:10}}>
+                    <Title>{Name}</Title>
                 </View>
-
-                <Card style={styles.mycard}>
-                    <View style={styles.cardContent}>
-                        <Feather
-                            name="user"
-                            color="#929000"
-                            size={25} /> 
-                        <Text style={styles.mytext}>{Name}</Text>
-                    </View>  
-                </Card>
 
                 <Card style={styles.mycard}>
                     <View style={styles.cardContent}>
@@ -132,6 +122,19 @@ const AdminViewDriver = ({navigation,route})=>{
                     </View>  
                 </Card> 
 
+                <View style={{alignItems:"center"}}>
+                    
+                      
+                            <View style={{alignItems:"center",margin:15}}>
+                           <Title style={{color: '#9E9D24',fontSize:20}}>الطلبات المسندة</Title>
+                           
+                       </View>
+                       <Image
+                            style={{width:'70%',marginTop:-8}}
+                            source={require('../assets/line.png')}
+                            />
+                </View>
+
                
 
             </View>  
@@ -159,7 +162,7 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
-        padding:10,
+        padding:8,
     },
     mytext:{
         fontSize:18,
