@@ -27,7 +27,7 @@ const AdminHomePage = ({navigation})=>{
   const logout=()=>{
     firebase.auth().signOut().then(function() {
       console.log('loged out')
-        navigation.navigate("ChooseBetweenUsersminLogin")
+        navigation.navigate("ChooseBetweenUsers")
       }).catch(function(error) {
           console.log(error)
       });
