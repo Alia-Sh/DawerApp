@@ -6,6 +6,9 @@ import { NativeModules } from 'react-native';
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import firebase from '../Database/firebase';
 import { Ionicons, FontAwesome, Feather, Octicons, AntDesign} from '@expo/vector-icons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {FontAwesome5} from '@expo/vector-icons';
+import Loading from '../components/Loading';
 
 
 
@@ -29,7 +32,8 @@ const  UserLogin =({navigation}) => {
     sendver: false,
     Validcode: true,
     SendtoCreate: false,
-    Valid: true
+    Valid: true,
+    isLoading:false
   })
 
  
@@ -76,7 +80,10 @@ const  UserLogin =({navigation}) => {
       })
       }
     else {
-    
+      setdata({
+        ... data,
+        isLoading:true
+      })
     try {
     const credential = firebase.auth.PhoneAuthProvider.credential(
       verificationId,
@@ -88,6 +95,10 @@ const  UserLogin =({navigation}) => {
         var query = firebase.database().ref('User/' + userId);
         query.once("value").then(function(result){
           const userData = result.val();
+          setdata({
+            ... data,
+            isLoading:false
+          })
           if (userData){
             navigation.navigate("UserHomePage")
            }
@@ -104,6 +115,7 @@ const  UserLogin =({navigation}) => {
           ... data,
           Valid: false,
           Validcode: true,
+          isLoading:false
         });
       })
 
@@ -126,15 +138,13 @@ const  UserLogin =({navigation}) => {
   
   return (  
 
-    <KeyboardAvoidingView 
-    style={styles.container}
-    behavior="padding">
+    <KeyboardAwareScrollView >
 
     <View style={styles.container}>
         <FirebaseRecaptchaVerifierModal ref={recaptchaVerifier} firebaseConfig={firebase.app().options}/>
-        
         <View style={styles.header}>
-       <StatusBar backgroundColor='#009387' barStyle="light=content"/>
+       {/* <StatusBar backgroundColor='#009387' barStyle="light=content"/> */}
+
         <Animatable.Image 
          animation="bounceIn"
          duraton="1500"
@@ -146,8 +156,15 @@ const  UserLogin =({navigation}) => {
 
       <Modal visible={data.complet} transparent={true}>
           <View backgroundColor= "#fff" flex= {1} >
+          <StatusBar backgroundColor='#009387' barStyle="light=content"/>
+          
           <View style={styles.header}>
-       <StatusBar backgroundColor='#009387' barStyle="light=content"/>
+          <FontAwesome5 name="chevron-right" size={24} color="#161924" style={Platform.OS === 'android' && 
+              NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
+              NativeModules.I18nManager.localeIdentifier === 'ar_SA' || 
+              NativeModules.I18nManager.localeIdentifier === 'ar_AE'?styles.iconAndroid:styles.iconIos}
+              onPress={()=>navigation.goBack()}
+              />
         <Animatable.Image 
          animation="bounceIn"
          duraton="1500"
@@ -249,6 +266,8 @@ const  UserLogin =({navigation}) => {
 
            <TouchableOpacity onPress={() => confirmCode()}>
            <View style={styles.button2}>
+           {data.isLoading ?
+                            <Loading></Loading>: 
            <LinearGradient 
               colors={['#AFB42B','#827717']}
               style={styles.signIn2}> 
@@ -256,6 +275,7 @@ const  UserLogin =({navigation}) => {
              
 
             </LinearGradient>
+            }
             </View>
             </TouchableOpacity> 
 
@@ -264,7 +284,7 @@ const  UserLogin =({navigation}) => {
       
       </Animatable.View>
       </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
 
       
     );
@@ -398,7 +418,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 100,
     fontWeight: 'bold',
     color: 'black'
-  }
+  },
+  iconIos:{
+    position: 'absolute',
+    right: 16,
+    top:25
+},
+iconAndroid:{
+  position: 'absolute',
+  left: 16,
+  top:20
+}
 });
 
 export default UserLogin

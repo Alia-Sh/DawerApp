@@ -105,6 +105,7 @@ const UserEditProfile  = ({navigation,route})=>{
                 Name: Name,
                 PhoneNumber: Phone,      
             }).then(function (){
+                if(Picture!=""){
                 uploadImage(Picture,userId)
                 .then(()=> {
                     setData({
@@ -120,6 +121,13 @@ const UserEditProfile  = ({navigation,route})=>{
                     });
                     Alert.alert(error.message);
                 });
+            }else{
+                setData({
+                    ...data,
+                    isLoading:false
+                });
+                navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+            }
             })
         }
     }
@@ -132,25 +140,6 @@ const UserEditProfile  = ({navigation,route})=>{
             aspect: [4, 3]
           })
           if (!response.cancelled) {
-            // setData({
-            //     ...data,
-            //     isLoading:true
-            // });
-            // var userId = firebase.auth().currentUser.uid;
-            // uploadImage(response.uri,userId)
-            // .then(()=> {
-            //     setData({
-            //         ...data,
-            //         isLoading:false
-            //     });
-            //    retriveImage();
-            // }).catch((error)=> {
-            //     setData({
-            //         ...data,
-            //         isLoading:false
-            //     });
-            //     Alert.alert(error.message);
-            // });
             setPicture(response.uri);
           }
         } catch (error) {

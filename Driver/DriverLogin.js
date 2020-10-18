@@ -15,6 +15,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Loading from '../components/Loading';
+import {FontAwesome5} from '@expo/vector-icons';
 
 
 const DriverLogin =({navigation}) => {
@@ -204,7 +205,12 @@ const createUser=()=>{
         <StatusBar backgroundColor='#009387' barStyle="light=content"/>
 
         <View style={styles.header}>
-
+        <FontAwesome5 name="chevron-right" size={24} color="#161924" style={Platform.OS === 'android' && 
+              NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
+              NativeModules.I18nManager.localeIdentifier === 'ar_SA' || 
+              NativeModules.I18nManager.localeIdentifier === 'ar_AE'?styles.iconAndroid:styles.iconIos}
+              onPress={()=>navigation.goBack()}
+              />
             <Animatable.Image 
             animation="bounceIn"
             duraton="1500"
@@ -440,7 +446,17 @@ const styles = StyleSheet.create({
   textSign: {
       fontSize: 18,
       fontWeight: 'bold'  
-  }
+  },
+  iconIos:{
+    position: 'absolute',
+    right: 16,
+    top:25
+},
+iconAndroid:{
+  position: 'absolute',
+  left: 16,
+  top:20
+}
 });
 
 export default DriverLogin
