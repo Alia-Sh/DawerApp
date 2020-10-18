@@ -198,7 +198,7 @@ const UserEditProfile  = ({navigation,route})=>{
                     </View>
 
                     <View style={{alignItems:"center",margin:10}}>
-                        <Title>{UserName}</Title>
+                        <Title>@{UserName}</Title>
                     </View>
 
                     <Card style={styles.action}>

@@ -88,7 +88,7 @@ const DriverViewProfile = ({navigation})=>{
                 </View>
 
                 <View style={{alignItems:"center",margin:15}}>
-                    <Title>{UserName}</Title>
+                    <Title>@{UserName}</Title>
                 </View>
 
                 <Card style={styles.mycard}>

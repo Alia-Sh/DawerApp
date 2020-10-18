@@ -335,7 +335,7 @@ import Loading from '../components/Loading';
             setAlert({
                 ...alert,
                 Title:'',
-                Message:'تمت إرسال الطلب بنجاح',
+                Message:'تم إرسال الطلب بنجاح',
                 jsonPath:"success",
                 alertVisible:true,
             });

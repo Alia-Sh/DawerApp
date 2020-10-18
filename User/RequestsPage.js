@@ -78,7 +78,7 @@ const  RequestsPage= () =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.text}>نوع المادة</Title>
+            <Title style={styles.text}> :نوع المادة</Title>
             <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
             </View>
             <View style={{flexDirection:Platform.OS === 'android' &&
@@ -86,7 +86,7 @@ const  RequestsPage= () =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.text}> الكمية</Title>
+            <Title style={styles.text}> :الكمية</Title>
             <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
             </View>
             <Image
@@ -179,7 +179,7 @@ const  RequestsPage= () =>{
                          onPress={()=>{ setDetailsModal(false) }}
                          />
                          <Title style={[styles.text,{color:'#424242'}]}>تفاصيل الطلب</Title>
-                         <Title style={[styles.text,{marginTop:5}]}>تاريخ و وقت الاستلام </Title>
+                         <Title style={[styles.text,{marginTop:5}]}> :تاريخ و وقت الاستلام </Title>
                          <Title style={{fontSize:16,textAlign:"right"}}>{tempItem.DateAndTime}</Title>
                                 <FlatList
                                     data={DetailsList}

@@ -10,7 +10,7 @@ export function DrawerContent(props){
 
     const logout=()=>{
         firebase.auth().signOut().then(function() {
-            props.navigation.navigate("DriverLogin")
+            props.navigation.navigate("ChooseBetweenUsers")
           }).catch(function(error) {
               console.log(error)
           });
