@@ -31,6 +31,7 @@ import RangeSlider from 'rn-range-slider';
 import WeekdayPicker from "react-native-weekday-picker";
 import {CheckBox} from "native-base";
 
+
 export default class AddFacility extends Component {
 
     constructor(props) {
@@ -40,8 +41,9 @@ export default class AddFacility extends Component {
             Category:[],
             Logo:"",
             Name:"",
-            Materials:"",
-            ContactInfo:"",
+            ContactInfo:[],
+            Phone:"",
+            Email:"",
             Weekday:{
               Sunday:false,
               Monday:false,
@@ -56,10 +58,11 @@ export default class AddFacility extends Component {
             data:{
               isValidName: true,
               LocationExist: true,
-              isValidMaterials: true,
               isValidWorkingD: true,
               isValidWorkingH: true,
               isValidContact: true,
+              isValidPhone:true,
+              isValidEmail:true,
               isValidCategory:true,
               EroorMessage:'',
             },
@@ -129,34 +132,100 @@ export default class AddFacility extends Component {
       }
     }
 
-    checkValidMaterials=()=>{
-      if(this.state.Materials==""){
+    checkValidPhone=()=>{
+      if(this.state.Phone!=""){
+        if(this.state.Phone.length<7){
           this.setState(prevState => {
             return {
               data: {
                 ...prevState.data,
-                isValidMaterials:false
+                isValidPhone:false
               }
             };
           });
           return false; 
-      }else{
-          if(!this.state.data.isValidMaterials){   
+        }
+      else{
+        if(!this.state.data.isValidPhone){   
+          this.setState(prevState => {
+            return {
+              data: {
+                ...prevState.data,
+                isValidPhone:true
+              }
+            };
+          });                 
+        }
+          return true;
+      }  
+    }else{
+      if(!this.state.data.isValidPhone){   
+        this.setState(prevState => {
+          return {
+            data: {
+              ...prevState.data,
+              isValidPhone:true
+            }
+          };
+        });                 
+      }
+        return true;
+    }  
+  }
+    
+    checkValidEmail=()=>{
+      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if(this.state.Email!=""){
+          if(reg.test(this.state.Email) === false){
             this.setState(prevState => {
               return {
                 data: {
                   ...prevState.data,
-                  isValidMaterials:true
+                  isValidEmail:false
                 }
               };
-            });                 
-          }
-          return true;
+            });
+          return false; 
+      }else{
+        if(!this.state.data.isValidEmail){   
+          this.setState(prevState => {
+            return {
+              data: {
+                ...prevState.data,
+                isValidEmail:true
+              }
+            };
+          });                 
+        }
+        return true;        
       }
+    }else{
+      if(!this.state.data.isValidEmail){   
+        this.setState(prevState => {
+          return {
+            data: {
+              ...prevState.data,
+              isValidEmail:true
+            }
+          };
+        });                 
+      }
+      return true;        
     }
+  }
 
     checkValidContactInfo=()=>{
-      if(this.state.ContactInfo==""){
+      this.setState({ContactInfo:[]})
+      if( this.checkValidPhone() && this.checkValidEmail()){
+        if(this.state.Phone!=""){
+          var tempPhone={Name:"رقم الهاتف",value:this.state.Phone}
+          this.state.ContactInfo.push(tempPhone)
+        }
+        if(this.state.Email!=""){
+          var tempEmail={Name:"البريد الإلكتروني",value:this.state.Email}
+          this.state.ContactInfo.push(tempEmail)
+        }
+        if(this.state.ContactInfo.length==0){
           this.setState(prevState => {
             return {
               data: {
@@ -165,9 +234,9 @@ export default class AddFacility extends Component {
               }
             };
           });
-          return false; 
-      }else{
-          if(!this.state.data.isValidContact){   
+          return false    
+        }else{
+          if(!this.state.data.isValidContact){
             this.setState(prevState => {
               return {
                 data: {
@@ -175,11 +244,12 @@ export default class AddFacility extends Component {
                   isValidContact:true
                 }
               };
-            });                 
+            });
           }
           return true;
-      }
+        } 
     }
+  }
 
     checkWorkingD=()=>{
       this.setState({WorkingD:[]})
@@ -303,7 +373,7 @@ export default class AddFacility extends Component {
       this.setState({Category:[]})
       for (var i in this.state.AllCategory) {
         if (this.state.AllCategory[i].checked) {
-          var tempId=this.state.AllCategory[i].CategoryId
+          var tempId={CategoryId:this.state.AllCategory[i].CategoryId,Name:this.state.AllCategory[i].Name}
           this.state.Category.push(tempId)
         }
       }
@@ -369,18 +439,18 @@ export default class AddFacility extends Component {
     }
 
     Add=()=>{
-      if(this.checkValidName() && this.checkValidMaterials() && this.checkValidContactInfo() && this.checkWorkingD() && this.checkValidWorkingH() && this.checkLocationExist() && this.checkValidCategory()){
+      if(this.checkValidName() && this.checkValidCategory() && this.checkValidContactInfo() && this.checkWorkingD() && this.checkValidWorkingH() && this.checkLocationExist()){
         this.setState({isLoading:true})
         var FacilityId=firebase.database().ref('RecyclingFacility/').push().getKey()
         for(var i in this.state.Category){
-          var CategoryId=this.state.Category[i]
+          var CategoryId=this.state.Category[i].CategoryId
           firebase.database().ref('RecyclingFacility/'+CategoryId+"/"+FacilityId).set({
             Name:this.state.Name,
             WorkingDays:this.state.WorkingD,
             WorkingHours:this.state.WorkingH,
             ContactInfo:this.state.ContactInfo,
             Location:this.state.Location,
-            AcceptedMaterials:this.state.Materials
+            AcceptedMaterials:this.state.Category
           }).then((result)=>{
             if(this.state.Logo!=""){
               this.uploadImage(this.state.Logo,FacilityId)
@@ -417,7 +487,7 @@ export default class AddFacility extends Component {
             },4000)
        
       }else{
-        
+
       }
     }
 
@@ -488,25 +558,34 @@ export default class AddFacility extends Component {
 
                     <View>
                         <Text style={styles.text_footer}>المواد المقبولة:</Text>
-                        <View style={styles.action}>
-                            <TextInput style={styles.textInput} 
-                                label="Materials"
-                                placeholder="ادخل المواد المستقبلة من المنشأة مثل {زجاج،ورق..}"
-                                autoCapitalize="none"
-                                onChangeText={(val)=>this.setState({Materials:val})}
-                                textAlign= 'right'
-                                onEndEditing={() => this.checkValidMaterials()}
-                                multiline
-                                numberOfLines={4}
-                                >
-                            </TextInput>  
-                        </View>
+                        <View style={styles.item}>
+                        {this.state.AllCategory.map((item) => 
+                          <View style={{flexDirection: Platform.OS === 'android' && 
+                          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse'}}>
+                            <CheckBox color="#9E9D24"  checked={item.checked} onPress={()=>this.onCheckChanged(item.CategoryId)}/>
+                            <Text style={Platform.OS === 'android' && 
+                                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+                              {...styles.checkBoxTxtAndroid,
+                                  color:item.checked?"#9E9D24":"gray",
+                                  fontWeight:item.checked? "bold" :"normal"
+                              }:{...styles.checkBoxTxtIos,
+                                color:item.checked?"#9E9D24":"gray",
+                                fontWeight:item.checked? "bold" :"normal"
+                            }}
+                            >{item.Name}</Text>  
+                          </View>
+                        )}
+                    </View>
 
-                        {this.state.data.isValidMaterials ?
+                    {this.state.data.isValidCategory ?
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب ادخال المواد المقبولة</Text>
+                            <Text style={styles.errorMsg}>يجب اضافة المنشأة لفئة واحدة على الأقل</Text>
                             </Animatable.View>
                         }
 
@@ -514,7 +593,7 @@ export default class AddFacility extends Component {
 
                     <View>
                       <Text style={styles.text_footer}>معلومات التواصل:</Text>
-                          <View style={styles.action}>
+                          {/* <View style={styles.action}>
                               <TextInput style={styles.textInput} 
                                   label="ContactInfo"
                                   placeholder="ادخل معلومات التواصل"
@@ -526,7 +605,54 @@ export default class AddFacility extends Component {
                                   numberOfLines={4}
                                   >
                               </TextInput>  
-                          </View>
+                          </View> */}
+
+                        <View style={{padding:15}}>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.textStyle}>رقم الهاتف:</Text>
+                                <View style={[styles.action]}>
+                                <TextInput style={[styles.textInput,{marginTop:-5}]} 
+                                    autoCapitalize="none"
+                                    textAlign= 'right'
+                                    keyboardType="number-pad" //number Input
+                                    onChangeText={(val)=>this.setState({Phone:val})}
+                                    onEndEditing={() => this.checkValidPhone()}
+                                    placeholder="ادخل رقم الهاتف للمنشأة "
+                                    maxLength={10}>
+                                </TextInput> 
+                                </View> 
+                            </View> 
+                            {this.state.data.isValidPhone ?
+                              null 
+                              : 
+                              <Animatable.View animation="fadeInRight" duration={500}>
+                              <Text style={styles.errorMsg}>يجب ادخال رقم الهاتف بشكل صحيح</Text>
+                              </Animatable.View>
+                          } 
+
+                            <View style={styles.cardContent}>
+                                <Text style={styles.textStyle}>البريد الإلكتروني:</Text>
+                                <View style={styles.action}>
+                                <TextInput style={[styles.textInput,{marginTop:-5}]} 
+                                    label="Email"
+                                    autoCapitalize="none"
+                                    textAlign= 'right'
+                                    onChangeText={(val)=>this.setState({Email:val})}
+                                    onEndEditing={() => this.checkValidEmail()}
+                                    placeholder="ادخل البريد الإلكتروني للمنشأة "
+                                    >
+                                </TextInput> 
+                                </View> 
+                            </View> 
+                            {this.state.data.isValidEmail ?
+                              null 
+                              : 
+                              <Animatable.View animation="fadeInRight" duration={500}>
+                              <Text style={styles.errorMsg}>يجب ادخال البريد الإلكتروني بشكل صحيح</Text>
+                              </Animatable.View>
+                          } 
+                        </View> 
+
 
                           {this.state.data.isValidContact ?
                               null 
@@ -779,38 +905,6 @@ export default class AddFacility extends Component {
                             ) }
                     </View>
 
-                    <Text style={styles.text_footer}>إضافة المنشأة إلى فئة:</Text>
-                    <View style={styles.item}>
-                        {this.state.AllCategory.map((item) => 
-                          <View style={{flexDirection: Platform.OS === 'android' && 
-                          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse'}}>
-                            <CheckBox color="#9E9D24"  checked={item.checked} onPress={()=>this.onCheckChanged(item.CategoryId)}/>
-                            <Text style={Platform.OS === 'android' && 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                              {...styles.checkBoxTxtAndroid,
-                                  color:item.checked?"#9E9D24":"gray",
-                                  fontWeight:item.checked? "bold" :"normal"
-                              }:{...styles.checkBoxTxtIos,
-                                color:item.checked?"#9E9D24":"gray",
-                                fontWeight:item.checked? "bold" :"normal"
-                            }}
-                            >{item.Name}</Text>  
-                          </View>
-                        )}
-                    </View>
-
-                    {this.state.data.isValidCategory ?
-                            null 
-                            : 
-                            <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب اضافة المنشأة لفئة واحدة على الأقل</Text>
-                            </Animatable.View>
-                        }
-
                     <View style={styles.button}> 
                         {this.state.isLoading? <Loading></Loading>:  
                             <Button 
@@ -886,7 +980,7 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: '#f2f2f2',
       paddingRight:3,
-      paddingLeft:3
+      paddingLeft:3,
     },  
     feather: {
       flex: 1,
@@ -947,7 +1041,7 @@ const styles = StyleSheet.create({
   },
     button:{
       alignItems: 'center',
-      margin: 30
+      margin: 15
     },
     profile_image:{
       width:150,
@@ -974,5 +1068,17 @@ const styles = StyleSheet.create({
   },
   checkBoxTxtAndroid:{
     marginLeft:20
-  }
+  },
+  cardContent:{
+    flexDirection: Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
+    // paddingTop:10,
+    // paddingLeft:10,
+},
+textStyle:{
+  color: '#9E9E9E',
+  fontSize: 15,
+}
 });
