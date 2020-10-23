@@ -27,10 +27,8 @@ import {Card,Title,FAB} from 'react-native-paper';
 import {FontAwesome5} from '@expo/vector-icons';
 import Google from '../components/Google';
 import moment from 'moment';
-import RangeSlider from 'rn-range-slider';
-import WeekdayPicker from "react-native-weekday-picker";
 import {CheckBox} from "native-base";
-
+import DateTimePicker from "react-native-modal-datetime-picker";
 
 export default class AddFacility extends Component {
 
@@ -54,7 +52,10 @@ export default class AddFacility extends Component {
               Saturday:false,
             },
             WorkingD:[],
-            WorkingH:"",
+            WorkingH:{
+              startTime: "",
+              endTime:"", 
+            },
             data:{
               isValidName: true,
               LocationExist: true,
@@ -65,6 +66,9 @@ export default class AddFacility extends Component {
               isValidEmail:true,
               isValidCategory:true,
               EroorMessage:'',
+              isStartTime:false,
+              isValidStartTime:true,
+              isValidEndTime:true
             },
             Location:{
               address:"",
@@ -78,7 +82,8 @@ export default class AddFacility extends Component {
               Message:'',
               jsonPath:'', 
             },
-            isLoading:false,   
+            isLoading:false, 
+            isDatePickerVisible: false,
         };
     }
 
@@ -251,6 +256,97 @@ export default class AddFacility extends Component {
     }
   }
 
+  hideDatePicker = () => {
+    this.setState({ isDatePickerVisible: false });
+  };
+
+  handleDatePicked = time => {
+    if(this.state.data.isStartTime){
+      this.setState(prevState => {
+        return {
+          WorkingH: {
+            ...prevState.WorkingH,
+            startTime: moment(time).format('hh:mm A')
+          }
+        };
+      });
+    }else{
+      this.setState(prevState => {
+        return {
+          WorkingH: {
+            ...prevState.WorkingH,
+            endTime: moment(time).format('hh:mm A')
+          }
+        };
+      }); 
+    }
+    this.hideDatePicker();
+  };
+
+  showDatePicker = (isStartTime) => {
+    this.setState(prevState => {
+      return {
+        data: {
+          ...prevState.data,
+          isStartTime:isStartTime
+        }
+      };
+    });
+    this.setState({ isDatePickerVisible: true });
+  };
+
+  checkValidStartTime=()=>{
+    if(this.state.WorkingH.startTime==""){
+      this.setState(prevState => {
+        return {
+          data: {
+            ...prevState.data,
+            isValidStartTime:false
+          }
+        };
+      });
+      return false; 
+  }else{
+      if(!this.state.data.isValidStartTime){   
+        this.setState(prevState => {
+          return {
+            data: {
+              ...prevState.data,
+              isValidStartTime:true
+            }
+          };
+        });                 
+      }
+      return true;
+  }
+  }
+
+  checkValidEndTime=()=>{
+    if(this.state.WorkingH.endTime==""){
+      this.setState(prevState => {
+        return {
+          data: {
+            ...prevState.data,
+            isValidEndTime:false
+          }
+        };
+      });
+      return false; 
+  }else{
+      if(!this.state.data.isValidEndTime){   
+        this.setState(prevState => {
+          return {
+            data: {
+              ...prevState.data,
+              isValidEndTime:true
+            }
+          };
+        });                 
+      }
+      return true;
+  }
+  }
+
     checkWorkingD=()=>{
       this.setState({WorkingD:[]})
 
@@ -315,33 +411,35 @@ export default class AddFacility extends Component {
   }
   
 
-    checkValidWorkingH=()=>{
-      if(this.state.WorkingH==""){
+  checkValidWorkingH=()=>{
+    if(this.checkValidStartTime() && this.checkValidEndTime()){
+      var beginningTime = moment(this.state.WorkingH.startTime, 'hh:mma');
+      var endTime = moment(this.state.WorkingH.endTime, 'hh:mma');
+      if(endTime.isBefore(beginningTime)){
+        this.setState(prevState => {
+          return {
+            data: {
+              ...prevState.data,
+              isValidWorkingH:false
+            }
+          };
+        }); 
+        return false
+      }else{
+        if(!this.state.data.isValidWorkingH){   
           this.setState(prevState => {
             return {
               data: {
                 ...prevState.data,
-                isValidWorkingH:false
+                isValidWorkingH:true
               }
             };
-          });
-          console.log(this.state.WorkingD.length);
-          return false; 
-      }else{
-          if(!this.state.data.isValidWorkingH){   
-            this.setState(prevState => {
-              return {
-                data: {
-                  ...prevState.data,
-                  isValidWorkingH:true
-                }
-              };
-            });              
-          }
-          console.log(this.state.WorkingD.length);
-          return true;   
+          });              
+        }
+        return true;   
       }
     }
+  }
 
     checkLocationExist=()=>{
       if(this.state.Location.address==""){
@@ -485,9 +583,7 @@ export default class AddFacility extends Component {
                 const { navigation } = this.props;
                 navigation.navigate("FacilityHome"); 
             },4000)
-       
       }else{
-
       }
     }
 
@@ -862,22 +958,67 @@ export default class AddFacility extends Component {
                     <View>
                     <Text style={styles.text_footer}>ساعات العمل:</Text>
                         <View style={styles.action}>
-                            <TextInput style={styles.textInput} 
-                                label="WorkingH"
-                                placeholder="ادخل ساعات العمل"
+                        <Text style={[styles.textStyle,{paddingRight:5,fontSize:18}]}>من:</Text>
+                            <TextInput style={[styles.textInput,{margin:0,marginRight:5,marginTop:5}]} 
+                                value={this.state.WorkingH.startTime}
+                                label="startTime"
+                                placeholder="ادخل وقت بدا العمل"
                                 autoCapitalize="none"
-                                onChangeText={(val)=>this.setState({WorkingH:val})}
+                                onChangeText={(val)=>his.setState(prevState => {
+                                                return {
+                                                  WorkingH: {
+                                                  ...prevState.WorkingH,
+                                                  startTime:val
+                                                  }
+                                                };
+                                              })}
+                                onFocus={()=>this.showDatePicker(true)}
                                 textAlign= 'right'
-                                onEndEditing={() => this.checkValidWorkingH()}
-                                >
-                            </TextInput>  
+                                onEndEditing={() => this.checkValidStartTime()}
+                            >
+                            </TextInput> 
+                            <Text style={[styles.textStyle,{paddingRight:5,fontSize:18}]}>الى:</Text>
+                            <TextInput style={[styles.textInput,{margin:0,marginRight:5,marginTop:5}]}
+                                value={this.state.WorkingH.endTime}
+                                label="endTime"
+                                placeholder="ادخل وقت انتهاء العمل"
+                                autoCapitalize="none"
+                                onChangeText={(val)=>his.setState(prevState => {
+                                  return {
+                                    WorkingH: {
+                                    ...prevState.WorkingH,
+                                    endTime:val
+                                    }
+                                  };
+                                })}
+                                onFocus={()=>this.showDatePicker(false)}
+                                textAlign= 'right'
+                                onEndEditing={() => this.checkValidEndTime()}
+                            >
+                            </TextInput> 
                         </View>
+
+                        {this.state.data.isValidStartTime ?
+                          null 
+                          : 
+                          <Animatable.View animation="fadeInRight" duration={500}>
+                          <Text style={styles.errorMsg}>يجب ادخال وقت بدء العمل</Text>
+                          </Animatable.View>
+                        } 
+
+                        {this.state.data.isValidEndTime ?
+                          null 
+                          : 
+                          <Animatable.View animation="fadeInRight" duration={500}>
+                          <Text style={styles.errorMsg}>يجب ادخال وقت انتهاء العمل</Text>
+                          </Animatable.View>
+                        } 
 
                         {this.state.data.isValidWorkingH ?
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب ادخال ساعات العمل للمنشأة</Text>
+                            <Text style={styles.errorMsg}>يجب ادخال ساعات العمل بشكل صحيح</Text>
                             </Animatable.View>
                         }
                     </View>
@@ -925,8 +1066,18 @@ export default class AddFacility extends Component {
                     <AlertView title={this.state.alert.Title} message={this.state.alert.Message} jsonPath={this.state.alert.jsonPath}></AlertView>
                     :
                     null
-                }      
+                }     
             </KeyboardAwareScrollView>
+            <DateTimePicker
+                    mode="time"
+                    isVisible={this.state.isDatePickerVisible}
+                    onConfirm={this.handleDatePicked}
+                    onCancel={this.hideDatePicker}
+                    cancelTextIOS="الغاء"
+                    confirmTextIOS="تأكيد"
+                    datePickerModeAndroid={'spinner'}
+                    is24Hour={false}
+                /> 
           </View>
         )
     }
