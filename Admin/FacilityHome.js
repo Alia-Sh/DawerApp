@@ -27,7 +27,8 @@ const HomeScreen = ({navigation})=>{
 
   // fetch all facilities Names ??
   const fetchData=()=>{
-    firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
+    // firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
+      firebase.database().ref('/RecyclingFacility/').on('value',snapshot=>{
       const Data = snapshot.val();
       if(Data){
         var li = []
@@ -68,6 +69,8 @@ const HomeScreen = ({navigation})=>{
 },[])
 
 const renderList = ((item)=>{
+  console.log("in ");
+  console.log(item);
   return(
       <Card style={styles.mycard}>
         <View style={styles.cardContent}>
@@ -114,15 +117,9 @@ const renderList = ((item)=>{
 
                     <Text style={styles.text_header}>المنشــآت</Text>
                     
-                    <TouchableOpacity  
-                      onPress={()=>navigation.goBack()}
-                      style={{position:'absolute',left:10}}>
-                    <Image
-                      source={require('../assets/AdminIcons/left-arrow.png')}
-                      style={styles.back}
-                      resizeMode="stretch"
-                    />
-                    </TouchableOpacity>
+                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} 
+                                  onPress={()=>navigation.goBack()}/>
+
 
                   </View>
 
@@ -252,6 +249,12 @@ const styles = StyleSheet.create({
       fontSize: 18,
       fontWeight: 'bold' ,
       textAlign :'center',
-    }   
+    },
+    icon:{
+      position: 'absolute',
+      marginTop:20,
+      left: 16
+    },
+  
 });
 export default HomeScreen;

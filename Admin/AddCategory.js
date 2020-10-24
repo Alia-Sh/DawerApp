@@ -62,7 +62,7 @@ const AddCategory=(props)=>{
                 // Check if the Category  exist. 
                 if (Data) {
                     console.log("Category exist!");
-                    // Check if the Driver doesnt exist.
+                    // Check if the Category doesnt exist.
                     setData({
                         ...data,
                         isLoading:false,
@@ -72,7 +72,7 @@ const AddCategory=(props)=>{
                 }else{
                     firebase.database().ref('Category/').push({
                         Name: Category,
-                        CategoryId:firebase.database().ref('Category/').push().getKey()
+                        // CategoryId:firebase.database().ref('Category/').push().getKey()
                     }).then((data)=>{
                         //success callback
                         setData({
@@ -102,7 +102,7 @@ const AddCategory=(props)=>{
                         //error callback
                         setData({
                             ...data,
-                            isLoading:true 
+                            isLoading:false 
                         })
                         Alert.alert(error.message)
                         console.log('error ' , error)
@@ -163,7 +163,7 @@ const AddCategory=(props)=>{
                                     placeholder="ادخل اسم الفئة"
                                     autoCapitalize="none"
                                     onChangeText={(val)=>setCategory(val)}
-                                    textAlign= 'right'
+                                    // textAlign= 'right'
                                     onEndEditing={() => checkValidCategory()}
                                     ref={data.CategoryInput}
                                 >
@@ -262,10 +262,10 @@ const styles=StyleSheet.create({
     },
     textInput: {
         marginTop: Platform.OS === 'ios' ? 0 : 0,
-        paddingLeft: 10,
+        // paddingLeft: 10,
         color: '#05375a',
-        textAlign: 'right',
-        marginRight:10  
+        // textAlign: 'right',
+        // marginRight:10  
     },
     header:{
         flexDirection:'row',

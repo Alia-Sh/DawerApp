@@ -11,8 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import {Card,Title,FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
-import AddCategory from './AddCategory'
-import DeleteCategory from './DeleteCategory'
+import AddCategory from './AddCategory';
+import DeleteCategory from './DeleteCategory';
+import {FontAwesome5} from '@expo/vector-icons'
 
 const HomeScreen = ({navigation})=>{
   const [modalVisible,setModalVisible]=useState(false);
@@ -101,15 +102,8 @@ const HomeScreen = ({navigation})=>{
 
                     <Text style={styles.text_header}>الفـئـــات</Text>
                     
-                    <TouchableOpacity  
-                      onPress={()=>navigation.goBack()}
-                      style={{position:'absolute',left:10}}>
-                    <Image
-                      source={require('../assets/AdminIcons/left-arrow.png')}
-                      style={styles.back}
-                      resizeMode="stretch"
-                    />
-                    </TouchableOpacity>
+                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} 
+                                  onPress={()=>navigation.goBack()}/>
 
                   </View>
 
@@ -243,6 +237,11 @@ const styles = StyleSheet.create({
       textAlign :'right',
       marginRight:15,
       marginLeft:15
-    }   
+    },
+    icon:{
+      position: 'absolute',
+      marginTop:20,
+      left: 16
+    },  
 });
 export default HomeScreen;

@@ -331,7 +331,7 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل اسم السائق"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setName(val)}
-                                textAlign= 'right'
+                                // textAlign= 'right'
                                 onEndEditing={() => checkValidName()}
                                 >
                             </TextInput>  
@@ -352,7 +352,7 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل اسم المستخدم"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setUserName(val)}
-                                textAlign= 'right'
+                                // textAlign= 'right'
                                 onEndEditing={() => checkValidUserName()}
                                 >
                             </TextInput>  
@@ -373,7 +373,7 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل البريد الإلكتروني"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setEmail(val)}
-                                textAlign= 'right'
+                                // textAlign= 'right'
                                 onEndEditing={() => checkValidEmail()}
                                 >
                             </TextInput>  
@@ -394,7 +394,7 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل رقم الهاتف"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setPhone(val)}
-                                textAlign= 'right'
+                                // textAlign= 'right'
                                 onEndEditing={() => checkValidPhone()}
                                 keyboardType="number-pad" //number Input
                                 maxLength={10}
@@ -417,7 +417,7 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل كلمة المرور"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setPassword(val)}
-                                textAlign= 'right'
+                                // textAlign= 'right'
                                 onEndEditing={() => checkValidPassword()}
                                 >
                             </TextInput>  
@@ -527,7 +527,7 @@ import Loading from '../components/Loading';
         marginTop: Platform.OS === 'ios' ? 0 : -12,
         paddingLeft: 10,
         color: '#05375a',
-        textAlign: 'right',
+        // textAlign: 'right',
         marginRight:'8%'  
     },
     action: {

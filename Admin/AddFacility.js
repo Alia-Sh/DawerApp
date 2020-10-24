@@ -539,53 +539,159 @@ export default class AddFacility extends Component {
     Add=()=>{
       if(this.checkValidName() && this.checkValidCategory() && this.checkValidContactInfo() && this.checkWorkingD() && this.checkValidWorkingH() && this.checkLocationExist()){
         this.setState({isLoading:true})
-        var FacilityId=firebase.database().ref('RecyclingFacility/').push().getKey()
-        for(var i in this.state.Category){
-          var CategoryId=this.state.Category[i].CategoryId
-          firebase.database().ref('RecyclingFacility/'+CategoryId+"/"+FacilityId).set({
-            Name:this.state.Name,
-            WorkingDays:this.state.WorkingD,
-            WorkingHours:this.state.WorkingH,
-            ContactInfo:this.state.ContactInfo,
-            Location:this.state.Location,
-            AcceptedMaterials:this.state.Category
-          }).then((result)=>{
-            if(this.state.Logo!=""){
-              this.uploadImage(this.state.Logo,FacilityId)
-            }
-          }).catch((error)=>{
-            Alert.alert(error.message)
-          })
-        }
-          this.setState({isLoading:false})
-          this.setState(
-            prevState => {
-              return {
-                alert: {
-                  ...prevState.alert,
-                  alertVisible:true,
-                  Title:"اضافة منشأة",
-                  Message:"تم اضافة المنشأة بنجاح",
-                  jsonPath:"suss"
-                }
-              };
-            })
-            setTimeout(()=>{
-              this.setState(
-                prevState => {
-                  return {
-                    alert: {
-                      ...prevState.alert,
-                      alertVisible:false,
-                    }
-                  };
+        firebase.database().ref("RecyclingFacility").orderByChild("Name")
+        .equalTo(this.state.Name.toLowerCase()).once("value", snapshot => {
+            const Data = snapshot.val();
+            // Check if the Category  exist. 
+            if (Data) {
+                console.log("Category exist!");
+                // Check if the Category doesnt exist.
+                this.setState({isLoading:false})
+                this.setState(
+                  prevState => {
+                    return {
+                      alert: {
+                        ...prevState.alert,
+                        alertVisible:true,
+                        Title:"اضافة منشأة",
+                        Message:"المنشأة مضافة بالفعل",
+                        jsonPath:"Error"
+                      }
+                    };
+                  })
+                  setTimeout(()=>{
+                    this.setState(
+                      prevState => {
+                        return {
+                          alert: {
+                            ...prevState.alert,
+                            alertVisible:false,
+                          }
+                        };
+                      })
+                  },4000)
+            }else{
+              var FacilityId=firebase.database().ref('RecyclingFacility/').push().getKey()
+              for(var i in this.state.Category){
+                var CategoryId=this.state.Category[i].CategoryId
+                firebase.database().ref('Category/'+CategoryId+'/RecyclingFacility/'+FacilityId).set({
+                  Name:this.state.Name,
+                  WorkingDays:this.state.WorkingD,
+                  WorkingHours:this.state.WorkingH,
+                  ContactInfo:this.state.ContactInfo,
+                  Location:this.state.Location,
+                  AcceptedMaterials:this.state.Category
+                }).then((result)=>{
+                  // firebase.database().ref('RecyclingFacility/'+FacilityId).set({
+                  //   Name:this.state.Name,
+                  //   WorkingDays:this.state.WorkingD,
+                  //   WorkingHours:this.state.WorkingH,
+                  //   ContactInfo:this.state.ContactInfo,
+                  //   Location:this.state.Location,
+                  //   AcceptedMaterials:this.state.Category
+                  // })
+                  // if(this.state.Logo!=""){
+                  //   this.uploadImage(this.state.Logo,FacilityId)
+                  // }
+                }).catch((error)=>{
+                  Alert.alert(error.message)
                 })
-                const { navigation } = this.props;
-                navigation.navigate("FacilityHome"); 
-            },4000)
+              }
+
+              firebase.database().ref('RecyclingFacility/'+FacilityId).set({
+                Name:this.state.Name,
+                WorkingDays:this.state.WorkingD,
+                WorkingHours:this.state.WorkingH,
+                ContactInfo:this.state.ContactInfo,
+                Location:this.state.Location,
+                AcceptedMaterials:this.state.Category
+                }).then((data)=>{
+                    //success callback
+                    if(this.state.Logo!=""){
+                      this.uploadImage(this.state.Logo,FacilityId)
+                    }
+                    this.setState({isLoading:false})
+                    setTimeout(()=>{
+                      this.setState(
+                        prevState => {
+                          return {
+                            alert: {
+                              ...prevState.alert,
+                              alertVisible:true,
+                              Title:"اضافة منشأة",
+                              Message:"تم اضافة المنشأة بنجاح",
+                              jsonPath:"suss"
+                            }
+                          };
+                        })
+                        setTimeout(()=>{
+                          this.setState(
+                            prevState => {
+                              return {
+                                alert: {
+                                  ...prevState.alert,
+                                  alertVisible:false,
+                                }
+                              };
+                            })
+                            const { navigation } = this.props;
+                            navigation.navigate("FacilityHome"); 
+                        },4000)
+                    },400)
+
+                    console.log('data ' , data);
+                }).catch((error)=>{
+                    //error callback
+                    this.setState({isLoading:false})
+                    Alert.alert(error.message)
+                    console.log('error ' , error)
+                })
+            }
+        });
+
+        // firebase.database().ref('RecyclingFacility/'+FacilityId).set({
+        //   Name:this.state.Name,
+        //   WorkingDays:this.state.WorkingD,
+        //   WorkingHours:this.state.WorkingH,
+        //   ContactInfo:this.state.ContactInfo,
+        //   Location:this.state.Location,
+        //   AcceptedMaterials:this.state.Category
+        // }).catch((error)=>{
+        //   Alert.alert(error.message)
+        // })
+        // if(this.state.Logo!=""){
+        //   this.uploadImage(this.state.Logo,FacilityId)
+        // }
+        //   this.setState({isLoading:false})
+        //   this.setState(
+        //     prevState => {
+        //       return {
+        //         alert: {
+        //           ...prevState.alert,
+        //           alertVisible:true,
+        //           Title:"اضافة منشأة",
+        //           Message:"تم اضافة المنشأة بنجاح",
+        //           jsonPath:"suss"
+        //         }
+        //       };
+        //     })
+        //     setTimeout(()=>{
+        //       this.setState(
+        //         prevState => {
+        //           return {
+        //             alert: {
+        //               ...prevState.alert,
+        //               alertVisible:false,
+        //             }
+        //           };
+        //         })
+        //         const { navigation } = this.props;
+        //         navigation.navigate("FacilityHome"); 
+        //     },4000)
       }else{
       }
     }
+
 
     render() {
       const { navigation } = this.props;

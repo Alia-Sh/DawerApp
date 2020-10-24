@@ -12,7 +12,8 @@ import { StyleSheet,
 import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {FAB} from 'react-native-paper';
-import AddDriver from './AddDriver'
+import AddDriver from './AddDriver';
+import {FontAwesome5} from '@expo/vector-icons'
 
 
 const Item = ({ item, onPress, style }) => (
@@ -127,13 +128,8 @@ const renderItem = ({ item }) => {
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row': 'row-reverse',
         justifyContent:'center'}}> 
         
-         <TouchableOpacity  onPress={()=> back()} style={{position:'absolute',left:10}}>
-         <Image
-          source={require('../assets/AdminIcons/left-arrow.png')}
-          style={styles.back}
-          resizeMode="stretch"
-          />
-          </TouchableOpacity>
+        <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} 
+                                  onPress={()=>navigation.goBack()}/>
           <Text style={styles.text_header}>  سائقي التوصيل </Text>
           </LinearGradient>
          </View>
@@ -267,6 +263,11 @@ fabAndroid: {
     margin: 16,
     right: 0,
     bottom: 0,
+},
+icon:{
+  position: 'absolute',
+  marginTop:30,
+  left: 16
 },
 
 
