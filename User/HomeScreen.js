@@ -4,11 +4,16 @@ import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
+import SearchBar from '../components/SearchBar';
 
 const HomeScreen = ({navigation})=>{
 
   const [CategoriesList, setCategoriesList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [term, setTerm] = useState('')
+  const [SearchList, setSearchList] = useState([])
+  const [SearchOccur, setSearchOccur] = useState(false)        
+
 
   const Item = ({ item, onPress, style }) => (
   
@@ -61,19 +66,45 @@ const HomeScreen = ({navigation})=>{
     );
   };
 
+  SearchInList = (word) =>{
+    setSearchList(CategoriesList.filter(item => item.name.toLowerCase().includes(word)))
+    setSearchOccur(true)
+  }
+
 
     return (
       <View>
-        <View>
+        <View style = {{flexDirection: 'row'}}>
         <FontAwesome5 name="camera" size={34} color="#AFB42B" style={styles.icon}
             onPress={()=>{
                 navigation.navigate("ImageClassifier")
             }}/>
+            <SearchBar
+            term = {term}
+            OnTermChange = {newTerm => setTerm(newTerm)}
+            OnTermSubmit = {()=> SearchInList(term)}
+            />
         </View>
           {/*<View>
                 <Text style={styles.textInput}>هنا الصفحة الرئيسية اللي فيها الخمس انواع</Text>
           </View> */}
           <View style={styles.container}>
+          {SearchOccur? 
+          <FlatList
+          contentContainerStyle = {styles.grid}
+          numColumns = {2}
+          data = {SearchList}
+          keyExtractor = {(item)=>item.key}
+          onRefresh = {()=>fetchData()}
+          refreshing = {loading}
+          renderItem={renderItem}
+          /*renderItem = {({ item }) => {
+            console.log(item);
+            return <Text style = {styles.item}>{item}</Text>
+          }
+          }*/
+        /> 
+          :
           <FlatList
             contentContainerStyle = {styles.grid}
             numColumns = {2}
@@ -87,7 +118,7 @@ const HomeScreen = ({navigation})=>{
               return <Text style = {styles.item}>{item}</Text>
             }
             }*/
-          />
+          />}
           </View>
       </View>
 

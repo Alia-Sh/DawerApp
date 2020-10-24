@@ -591,7 +591,6 @@ export default class AddFacility extends Component {
       const { navigation } = this.props;
         return (
           <View style={styles.container}>
-            <KeyboardAwareScrollView>
               <View style={styles.fixedHeader}>
                     <LinearGradient
                         colors={["#809d65","#9cac74"]}
@@ -615,6 +614,7 @@ export default class AddFacility extends Component {
                     </LinearGradient>
                 </View>
                 <View style={{flex:8}}>
+                  <KeyboardAwareScrollView>
 
                       <View style={{alignItems:"center"}}>
                             <Image style={styles.Logo_image} 
@@ -781,11 +781,11 @@ export default class AddFacility extends Component {
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                 NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 {...styles.checkBoxTxtAndroid,
-                                    color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                    fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                    color:this.state.Weekday.Sunday?"#9E9D24":"gray",
+                                    fontWeight:this.state.Weekday.Sunday? "bold" :"normal"
                                 }:{...styles.checkBoxTxtIos,
-                                  color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                  fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                  color:this.state.Weekday.Sunday?"#9E9D24":"gray",
+                                  fontWeight:this.state.Weekday.Sunday? "bold" :"normal"
                               }}
                               >الأحد</Text>
             
@@ -807,11 +807,11 @@ export default class AddFacility extends Component {
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                 NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 {...styles.checkBoxTxtAndroid,
-                                    color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                    fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                    color:this.state.Weekday.Monday?"#9E9D24":"gray",
+                                    fontWeight:this.state.Weekday.Monday? "bold" :"normal"
                                 }:{...styles.checkBoxTxtIos,
-                                  color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                  fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                  color:this.state.Weekday.Monday?"#9E9D24":"gray",
+                                  fontWeight:this.state.Weekday.Monday? "bold" :"normal"
                               }}
                               >الإثنين</Text>
 
@@ -833,11 +833,11 @@ export default class AddFacility extends Component {
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                 NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 {...styles.checkBoxTxtAndroid,
-                                    color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                    fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                    color:this.state.Weekday.Tuesday?"#9E9D24":"gray",
+                                    fontWeight:this.state.Weekday.Tuesday? "bold" :"normal"
                                 }:{...styles.checkBoxTxtIos,
-                                  color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                  fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                  color:this.state.Weekday.Tuesday?"#9E9D24":"gray",
+                                  fontWeight:this.state.Weekday.Tuesday? "bold" :"normal"
                               }}
                               >الثلاثاء</Text>
 
@@ -859,11 +859,11 @@ export default class AddFacility extends Component {
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                 NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 {...styles.checkBoxTxtAndroid,
-                                    color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                    fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                    color:this.state.Weekday.Wednesday?"#9E9D24":"gray",
+                                    fontWeight:this.state.Weekday.Wednesday? "bold" :"normal"
                                 }:{...styles.checkBoxTxtIos,
-                                  color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                  fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                  color:this.state.Weekday.Wednesday?"#9E9D24":"gray",
+                                  fontWeight:this.state.Weekday.Wednesday? "bold" :"normal"
                               }}
                               >الأربعاء</Text>
 
@@ -885,11 +885,11 @@ export default class AddFacility extends Component {
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                 NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 {...styles.checkBoxTxtAndroid,
-                                    color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                    fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                    color:this.state.Weekday.Thursday?"#9E9D24":"gray",
+                                    fontWeight:this.state.Weekday.Thursday? "bold" :"normal"
                                 }:{...styles.checkBoxTxtIos,
-                                  color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                  fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                  color:this.state.Weekday.Thursday?"#9E9D24":"gray",
+                                  fontWeight:this.state.Weekday.Thursday? "bold" :"normal"
                               }}
                               >الخميس</Text>
 
@@ -911,11 +911,11 @@ export default class AddFacility extends Component {
                                 NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                 NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                 {...styles.checkBoxTxtAndroid,
-                                    color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                    fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                    color:this.state.Weekday.Friday?"#9E9D24":"gray",
+                                    fontWeight:this.state.Weekday.Friday? "bold" :"normal"
                                 }:{...styles.checkBoxTxtIos,
-                                  color:this.state.Weekday.Saturday?"#9E9D24":"gray",
-                                  fontWeight:this.state.Weekday.Saturday? "bold" :"normal"
+                                  color:this.state.Weekday.Friday?"#9E9D24":"gray",
+                                  fontWeight:this.state.Weekday.Friday? "bold" :"normal"
                               }}
                               >الجمعة</Text>
 
@@ -962,7 +962,7 @@ export default class AddFacility extends Component {
                             <TextInput style={[styles.textInput,{margin:0,marginRight:5,marginTop:5}]} 
                                 value={this.state.WorkingH.startTime}
                                 label="startTime"
-                                placeholder="ادخل وقت بدا العمل"
+                                placeholder="ادخل وقت بدء العمل"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>his.setState(prevState => {
                                                 return {
@@ -1059,6 +1059,7 @@ export default class AddFacility extends Component {
                             </Button>
                         }
                     </View>     
+                    </KeyboardAwareScrollView>
 
                 </View>
                 {this.state.LocationModal?<Google pickLocation={this.pickLocation}></Google>:null}
@@ -1067,7 +1068,6 @@ export default class AddFacility extends Component {
                     :
                     null
                 }     
-            </KeyboardAwareScrollView>
             <DateTimePicker
                     mode="time"
                     isVisible={this.state.isDatePickerVisible}
@@ -1179,7 +1179,7 @@ const styles = StyleSheet.create({
       textAlign: 'right',
       margin:10 , 
       // marginLeft:10,
-      fontSize:16 
+      fontSize:14 
   },
    FABStyleAndroid:{
       marginLeft:90,

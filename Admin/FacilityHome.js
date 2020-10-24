@@ -27,7 +27,7 @@ const HomeScreen = ({navigation})=>{
 
   // fetch all facilities Names ??
   const fetchData=()=>{
-    firebase.database().ref('/Category/ CATEGORY_ID /Facility').on('value',snapshot=>{
+    firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
       const Data = snapshot.val();
       if(Data){
         var li = []
@@ -35,7 +35,8 @@ const HomeScreen = ({navigation})=>{
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
           // here fetch the logo ?
-          var temp={Name:snapshot.val().Name, FacilityId:snapshot.key}
+          //retriveImage(snapshot.key);
+          var temp={Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: Picture}
           li.push(temp)
           setLoading(false)
         })
@@ -51,7 +52,7 @@ const HomeScreen = ({navigation})=>{
   }
 
   //retrive facility logo
-  const retriveImage= async ()=>{
+  const retriveImage= ()=>{
     var imageRef = firebase.storage().ref('Facilities/'); //facilities path 
     imageRef
       .getDownloadURL()
@@ -75,19 +76,23 @@ const renderList = ((item)=>{
                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                     NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                     'row':'row-reverse'}}>
+          
+          <View style = {{flexDirection: 'column'}}>
             {Picture==""?
             <Image 
             // retrieve the logo here
+                style = {styles.profile_image}
                 source = {require('../assets/AdminIcons/FacilityIcon.jpg')}
             /> 
             :
             <Image
                 style = {styles.profile_image}
-                source = {{uri:Picture}}
-                            />
+                //source = {{uri:Picture}}
+                source = {item.Logo}
+            />
             }
-
-            <Title style={styles.title}>{item.Name}</Title>
+            <Title style={styles.title}>Name {item.Name}</Title>
+          </View>
 
             </View>
         </View>
@@ -214,22 +219,20 @@ const styles = StyleSheet.create({
     },
     mycard:{
         backgroundColor: '#F3F3F3',
-        marginVertical: 5,
-        marginHorizontal: 10,
-        borderRadius :10,
-        shadowColor :'#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.30,
-        shadowRadius: 4.65,
-        elevation: 5,
-        padding :12,
+        marginVertical: 12,
+        marginHorizontal: 15,
+        borderRadius :0,
+        elevation:0, // borderless!
+        padding :12
+    },
+    grid: {
+      marginBottom: 32,
+      marginVertical: 8,
+      alignItems: 'center',
     },
     profile_image:{
-      width:150,
-      height:150,
+      width:120,
+      height:120,
       //borderRadius:150/2,
       //marginTop:-75 
     },
@@ -248,9 +251,7 @@ const styles = StyleSheet.create({
     title: {
       fontSize: 18,
       fontWeight: 'bold' ,
-      textAlign :'right',
-      marginRight:15,
-      marginLeft:15
+      textAlign :'center',
     }   
 });
 export default HomeScreen;
