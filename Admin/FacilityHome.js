@@ -2,11 +2,11 @@ import React, {useState,useEffect} from 'react';
 import { StyleSheet, Text, View, Image,
   Dimensions,
   NativeModules,
-  FlatList,
-  TouchableOpacity } from 'react-native';
+  FlatList } from 'react-native';
 import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import {Card,Title,FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
 
@@ -28,16 +28,17 @@ const HomeScreen = ({navigation})=>{
   // fetch all facilities Names ??
   const fetchData=()=>{
     // firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
-      firebase.database().ref('/RecyclingFacility/').on('value',snapshot=>{
+      firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
       const Data = snapshot.val();
       if(Data){
         var li = []
         snapshot.forEach(function(snapshot){
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
-          // here fetch the logo ?
-          //retriveImage(snapshot.key);
-          var temp={Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: Picture}
+          // fetch the logo here..
+          retriveImage(snapshot.key);
+          console.log(Picture);
+          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: Picture}
           li.push(temp)
           setLoading(false)
         })
@@ -53,8 +54,8 @@ const HomeScreen = ({navigation})=>{
   }
 
   //retrive facility logo
-  const retriveImage= ()=>{
-    var imageRef = firebase.storage().ref('Facilities/'); //facilities path 
+  const retriveImage = (id) =>{
+    var imageRef = firebase.storage().ref('Facilities/'+id); //facilities path 
     imageRef
       .getDownloadURL()
       .then((url) => {
@@ -68,11 +69,34 @@ const HomeScreen = ({navigation})=>{
     fetchData()
 },[])
 
-const renderList = ((item)=>{
-  console.log("in ");
+const [selectedId, setSelectedId] = useState(null);
+
+const renderList =  ({ item }) =>{
+  console.log("in renderList");
   console.log(item);
   return(
-      <Card style={styles.mycard}>
+    <TouchableOpacity
+      key={item.key}
+      onPress={() => setSelectedId(item.key)}
+      style={styles.mycard}>
+        <View style = {{flexDirection: 'column'}}>
+            {Picture==""?
+            <Image 
+            // retrieve the logo here
+                style = {styles.profile_image}
+                source = {require('../assets/AdminIcons/FacilityIcon.jpg')}/> 
+            :
+            <Image
+                style = {styles.profile_image}
+                //source = {item.Logo}/>
+                source = {{uri:Picture}}/>
+
+            }
+            <Text style={styles.title}>{item.Name}</Text>
+        </View>
+    </TouchableOpacity>
+   
+      /*<View style={styles.mycard}>
         <View style={styles.cardContent}>
             <View style={{flexDirection:Platform.OS === 'android' &&
                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -85,24 +109,21 @@ const renderList = ((item)=>{
             <Image 
             // retrieve the logo here
                 style = {styles.profile_image}
-                source = {require('../assets/AdminIcons/FacilityIcon.jpg')}
-            /> 
+                source = {require('../assets/AdminIcons/FacilityIcon.jpg')}/> 
             :
             <Image
                 style = {styles.profile_image}
                 //source = {{uri:Picture}}
-                source = {item.Logo}
-            />
+                source = {item.Logo}/>
             }
-            <Title style={styles.title}>Name {item.Name}</Title>
+            <Text style={styles.title}>{item.Name}</Text>
           </View>
 
             </View>
         </View>
-      </Card>
+      </View>*/
   )
-});
-
+};
 
     return (
         <View style={styles.container}>
@@ -219,7 +240,7 @@ const styles = StyleSheet.create({
         marginVertical: 12,
         marginHorizontal: 15,
         borderRadius :0,
-        elevation:0, // borderless!
+        elevation:1, // borderless!
         padding :12
     },
     grid: {
@@ -246,9 +267,11 @@ const styles = StyleSheet.create({
       bottom: 0,
     },
     title: {
-      fontSize: 18,
+      fontSize: 20,
       fontWeight: 'bold' ,
       textAlign :'center',
+      color: '#9E9D24',
+      marginTop: 8,
     },
     icon:{
       position: 'absolute',
