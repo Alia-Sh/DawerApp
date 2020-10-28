@@ -4,7 +4,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {MaterialIcons} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Animatable from 'react-native-animatable';
-import {Card} from 'react-native-paper';
+import {Card,Button} from 'react-native-paper';
+import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
 import firebase from '../Database/firebase';
@@ -335,7 +336,7 @@ import Loading from '../components/Loading';
             setAlert({
                 ...alert,
                 Title:'',
-                Message:'تم إرسال الطلب بنجاح',
+                Message:'تمت إرسال الطلب بنجاح',
                 jsonPath:"success",
                 alertVisible:true,
             });
@@ -452,7 +453,9 @@ import Loading from '../components/Loading';
         setData({
             ...data,
             isVisibleList:false,
-            isEdit:false})
+            isEdit:false,
+            isDateAndTimeStep:false,//to navigate to first page
+            })
             setMaterial(CategoryList[0].Name);
             setQantity('');
     }
@@ -530,23 +533,29 @@ return (
                                         'row-reverse':'row',
                                         justifyContent:'space-between'
                                         ,margin:15}}>
-                                <TouchableOpacity onPress={goBackFromEdit}>
+                                        
+                                <TouchableOpacity onPress={() =>DateAndTimeStep()}>
+                                
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/back.png')}
                                         resizeMethod='scale'
                                     />
+                                    
                                 </TouchableOpacity>
                                 <TouchableOpacity 
-                                 onPress={() =>DateAndTimeStep()}
+                                 onPress={()=>goBackFromEdit()}
                                 >
                                 <Image     
                                     style={styles.ImageStyle}
                                     source={require('../assets/send.png')}
                                     />
+                                    
+                                
                                 </TouchableOpacity>  
                             </View>
                         </View>
+                        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     :
                     <View style={{flex:1}}>
                         {data.isDisplayRequests?                      
@@ -578,13 +587,7 @@ return (
                                         'row-reverse':'row',
                                         justifyContent:'space-between',
                                         margin:15}}>
-                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false})}>
-                                    <Image
-                                        style={styles.ImageStyle}
-                                        source={require('../assets/back.png')}
-                                        resizeMethod='scale'
-                                    />
-                                </TouchableOpacity>
+                                
                                 <TouchableOpacity 
                                 //  onPress={() =>DateAndTimeStep()}
                                 onPress={Send}
@@ -594,6 +597,15 @@ return (
                                     source={require('../assets/sendRequest.png')}
                                     />
                                 </TouchableOpacity>  
+
+                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false})}>
+                                    <Image
+                                        style={styles.ImageStyle}
+                                        source={require('../assets/send.png')}
+                                        resizeMethod='scale'
+                                    />
+                                    
+                                </TouchableOpacity>
                             </View>
                         </View>
                         :
@@ -640,6 +652,7 @@ return (
                                 }
                                 </View>
                                 :
+                                
                                 <View>
                                     <Text style={styles.text}>نوع المادة:</Text>
                                     <View style={{flexDirection:Platform.OS === 'android' && 
@@ -673,7 +686,7 @@ return (
                                             <Text style={styles.errorMsg}>{data.MaterialErrorMsg}</Text>
                                         </Animatable.View>
                                     }
-
+                                   
                                     <Text style={styles.text}> الكمية:</Text>
                                     <View style={{flexDirection:Platform.OS === 'android' && 
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -693,25 +706,36 @@ return (
                                                 >
                                             </TextInput> 
                                         </View> 
+
                                     </View>
-                                    {data.isvalidQuantity ?
+                                      {data.isvalidQuantity ?
                                         null 
                                         : 
                                         <Animatable.View animation="fadeInRight" duration={500}>
                                             <Text style={styles.errorMsg}>{data.QuantityErrorMsg}</Text>
                                         </Animatable.View>
                                     }
-
-                                </View>
-                                }
-
-                            {/* <View>
+                                    
+                                       <View>
                                 {RequestList.map(request=> (
                                     <View key={request.id}>
-                                    <Text>{request.id} {request.material} {request.Quantity} {request.DateAndTime}</Text>
+                  
+                                    <Text style={{textAlign:Platform.OS=='ios'?'right':'left',color:"#999999"}}> - المادة: {request.material}  الكمية: {request.Quantity} </Text>
                                     </View>
-                                ))}
-                            </View> */}
+                                   ))}
+                                  
+                                </View> 
+                                   
+                                     <View style={styles.button}>
+                                    <Button  icon="plus" mode="contained" theme={theme } onPress={() =>addRequest ()}>
+                                         إضافة المادة
+                                       </Button>
+                                       </View>
+                                </View>
+
+                                }
+
+                            
 
                             {data.isEdit?                   
                                 <View style={{flexDirection:Platform.OS === 'android' &&
@@ -719,13 +743,13 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                     'row-reverse':'row',justifyContent:'space-between',margin:15}}>
-                                <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
+                               {/** <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/back.png')}
                                         resizeMethod='scale'
                                     />
-                                </TouchableOpacity>
+                                </TouchableOpacity>*/}
                                 <TouchableOpacity 
                                     onPress={() => UpdateRequest(id,Material,Quantity)}
                                 >
@@ -733,6 +757,8 @@ return (
                                     style={styles.ImageStyle}
                                     source={require('../assets/Save.png')}
                                     />
+
+                                
                                 </TouchableOpacity>  
                                 </View>
                                 :
@@ -744,51 +770,43 @@ return (
                                             NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                             'row-reverse':'row',
                                             justifyContent:'space-between',
-                                            margin:15}}>
-                                    <TouchableOpacity onPress={() =>setData({...data,isDateAndTimeStep:false})}>
+                                            margin:15,marginVertical:250}}>
+                                    <TouchableOpacity onPress={() =>DisplayRequests()}>
                                         <Image
                                             style={styles.ImageStyle}
                                             source={require('../assets/back.png')}
                                             resizeMethod='scale'
                                         />
+                                        
                                     </TouchableOpacity>
                                     <TouchableOpacity 
                                     // onPress={Send}
-                                    onPress={() =>DisplayRequests()}
+                                    //here date page
+                                    onPress={() =>DisplayMaterials ()}
                                     >
-                                <Image     
+                                   <Image     
                                     style={styles.ImageStyle}
                                     source={require('../assets/send.png')}
                                     />
+                                   
                                     </TouchableOpacity>  
                                     </View>
-                                :
-                                <View style={{alignItems:Platform.OS === 'android' && 
-                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'flex-start':'flex-end',padding:20}}>
-                                    <TouchableOpacity onPress={() =>addRequest ()}>
-                                    <Image
+                                    //*************************************************
+                                ://*******************here is the first page in the modal
+                              
+                               
+                                  
+                                       
+                                    <View style={styles.arow}>
+                                     <TouchableOpacity  onPress={() =>DisplayMaterials ()}  >
+                                     <Image     
                                         style={styles.ImageStyle}
-                                        source={require('../assets/addRequest.png')}    
+                                        source={require('../assets/back.png')}
                                         />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() =>DisplayMaterials ()}>
-                                    <Image
-                                        style={styles.ImageStyle}
-                                        source={require('../assets/RequestList.png')}
-                                        resizeMethod='scale'
-                                        />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity 
-                                    onPress={() =>DateAndTimeStep()}
-                                    >
-                                    <Image     
-                                        style={styles.ImageStyle}
-                                        source={require('../assets/send.png')}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
+                                     </TouchableOpacity>
+                                     </View>
+
+                                
                                 }
                             </View>
                             }
@@ -852,7 +870,8 @@ const styles=StyleSheet.create({
     ImageStyle:{
         width:42,
         height:39,
-        margin:5
+        margin:5,
+        
     },
     header:{
         alignItems:'center',
@@ -911,7 +930,8 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
-        paddingRight:20
+        paddingRight:20,
+        marginTop:-5
     },
     mycard:{
         // margin:5,// بعدها عن الحواف 
@@ -953,10 +973,10 @@ const styles=StyleSheet.create({
     button:{
         flexDirection:"row",
         justifyContent:"space-around",
-        paddingTop:15,
-        paddingLeft:40,
-        paddingRight:40,
-        paddingBottom:15
+        paddingTop:40,
+        paddingLeft:Platform.OS === 'ios'?210:0,
+        paddingRight:Platform.OS === 'android'?200:0,
+        paddingBottom:20,
     },
     errorMsg2: {
         color: '#FF0000',
@@ -971,7 +991,12 @@ const styles=StyleSheet.create({
     pickerStyleAndroid:{
         height: 50,
         width: '70%',
-    }   
+    } ,
+    arow:{
+    justifyContent:'space-between',
+       marginLeft:Platform.OS === 'ios'?20:255,
+       marginVertical:10
+    } 
 });
 
 export default NewRequestModal

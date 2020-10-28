@@ -20,7 +20,7 @@
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.0",
     "@tensorflow-models/mobilenet": "^2.0.4",
-    "@tensorflow/tfjs": "^2.3.0",
+    "@tensorflow/tfjs": "^2.7.0",
     "@tensorflow/tfjs-react-native": "^0.3.0",
     "antd": "^4.7.0",
     "expo": "~38.0.8",

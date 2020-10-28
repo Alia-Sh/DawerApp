@@ -203,7 +203,7 @@ const  RequestsPage= () =>{
                 <TouchableOpacity onPress={()=>setAlertVisible(true)}>
                     <Title style={[styles.text,{fontWeight: 'bold',marginTop:10}]}>طلب جديد</Title>
                 </TouchableOpacity>
-                <Title style={[styles.text,{marginTop:10}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
+                <Title style={[styles.text,{marginTop:10,marginLeft:55}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
                 <TouchableOpacity style={{margin:10}}
                     //  onPress={()=>DeleteRequest(item)}
                      >
