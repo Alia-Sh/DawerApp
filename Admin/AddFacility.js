@@ -25,7 +25,7 @@ import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import {Card,Title,FAB} from 'react-native-paper';
 import {FontAwesome5} from '@expo/vector-icons';
-import Google from '../components/Google';
+import GoogleMap from '../components/GoogleMap';
 import moment from 'moment';
 import {CheckBox} from "native-base";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -535,6 +535,10 @@ export default class AddFacility extends Component {
       })
       this.setState({LocationModal:false})
     }
+
+    closeLocatiomModal=()=>{
+      this.setState({LocationModal:false})
+  }
 
     Add=()=>{
       if(this.checkValidName() && this.checkValidCategory() && this.checkValidContactInfo() && this.checkWorkingD() && this.checkValidWorkingH() && this.checkLocationExist()){
@@ -1168,7 +1172,7 @@ export default class AddFacility extends Component {
                     </KeyboardAwareScrollView>
 
                 </View>
-                {this.state.LocationModal?<Google pickLocation={this.pickLocation}></Google>:null}
+                {this.state.LocationModal?<GoogleMap pickLocation={this.pickLocation} closeLocatiomModal={this.closeLocatiomModal}></GoogleMap>:null}
                 {this.state.alert.alertVisible?
                     <AlertView title={this.state.alert.Title} message={this.state.alert.Message} jsonPath={this.state.alert.jsonPath}></AlertView>
                     :

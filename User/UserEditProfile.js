@@ -1,5 +1,5 @@
-import React, {useEffect,useState}from 'react';
-import { StyleSheet, Text, View,Image,KeyboardAvoidingView,TextInput, Alert,ActivityIndicator} from 'react-native';
+import React, {useEffect,useState,useRef}from 'react';
+import { StyleSheet, Text, View,Image,KeyboardAvoidingView,TextInput, Alert,ActivityIndicator,Modal,TouchableOpacity} from 'react-native';
 import {FontAwesome5} from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {Title,Card,Button,FAB}from 'react-native-paper';
@@ -9,16 +9,28 @@ import * as ImagePicker from 'expo-image-picker';
 import { NativeModules } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
-import Loading from '../components/Loading'
+import Loading from '../components/Loading';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import { AntDesign} from '@expo/vector-icons';
+import AlertView from "../components/AlertView";
+import {MaterialIcons} from '@expo/vector-icons';
+import GoogleMap from '../components/GoogleMap';
 
 const UserEditProfile  = ({navigation,route})=>{
-
+    const recaptchaVerifier = useRef(null);
+    const [code, setCode] = useState('');
+    const [verificationId, setVerificationId] = useState(null);
+    const [message, showMessage] = React.useState((!recaptchaVerifier || Platform.OS === 'web')
+    ? { text: "To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device."}
+    : undefined);
+    const [alertVisible,setAlertVisible]= useState(false)
     var userId = firebase.auth().currentUser.uid;
-    var query = firebase.database().ref('User/' + userId+'/Location');
-    query.once("value").then(function(result) {
-        const userData = result.val();
-        setLocation(userData.address);
-    });
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',   
+    })
 
     const getDetails=(type)=>{
         if(route.params){
@@ -42,48 +54,41 @@ const UserEditProfile  = ({navigation,route})=>{
         return ""
     }
 
-    // const retriveImage= async ()=>{
-    //     userId = firebase.auth().currentUser.uid;
-    //     var imageRef = firebase.storage().ref('images/' + userId);
-    //     imageRef
-    //       .getDownloadURL()
-    //       .then((url) => {
-    //         //from url you can fetched the uploaded image easily
-    //         setPicture(url)
-    //       })
-    //       .catch((e) => console.log('getting downloadURL of image error => ', e));
-    //   }
-
-    // useEffect(()=>{
-    //     retriveImage()
-    // },[]);
-
     const [Name,setName] = useState(getDetails("Name"))
     const [Phone,setPhone] = useState(getDetails("Phone"))
+    const [NewPhone,setNewPhone] = useState(Phone)
     const [UserName,setUserName] = useState(getDetails("UserName"))
-    const [Location,setLocation] = useState(getDetails("Location"))
+    const [Location,setLocation] = useState({
+        address:getDetails("Location").address,
+        latitude:getDetails("Location").latitude,
+        longitude:getDetails("Location").longitude
+    })
     const [Picture,setPicture] = useState(getDetails("Picture"))
     const [data,setData] = React.useState({
         isLoading:false,
         isValidPhone:true,
-        PhoneErrorMessage:''
+        PhoneErrorMessage:'',
+        Validcode:true,
+        CodeErrorMessage:'',
+        LocationModal:false
       });
 
     const checkValidPhone=()=>{
-        if(Phone==""){
+        const reg = /^[0]?[789]\d{9}$/;
+        if(NewPhone==""){
             setData({
                 ...data,
                 isValidPhone:false,
                 PhoneErrorMessage:'يجب ادخال رقم الهاتف'
             });
             return false; 
-        }else if(Phone.length<10){
+        }else if(NewPhone.length<10){
             setData({
                 ...data,
                 isValidPhone:false,
                 PhoneErrorMessage:'يجب ان يتكون رقم الهاتف من ١٠ ارقام'
             });
-            return false;       
+            return false;    
         }else{
             if(!data.isValidPhone){   
                 setData({
@@ -92,43 +97,193 @@ const UserEditProfile  = ({navigation,route})=>{
                     PhoneErrorMessage:''
                 });                 
             }
+            if(NewPhone!=Phone){
+                updateProfilePhoneNumber()
+            }
             return true;         
         }
     }
+
+    const pickLocation=(address,latitude,longitude)=>{
+        setLocation({
+            ...Location,
+            address:address,
+            latitude:latitude,
+            longitude:longitude
+        })
+        setData({
+            ...data,
+            LocationModal:false
+        })
+      }
+      
     const updateUserInfo=()=>{
-        if(checkValidPhone()){
+        var user = firebase.auth().currentUser;
+        if(NewPhone!="" &&  NewPhone.length==10){
             setData({
                 ... data,
                 isLoading: true,
               });
-            firebase.database().ref('User/' + userId).update({
-                Name: Name,
-                PhoneNumber: Phone,      
-            }).then(function (){
-                if(Picture!=""){
-                uploadImage(Picture,userId)
-                .then(()=> {
+              if(code!='' && verificationId!=null){
+                var phoneCredential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
+                user.updatePhoneNumber(phoneCredential).then(()=>{
+                    firebase.database().ref('User/' + userId).update({
+                        PhoneNumber: NewPhone, 
+                        Name: Name,
+                        Location:Location  
+                    }).then(function (){
+                        if(Picture!=""){
+                        uploadImage(Picture,userId)
+                        .then(()=> {
+                            setData({
+                                ...data,
+                                isLoading:false
+                            });
+                            setCode('')
+                            setVerificationId(null)
+                            setNewPhone(Phone)
+                            // navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                            navigation.goBack();
+                            // retriveImage();
+                        }).catch((error)=> {
+                            setData({
+                                ...data,
+                                isLoading:false
+                            });
+                            Alert.alert(error.message);
+                        });
+                    }else{
+                        setData({
+                            ...data,
+                            isLoading:false
+                        });
+                        setNewPhone(Phone)
+                        setCode('')
+                        setVerificationId(null)
+                        // navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                        navigation.goBack();
+                    }
+                    })
+                }).catch((error)=>{
+                    if (error.message=="This credential is already associated with a different user account."){
+                        setData({
+                            ...data,
+                            isLoading:false
+                        }); 
+                        setCode('')
+                        setTimeout(()=>{
+                            setAlert({
+                                ...alert,
+                                Title:'',
+                                Message:'رقم الهاتف مرتبط بحساب اخر.',
+                                jsonPath:"Error",
+                                alertVisible:true,
+                            });
+                            setTimeout(() => {
+                                setAlert({
+                                    ...alert,
+                                    alertVisible:false,
+                                });
+                            }, 4000)
+                        },400)
+                       }
+                       else if (error.message=="The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user."){
+                        setData({
+                            ...data,
+                            isLoading:false
+                        }); 
+                        setCode('')
+                        setTimeout(()=>{
+                            setAlert({
+                                ...alert,
+                                Title:'',
+                                Message:'رمز التحقق SMS المستخدم غير صحيح.',
+                                jsonPath:"Error",
+                                alertVisible:true,
+                            });
+                            setTimeout(() => {
+                                setAlert({
+                                    ...alert,
+                                    alertVisible:false,
+                                });
+                            }, 5000)
+                            setTimeout(() => {
+                                setAlertVisible(true)
+                            }, 5000)
+                            
+                        },400)
+                       }
+                       else if (error.message=="The SMS code has expired. Please re-send the verification code to try again."){
+                        setData({
+                            ...data,
+                            isLoading:false
+                        }); 
+                        setCode('')
+                        setTimeout(()=>{
+                            setAlert({
+                                ...alert,
+                                Title:'',
+                                Message:'رمز التحقق SMS المستخدم منهي الصلاحية، الرجاء المحاولة مرة اخرى.',
+                                jsonPath:"Error",
+                                alertVisible:true,
+                            });
+                            setTimeout(() => {
+                                setAlert({
+                                    ...alert,
+                                    alertVisible:false,
+                                });
+                            }, 5000)
+                            // setAlertVisible(true)
+                        },400)
+                       }
+                       else{
+                            setData({
+                                ...data,
+                                isLoading:false
+                            }); 
+                            setCode('')
+                            console.log(error.message);
+                            Alert.alert(error.message);
+                        }
+                })
+              }else{
+                firebase.database().ref('User/' + userId).update({
+                    Name: Name,
+                    Location:Location       
+                }).then(function (){
+                    if(Picture!=""){
+                    uploadImage(Picture,userId)
+                    .then(()=> {
+                        setData({
+                            ...data,
+                            isLoading:false
+                        });
+                        setNewPhone(Phone)
+                        setCode('')
+                        setVerificationId(null)
+                        // navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                        navigation.goBack();
+                        // retriveImage();
+                    }).catch((error)=> {
+                        setData({
+                            ...data,
+                            isLoading:false
+                        });
+                        Alert.alert(error.message);
+                    });
+                }else{
                     setData({
                         ...data,
                         isLoading:false
                     });
-                    navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
-                    // retriveImage();
-                }).catch((error)=> {
-                    setData({
-                        ...data,
-                        isLoading:false
-                    });
-                    Alert.alert(error.message);
-                });
-            }else{
-                setData({
-                    ...data,
-                    isLoading:false
-                });
-                navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                    setNewPhone(Phone)
+                    setCode('')
+                    setVerificationId(null)
+                    // navigation.navigate("UserViewProfile",{UserName,Name,Phone,Location,Picture})
+                    navigation.goBack();
+                }
+                })
             }
-            })
         }
     }
 
@@ -159,17 +314,109 @@ const UserEditProfile  = ({navigation,route})=>{
     const resetData=()=>{
         setName(getDetails("Name"));
         setPhone(getDetails("Phone"));
+        setNewPhone(Phone)
         setPicture(getDetails("Picture"))
+        setLocation({
+            ...Location,
+            address:getDetails("Location").address,
+            latitude:getDetails("Location").latitude,
+            longitude:getDetails("Location").longitude
+        })
         setData({
             ...data,
             isLoading:false,
-            isValidPhone:true,        
+            isValidPhone:true,
+            PhoneErrorMessage:'',
+            Validcode:true,
+            CodeErrorMessage:'',
+            LocationModal:false      
         })
-        navigation.navigate("UserViewProfile");
+        setCode('')
+        setVerificationId(null)
+        setAlert({
+            ...alert,
+            alertVisible:false,
+            Title:'',
+            Message:'',
+            jsonPath:'',  
+        })
+        navigation.goBack();
     }
+
+    const closeLocatiomModal=()=>{
+        setData({
+            ...data,
+            LocationModal:false
+        })
+    }
+
+    function updateProfilePhoneNumber() {
+
+        var phoneNumber ="+966".concat(NewPhone.substring(1)); 
+    
+        var provider = new firebase.auth.PhoneAuthProvider();
+        provider.verifyPhoneNumber(phoneNumber,  recaptchaVerifier.current)
+            .then(setVerificationId)
+            .then((result) => {
+                setAlertVisible(true)
+            })
+            .catch((error) => {
+                // Error occurred.
+                if (error.message=="We have blocked all requests from this device due to unusual activity. Try again later."){
+                        setAlert({
+                            ...alert,
+                            Title:'',
+                            Message:'تم حظر جميع الطلبات الواردة من هذا الجهاز بسبب نشاط غير عادي. حاول مرة أخرى في وقت لاحق.',
+                            jsonPath:"Error",
+                            alertVisible:true,
+                        });
+                        setTimeout(() => {
+                            setAlert({
+                                ...alert,
+                                alertVisible:false,
+                            });
+                        }, 4000)
+                   }
+
+                console.log(error);
+            });
+    }
+    const checkValidCode=()=>{
+        if(code==''){
+           setData({
+               ...data,        
+               Validcode:false,
+               CodeErrorMessage:'يجب ادخال رمز التحقق'
+           }) 
+            return false
+        }else if(code.length<6){
+            setData({
+                ...data,        
+                Validcode:false,
+                CodeErrorMessage:'يجب ادخال رمز التحقق بشكل صحيح'
+            }) 
+            return false   
+        }else{
+            setData({
+                ...data,        
+                Validcode:true,
+                CodeErrorMessage:''
+            })
+            return true   
+        }
+    }
+
+    const closeModal=()=>{
+        if(checkValidCode()){
+            setAlertVisible(false) 
+        }
+    }
+
+    
     return(
         <KeyboardAwareScrollView style={styles.root}>
             <View style={styles.root}>
+                <FirebaseRecaptchaVerifierModal ref={recaptchaVerifier} firebaseConfig={firebase.app().options}/>
                 <LinearGradient
                     colors={["#827717","#AFB42B"]}
                     style={{height:200}}>
@@ -184,11 +431,9 @@ const UserEditProfile  = ({navigation,route})=>{
 
                 <View style={styles.footer}>
                     <View style={{alignItems:"center"}}>
-                        {/* {data.isLoading ? <ActivityIndicator size="large" color="#9E9D24" /> :  */}
                             <Image style={styles.profile_image} 
                             source={Picture==""?require('../assets/DefaultImage.png'):{uri:Picture}}
                             />
-                        {/* } */}
                         <FAB  
                             onPress={() =>selectImage ()}
                             small
@@ -198,7 +443,7 @@ const UserEditProfile  = ({navigation,route})=>{
                     </View>
 
                     <View style={{alignItems:"center",margin:10}}>
-                        <Title>@{UserName}</Title>
+                        <Title>{UserName}</Title>
                     </View>
 
                     <Card style={styles.action}>
@@ -212,12 +457,41 @@ const UserEditProfile  = ({navigation,route})=>{
                                 onChangeText={text => setName(text)}>
                             </TextInput>  
                         </View>  
-                    </Card>  
+                    </Card> 
+
+                    <Card style={styles.action}>
+                        <View style={styles.cardContent}>
+                            <Text style={styles.textStyle}>  رقم الهاتف</Text>
+                            <TextInput style={styles.textInput} 
+                            value={NewPhone}
+                            autoCapitalize="none"
+                            textAlign= 'right'
+                            keyboardType="number-pad" //number Input
+                            onChangeText={text => setNewPhone(text)}
+                            onEndEditing={(val) => checkValidPhone(val)}
+                            maxLength={10}>
+                            </TextInput>  
+                        </View>  
+                    </Card> 
+
+                    {data.isValidPhone ?
+                        null 
+                        : 
+                        <Animatable.View animation="fadeInRight" duration={500}>
+                            <Text style={styles.errorMsg}>{data.PhoneErrorMessage}</Text>
+                        </Animatable.View>
+                    }  
   
-                    <Card style={styles.action} onPress={()=>navigation.navigate("GoogleMap")} >
+                    <Card style={styles.action} 
+                        onPress={()=>        
+                            setData({
+                            ...data,
+                            LocationModal:true
+                        })}
+                     >
                         <View style={styles.cardContent}>
                         <Text style={styles.textStyle}> الموقع</Text>
-                            <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{Location}</Text>
+                            <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{Location.address}</Text>
                             <Feather
                                     name="chevron-left"
                                     color="grey"
@@ -235,7 +509,95 @@ const UserEditProfile  = ({navigation,route})=>{
                         </Button>
                         }
                     </View>
+                     
                 </View>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={alertVisible}>
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+
+                                <Animatable.View animation="fadeInUpBig">
+                                <MaterialIcons style={Platform.OS === 'android' && 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="clear" size={25} color="#424242" 
+                                     onPress={()=>{ setAlertVisible(false) }}/>
+              
+                                    <Text style={styles.text_footer}>رقم التحقق:</Text>
+                                    <View style={styles.action}>
+
+                                        <AntDesign
+                                            name="checkcircleo"
+                                            color="#9E9D24"
+                                            size={20}
+                                            style={{paddingTop:10}}/> 
+                                            <TextInput style={[styles.textInput,{padding:10}]} 
+                                                placeholder="ادخل رقم التحقق"
+                                                onChangeText={setCode}
+                                                keyboardType="number-pad"
+                                                onEndEditing={(val) => checkValidCode(val)}
+                                                maxLength={6}
+                                            />
+                                    </View>
+   
+            
+                                    {data.Validcode ? null : (
+                                        <Animatable.View animation="fadeInRight" duration={500}>
+                                        <Text style={styles.errorMsg}>
+                                        {data.CodeErrorMessage}
+                                        </Text>
+                                        </Animatable.View>
+                                    ) 
+                                    }
+   
+                                    <TouchableOpacity 
+                                        onPress={() =>closeModal(false)}
+                                    >
+                                        <View style={styles.button2}>
+                                        
+                                            <LinearGradient 
+                                                colors={['#AFB42B','#827717']}
+                                                style={styles.signIn2}> 
+                                                <Text style={[styles.textSign,{color:'#fff'}]}>تم</Text>
+                                                
+                                
+                                            </LinearGradient>
+   
+                                        </View>
+                                    </TouchableOpacity> 
+   
+               
+            
+         
+                                </Animatable.View>
+                            </View>
+                        </View>
+                </Modal>
+                {alert.alertVisible?
+                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+                    :
+                        null
+                }
+                {data.LocationModal?<GoogleMap pickLocation={pickLocation} closeLocatiomModal={closeLocatiomModal}></GoogleMap>:null}
+
+                    {message ? (
+                        <TouchableOpacity
+                            style={[StyleSheet.absoluteFill, { backgroundColor: 0xffffffee, justifyContent: "center" }]}
+                            onPress={() => showMessage(undefined)}>
+                            <Text style={{color: message.color || "blue", fontSize: 17, textAlign: "center", margin: 20, }}>
+                                {message.text}
+                            </Text>
+                        </TouchableOpacity>
+                            ) : 
+                            undefined
+                    }
+                    {data.isLoading ? 
+                        <Loading></Loading>  
+                        :
+                        null
+                    }
             </View>
         </KeyboardAwareScrollView>
       
@@ -268,7 +630,8 @@ const styles=StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
         paddingRight:3,
-        paddingLeft:3
+        paddingLeft:3,
+        width:'100%'
     },  
     textInput: {
         flex: 1,
@@ -349,36 +712,52 @@ const styles=StyleSheet.create({
     FABStyleIOS:{
         marginLeft:90,
         marginTop:-23,
+    },
+    centeredView:{
+        justifyContent:'center',
+        alignItems:'center',
+        alignContent:'center',
+        flex:1,
+    },
+    modalView:{
+        width:'80%',
+        margin:10,
+        backgroundColor:"#fff",
+        borderRadius:10,
+        padding:15,
+        alignItems:'center',
+        shadowColor:'#161924',
+        shadowOffset:{
+            width:0,
+            height:2
+        },
+        shadowOpacity:0.25,
+        shadowRadius:3.85,
+        elevation:5,        
+    },
+    text_footer: {
+        color: '#9E9D24',
+        fontSize: 18,
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'left' : 'right',
+    },
+    button2: {
+        alignItems: 'center',
+        marginTop: 15,
+    },
+    signIn2: {
+        width: '50%',
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
+    },
+    textSign: {
+        fontSize: 18,
+        fontWeight: 'bold'  
     }
 })
 
 export default UserEditProfile
-
-
-/*   <Card style={styles.action} onPress={()=>navigation.navigate("EditPassword")} >
-<View style={styles.cardContent}>
-<Text style={styles.textStyle}>كلمة المرور</Text>
-    <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}></Text>
-    <Feather
-            name="chevron-left"
-            color="grey"
-            size={23}/>  
-</View>  
-</Card> */ 
-
-/*  <Card style={styles.action}>
-                        <View style={styles.cardContent}>
-                        <Text style={styles.textStyle}> رقم الهاتف</Text>
-                            <TextInput style={styles.textInput} 
-                            label="Phone"
-                            value={Phone}
-                            autoCapitalize="none"
-                            textAlign= 'right'
-                            onFocus={()=>setAnbleshift(false)}
-                            keyboardType="number-pad" //number Input
-                            onChangeText={text => setPhone(text)}
-                            maxLength={10}>
-                        </TextInput>  
-                        </View>  
-                    </Card>  
-*/

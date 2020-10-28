@@ -7,26 +7,45 @@ import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import {FontAwesome5} from '@expo/vector-icons';
 import { YellowBox } from 'react-native';
+import { set } from 'react-native-reanimated';
+import { useIsFocused } from "@react-navigation/native";
 YellowBox.ignoreWarnings(['Setting a timer']);
 
-const UserViewProfile = ({navigation})=>{
+const UserViewProfile = ({navigation,props})=>{
+    const isFocused = useIsFocused();
+    const [Name,setName] = useState("")
+    const [Phone,setPhone] = useState("")
+    const [UserName,setUserName] = useState("")
+    const [Location,setLocation] = useState({
+        address:"",
+        latitude:0,
+        longitude:0
+    })
+    const [Picture,setPicture] = useState("")
 
-    var userId = firebase.auth().currentUser.uid;
-    var query = firebase.database().ref('User/' + userId);
-    query.once("value").then(function(result) {
-      const userData = result.val();
-      setName(userData.Name);
-      setPhone(userData.PhoneNumber);
-      setUserName(userData.UserName);
-      retriveImage();
-    });
+    useEffect(() => {      
+        retriveData()
+    }, [props, isFocused]);
 
-    var query2 = firebase.database().ref('User/' + userId+'/Location');
-    query2.once("value").then(function(result) {
-        const userData = result.val();
-        setLocation(userData.address);
-    });
-
+    const retriveData=()=>{
+        var userId = firebase.auth().currentUser.uid;
+        var query = firebase.database().ref('User/' + userId);
+        query.on("value",function(result) {
+          const userData = result.val();
+          setName(userData.Name);
+          setPhone(userData.PhoneNumber);
+          setUserName(userData.UserName);
+          setLocation({
+            ...Location,
+            address:userData.Location.address,
+            latitude:userData.Location.latitude,
+            longitude:userData.Location.longitude           
+          })
+          retriveImage()
+        });
+        
+        
+    } 
     const retriveImage= async ()=>{
         var userId = firebase.auth().currentUser.uid;
         var imageRef = firebase.storage().ref('images/' + userId);
@@ -39,15 +58,6 @@ const UserViewProfile = ({navigation})=>{
           .catch((e) => console.log('getting downloadURL of image error => ', e));
       }
 
-    useEffect(()=>{
-        retriveImage()
-    },[]);
-
-    const [Name,setName] = useState("")
-    const [Phone,setPhone] = useState("")
-    const [UserName,setUserName] = useState("")
-    const [Location,setLocation] = useState("")
-    const [Picture,setPicture] = useState("")
 
     const goDoubleBack = () => {
         setTimeout(() => {
@@ -65,7 +75,7 @@ const UserViewProfile = ({navigation})=>{
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
                         onPress={()=>{
-                            navigation.navigate("HomeScreen")
+                            navigation.goBack();
                         }}/>
                     <View>
                         <Text style={styles.headerText}>الملف الشخصي</Text>
@@ -117,13 +127,13 @@ const UserViewProfile = ({navigation})=>{
                             name="map-pin"
                             color="#AFB42B"
                             size={20}/> 
-                        <Text style={{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:10}} >{Location}</Text>
+                            <Text style={{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:10}} >{Location.address}</Text>
                     </View>  
                 </Card>  
                 <View style={styles.button}> 
                     <Button icon="account-edit" mode="contained" theme={theme }
                         onPress={() => {
-                            navigation.navigate("UserEditProfile",{UserName,Name,Phone,Location,Picture})
+                            navigation.navigate("UserEditProfile",{UserName,Name,Phone,Picture,Location})
                         }}>
                         تحديث
                     </Button>

@@ -1,7 +1,6 @@
-import React, { Component,useState } from "react";
+import React, {useState } from "react";
 import {
   View,
-  Button,
   StyleSheet,
   Text,
   Dimensions,
@@ -9,17 +8,13 @@ import {
   TouchableOpacity
 } from "react-native";
 import MapView from "react-native-maps";
-import {FontAwesome5} from '@expo/vector-icons';
 import { NativeModules } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
-import firebase from '../Database/firebase';
-import Placesearch from 'react-native-placesearch';
-import { LinearGradient } from 'expo-linear-gradient';
-import AddFacility from '../Admin/AddFacility'
+
 const Google=(props)=> {
   console.log(props.state);
     const [alertVisible,setAlertVisible]= useState(true)
-  const [state,setState] =useState(  {
+    const [state,setState] =useState({
       focusedLocation: {
         latitude: 24.68773,
         longitude: 46.72185,
@@ -33,7 +28,7 @@ const Google=(props)=> {
       isVisible: false,
       formatted_address:''
 
-  }
+    }
   )
 
   pickLocationHandler = event => {
@@ -75,30 +70,23 @@ const Google=(props)=> {
       };
       pickLocationHandler(coordsEvent);
     },
-  err => {
-    console.log(err);
-    alert("يجب تفعيل الموقع للوصول الى موقعك الحالي");
-  })
+    err => {
+      console.log(err);
+      alert("يجب تفعيل الموقع للوصول الى موقعك الحالي");
+    })
   }
 
   udpateUserLocation=()=>{
-    // props.setLocation({
-    //   latitude:state.focusedLocation.latitude,
-    //   longitude:state.focusedLocation.longitude,
-    //   address:state.formatted_address
-    // })
     props.pickLocation(state.formatted_address,state.focusedLocation.latitude,state.focusedLocation.longitude);
     closeModal();
   }
 
   const closeModal=()=>{
-
+    props.closeLocatiomModal();
     setAlertVisible(false)
-    
   }
 
     let marker = null;
-    // const { navigation } = this.props;
 
     if (state.locationChosen) {
       marker = <MapView.Marker coordinate={state.focusedLocation} />;
@@ -113,19 +101,11 @@ const Google=(props)=> {
                 <View style={styles.modalView}>
 
                     <View style={styles.header}>
-                    <LinearGradient
-                            colors={["#809d65","#9cac74"]}
-                            style={{height:"100%" ,width:"100%",alignItems:'center',
-                            justifyContent:'center',flexDirection: Platform.OS === 'android' && 
-                            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row': 'row-reverse' ,}}> 
-                        <MaterialIcons name="cancel" size={30} color="#fff" style={styles.icon}
+                        <MaterialIcons name="clear" size={30} color="#212121" style={styles.icon}
                             onPress={closeModal}/>
                          <View>
-                            <Text style={styles.headerText}>تحديث الموقع</Text>
+                            <Text style={styles.headerText}>... الموقع</Text>
                         </View>
-                        </LinearGradient>
                     </View>  
 
                     <MapView
@@ -143,15 +123,11 @@ const Google=(props)=> {
 
                     {!state.isVisible? null:
                     
-                    <View style={styles.button}>
-                      <TouchableOpacity onPress={udpateUserLocation}>
-                        <LinearGradient
-                            colors={["#809d65","#9cac74"]}
-                            style={styles.Selecet}>
-                            <Text style={[styles.textSelecet,{color:'#fff'}]}>اختـر</Text>
-                        </LinearGradient>
-                      </TouchableOpacity>
-                    </View>
+                      <View style={styles.button}>
+                        <TouchableOpacity onPress={udpateUserLocation}  style={styles.Selecet}>
+                              <Text style={[styles.textSelecet,{color:'#212121'}]}>اختـر</Text>
+                        </TouchableOpacity>
+                      </View>
                     
                     }
                 </View>
@@ -160,25 +136,16 @@ const Google=(props)=> {
     );
 }
 
-const {height} = Dimensions.get("screen");
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    alignItems: "center",
-    flex: 1
-  },
   map: {
     width: "100%",
     height: "90%"
   },
   button: {
     margin: 15,
-    backgroundColor:"#C0CA33",
+    backgroundColor:"#ffff",
     width: "50%",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomLeftRadius:10,
-    borderBottomRightRadius:10,
+    borderRadius:5,
     position:'absolute',
     bottom:0
   },
@@ -187,8 +154,8 @@ const styles = StyleSheet.create({
     fontSize: 18,      
     letterSpacing: 1, 
     textAlign:'center',
-    color: '#fff'
-    // color: '#212121'
+    // color: '#fff'
+    color: '#212121'
   },
   icon:{
     position: 'absolute',
@@ -199,8 +166,10 @@ const styles = StyleSheet.create({
     height: '10%',
     alignItems: 'center',
     justifyContent: 'center',
-    // marginTop:15,
-    backgroundColor:'#C0CA33',
+    flexDirection: Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row': 'row-reverse',
     borderRadius:5,
     overflow: 'hidden',
   },
@@ -224,8 +193,8 @@ const styles = StyleSheet.create({
     alignItems:'center',
     alignContent:'center',
     flex:1,
-},
-modalView:{
+  },
+  modalView:{
     width:'90%',
     height:'70%',
     margin:10,
@@ -241,17 +210,17 @@ modalView:{
     shadowOpacity:0.25,
     shadowRadius:3.85,
     elevation:5,        
-},
-Selecet: {
-  width: '100%',
-  height: 50,
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: 10
-},
-textSelecet: {
-  fontSize: 18,
-  fontWeight: 'bold'  
-}
+  },
+  Selecet: {
+    width: '100%',
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
+  },
+  textSelecet: {
+    fontSize: 18,
+    fontWeight: 'bold'  
+  }
 });
 export default Google;
