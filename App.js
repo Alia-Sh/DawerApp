@@ -35,7 +35,7 @@ import ImageClassifier from './User/ImageClassifier';
 import RequestsPage from './User/RequestsPage'
 import AdminViewDriver from './Admin/AdminViewDriver'
 import AddFacility from './Admin/AddFacility';
-
+import FacilitiesInCategory from './User/FacilitiesInCategory';
 
 
 
@@ -78,6 +78,7 @@ function Root() {
           <Drawer.Screen name="EditPassword" component={EditPassword} options={myOptions}/>
           <Drawer.Screen name="GoogleMap" component={GoogleMap} options={myOptions}/>
           <Drawer.Screen name="ImageClassifier" component={ImageClassifier} options={myOptions}/>
+          <Drawer.Screen name="FacilitiesInCategory" component={FacilitiesInCategory} options={myOptions}/>
         </Drawer.Navigator>
   );
 }
@@ -134,36 +135,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-
-/////// Alia's code.. not finished yet
-
-//import HomeScreen from './User/HomeScreen';
-
-/*const navigator = createStackNavigator({
-  Homepage: HomeScreen
-
-}, {
-  initialRouteName: 'Homepage',
-});*/
-
-/*export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Our GREATE App!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});*/
-
-/*export default createAppContainer(navigator);*/
 

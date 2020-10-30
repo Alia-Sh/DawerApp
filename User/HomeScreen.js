@@ -54,13 +54,19 @@ const HomeScreen = ({navigation})=>{
 
   const [selectedId, setSelectedId] = useState(null);
 
+
   const renderItem = ({ item }) => {
     const backgroundColor = item.key === selectedId ? "#F3F3F3" : "#F3F3F3";
 
     return (
       <Item
         item={item}
-        onPress={() => setSelectedId(item.key)}
+        //onPress={() => setSelectedId(item.key)}
+        onPress={() => {
+            var ID =item.key;
+            var Name =item.name;
+            console.log(ID+' >>> to facilities..');
+            navigation.navigate("FacilitiesInCategory",{ID,Name})}}
         style={{ backgroundColor }}
       />
     );

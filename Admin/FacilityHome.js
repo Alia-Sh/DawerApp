@@ -9,23 +9,25 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import {Card,Title,FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
+import SearchBar from '../components/SearchBar';
 
 const HomeScreen = ({navigation})=>{
-    /*const Open=()=>{
-        navigation.openDrawer()
-    }*/
+  
 
   //const [modalVisible,setModalVisible]=useState(false);
   const [FacList,setFacList] = useState([])
   const [loading,setLoading] = useState(true)
   const [Picture,setPicture] = useState("")
+  const [term, setTerm] = useState('')
+  const [SearchList, setSearchList] = useState([])
+  const [SearchOccur, setSearchOccur] = useState(false)  
 
   const [data,setData]=React.useState({
     isLoading:false,
     isEmptyList:false         
   })
 
-  // fetch all facilities Names ??
+  // fetch all facilities Names
   const fetchData=()=>{
     // firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
       firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
@@ -82,11 +84,11 @@ const renderList =  ({ item }) =>{
         <View style = {{flexDirection: 'column'}}>
             {Picture==""?
             <Image 
-            // retrieve the logo here
                 style = {styles.profile_image}
                 source = {require('../assets/AdminIcons/FacilityIcon.jpg')}/> 
             :
             <Image
+                // retrieve the logo here
                 style = {styles.profile_image}
                 //source = {item.Logo}/>
                 source = {{uri:Picture}}/>
@@ -125,6 +127,11 @@ const renderList =  ({ item }) =>{
   )
 };
 
+SearchInList = (word) =>{
+  setSearchList(FacList.filter(item => item.Name.toLowerCase().includes(word)))
+  setSearchOccur(true)
+}
+
     return (
         <View style={styles.container}>
            <View style={styles.fixedHeader}>
@@ -150,9 +157,28 @@ const renderList =  ({ item }) =>{
 
           </View>
 
-          <View style={{flex:8}}>
-            {data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا توجد منشـآت مدخلة حتى الآن</Title>:
+          <SearchBar
+            term = {term}
+            OnTermChange = {newTerm => setTerm(newTerm)}
+            OnTermSubmit = {()=> SearchInList(term)}
+            />
 
+          <View style={{flex:8}}>
+           {/* {data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا توجد منشـآت مدخلة حتى الآن</Title>:
+            */}
+
+          {SearchOccur ? 
+           
+           <FlatList
+            contentContainerStyle = {styles.grid}
+            numColumns = {2}
+            data = {SearchList}
+            keyExtractor = {(item)=>item.key}
+            onRefresh = {()=>fetchData()}
+            refreshing = {loading}
+            renderItem={renderList}
+            />
+            :
             <FlatList
             contentContainerStyle = {styles.grid}
             numColumns = {2}
@@ -237,7 +263,7 @@ const styles = StyleSheet.create({
     },
     mycard:{
         backgroundColor: '#F3F3F3',
-        marginVertical: 12,
+        marginVertical: 8,
         marginHorizontal: 15,
         borderRadius :0,
         elevation:1, // borderless!
