@@ -89,6 +89,8 @@ const HomeScreen = ({navigation})=>{
             term = {term}
             OnTermChange = {newTerm => setTerm(newTerm)}
             OnTermSubmit = {()=> SearchInList(term)}
+            BarWidth = {'80%'}
+            BarMargin = {'30'}
             />
         </View>
           {/*<View>
@@ -164,6 +166,7 @@ const styles = StyleSheet.create({
     icon: {
       left: 12,
       marginTop: 10,
+      marginEnd: 35
     }
   });
 export default HomeScreen;

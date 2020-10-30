@@ -4,9 +4,9 @@ import {FontAwesome5} from '@expo/vector-icons';
 //import { TextInput } from 'react-native-paper';
 
 
-const SearchBar = ({term, OnTermChange, OnTermSubmit}) =>{
+const SearchBar = ({term, OnTermChange, OnTermSubmit, BarWidth, BarMargin}) =>{
     return(
-        <View style = {styles.background}>
+        <View style = { width = BarWidth, marginHorizontal= BarMargin, styles.background}>
             <TextInput 
                 autoCapitalize = "none"
                 autoCorrect = {false}
@@ -25,17 +25,17 @@ const styles = StyleSheet.create({
     background:{
         backgroundColor:'#ecebe8',
         height: 35,
-        width: 290,
+        //width: '80%', //was 290
         borderRadius: 5,
         marginTop: 10,
-        marginHorizontal: 40,
+        //marginHorizontal: 30,//40
         flexDirection: 'row',
         justifyContent: 'flex-end'
     },
     inputStyle:{
         marginRight: 10,
         fontSize : 15,
-        width: 220,
+        width: '70%', //was 220
         textAlign: 'right'
     },
     iconStyle: {

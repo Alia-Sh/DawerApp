@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {FAB} from 'react-native-paper';
 import AddDriver from './AddDriver';
 import {FontAwesome5} from '@expo/vector-icons'
+import SearchBar from '../components/SearchBar';
 
 
 const Item = ({ item, onPress, style }) => (
@@ -43,6 +44,9 @@ const HomeScreen = ({navigation})=>{
     const [modalVisible,setModalVisible]=useState(false);
     const [DriverList,setDriverList] = useState([])
     const[loading,setLoading]=useState(true)
+    const [term, setTerm] = useState('')
+    const [SearchList, setSearchList] = useState([])
+    const [SearchOccur, setSearchOccur] = useState(false) 
   
 //backend
     const back=()=>{
@@ -110,6 +114,11 @@ const renderItem = ({ item }) => {
   );
 };
 
+// Search function
+SearchInList = (word) =>{
+  setSearchList(DriverList.filter(item => item.name.toLowerCase().includes(word)))
+  setSearchOccur(true)
+}
 
 
    //front-end
@@ -136,7 +145,28 @@ const renderItem = ({ item }) => {
         {//End Header 
           } 
        {/* drivers list */}
-     
+      <View style={{marginLeft:10,marginRight:10}}>
+
+       <SearchBar
+            term = {term}
+            OnTermChange = {newTerm => setTerm(newTerm)}
+            OnTermSubmit = {()=> SearchInList(term)}
+            BarWidth = {'100%'}
+        />
+      </View>
+      
+      {SearchOccur ? 
+           
+        <FlatList
+          data = {SearchList}
+          renderItem={renderItem}
+          keyExtractor = {(item)=>item.key}
+          extraData={selectedId}
+          onRefresh = {()=>fetchData()}
+          refreshing = {loading}
+        />
+
+        :
 
        <FlatList
         data={DriverList}
@@ -146,6 +176,7 @@ const renderItem = ({ item }) => {
         onRefresh={()=>fetchData()}
         refreshing={loading}
       />
+      }
             {/* end drivers list */}
         <FAB  
         onPress={() => setModalVisible(true)}

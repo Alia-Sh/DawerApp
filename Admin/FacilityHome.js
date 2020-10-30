@@ -157,13 +157,16 @@ SearchInList = (word) =>{
 
           </View>
 
+       
+
+          <View style={{flex:8,marginLeft:10,marginRight:10}}>
           <SearchBar
             term = {term}
             OnTermChange = {newTerm => setTerm(newTerm)}
             OnTermSubmit = {()=> SearchInList(term)}
+            BarWidth = {'100%'}
             />
-
-          <View style={{flex:8}}>
+            
            {/* {data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا توجد منشـآت مدخلة حتى الآن</Title>:
             */}
 

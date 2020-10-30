@@ -55,6 +55,10 @@ const FacilitiesInCategory = ({navigation, route}) => {
     })
   }
 
+  useEffect(()=>{
+    fetchData()
+},[])
+
   //retrive facility logo
   const retriveImage = (id) =>{
     var imageRef = firebase.storage().ref('Facilities/'+id); //facilities path 
@@ -67,9 +71,6 @@ const FacilitiesInCategory = ({navigation, route}) => {
       .catch((e) => console.log('getting downloadURL of image error => ', e));
   }
 
-  useEffect(()=>{
-    fetchData()
-},[])
 
 const [selectedId, setSelectedId] = useState(null);
 
@@ -157,11 +158,14 @@ SearchInList = (word) =>{
               />
         </View>
               
-        <View style={{flex:8, marginTop:10}}>
+        <View style={{flex:8, marginTop:10, margin :15}}>
             <SearchBar
                   term = {term}
                   OnTermChange = {newTerm => setTerm(newTerm)}
                   OnTermSubmit = {()=> SearchInList(term)}
+                  BarWidth = {'100%'}
+                  BarMargin = {'40'}
+
             />
             {/*{data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا توجد منشـآت مدخلة حتى الآن</Title>:
             */}
