@@ -36,7 +36,7 @@ import RequestsPage from './User/RequestsPage'
 import AdminViewDriver from './Admin/AdminViewDriver'
 import AddFacility from './Admin/AddFacility';
 import FacilitiesInCategory from './User/FacilitiesInCategory';
-
+import ViewFacilityInfo from './components/ViewFacilityInfo'
 
 
 
@@ -105,6 +105,7 @@ function App() {
           <Stack.Screen name="ResetPassword" component={ResetPassword} options={myOptions}/>
           <Stack.Screen name="AdminViewDriver" component={AdminViewDriver} options={myOptions}/>
           <Stack.Screen name="AddFacility" component={AddFacility} options={myOptions}/>
+          <Stack.Screen name="ViewFacilityInfo" component={ViewFacilityInfo} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );

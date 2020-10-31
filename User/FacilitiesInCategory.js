@@ -80,7 +80,8 @@ const renderList =  ({ item }) =>{
   return(
     <TouchableOpacity
       key={item.key}
-      onPress={() => setSelectedId(item.key)}
+      onPress={() => navigation.navigate("ViewFacilityInfo",{item})}
+      // onPress={() => setSelectedId(item.key)}
       style={styles.mycard}>
         <View style = {{flexDirection: 'column'}}>
             {Picture==""?
