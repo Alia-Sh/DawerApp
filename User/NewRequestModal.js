@@ -302,11 +302,12 @@ import Loading from '../components/Loading';
         })
         // for (var i in RequestList) {
             var RequestId = firebase.database().ref('Category/').push().getKey();
-            firebase.database().ref('/PickupRequest/'+userId+'/DeliveryDriverId/'+RequestId).set({
+            firebase.database().ref('/PickupRequest/'+userId+'/'+RequestId).set({
                 DateAndTime:DateAndTime,
                 Status:'Pending',
                 Location:Location,
                 TimeStamp: firebase.database.ServerValue.TIMESTAMP,
+                DeliveryDriverId:""
             }).then((data)=>{
                 AddMaterialsToDatabase(RequestId);
             }).catch((error)=>{
