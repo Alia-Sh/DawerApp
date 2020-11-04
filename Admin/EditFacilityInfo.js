@@ -605,6 +605,9 @@ export default class EditFacilityInfo extends Component {
                           alert: {
                             ...prevState.alert,
                             alertVisible:false,
+                            Title:"",
+                            Message:"",
+                            jsonPath:""
                           }
                         };
                       })
@@ -647,6 +650,9 @@ export default class EditFacilityInfo extends Component {
                                 alert: {
                                   ...prevState.alert,
                                   alertVisible:false,
+                                  Title:"",
+                                  Message:"",
+                                  jsonPath:""
                                 }
                               };
                             })

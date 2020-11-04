@@ -566,6 +566,9 @@ export default class AddFacility extends Component {
                           alert: {
                             ...prevState.alert,
                             alertVisible:false,
+                            Title:"",
+                            Message:"",
+                            jsonPath:""
                           }
                         };
                       })
@@ -619,6 +622,9 @@ export default class AddFacility extends Component {
                                 alert: {
                                   ...prevState.alert,
                                   alertVisible:false,
+                                  Title:"",
+                                  Message:"",
+                                  jsonPath:""
                                 }
                               };
                             })
@@ -1066,7 +1072,7 @@ export default class AddFacility extends Component {
                         <TouchableOpacity
                             onPress={()=>
                               this.setState({LocationModal:!this.state.LocationModal})}
-                              style={{flexDirection:"row-reverse",flex:1}}>  
+                              style={[styles.flexDirectionStyle,{flex:1}]}>  
                               <Text style={[{flex: 1,flexWrap: 'wrap',fontSize:16,textAlign:"right"}]}>{this.state.Location.address}</Text>
                                   <Feather
                                     onPress={()=>
