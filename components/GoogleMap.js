@@ -12,7 +12,6 @@ import { NativeModules } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 
 const Google=(props)=> {
-  console.log(props.state);
     const [alertVisible,setAlertVisible]= useState(true)
     const [state,setState] =useState({
       focusedLocation: {
@@ -104,7 +103,7 @@ const Google=(props)=> {
                         <MaterialIcons name="clear" size={30} color="#212121" style={styles.icon}
                             onPress={closeModal}/>
                          <View>
-                            <Text style={styles.headerText}>... الموقع</Text>
+                            <Text style={styles.headerText}>تحديد الموقع</Text>
                         </View>
                     </View>  
 

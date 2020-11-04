@@ -1,5 +1,5 @@
 import React, {useEffect,useState}from 'react';
-import { StyleSheet, Text, View,Image,Platform}from 'react-native';
+import { StyleSheet, Text, View,Image,Platform,Linking}from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {Title,Card,Button,FAB}from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
@@ -49,7 +49,13 @@ const AdminViewDriver = ({navigation,route})=>{
         retriveImage()
     },[]);
 
-
+    const openDial=(phone)=>{
+        if(Platform.OS==="android"){
+            Linking.openURL(`tel:${phone}`)
+        }else {
+            Linking.openURL(`telprompt:${phone}`)
+        }
+    }
     // const updateSecureTextEntry=()=>{
     //     setSecureTextEntry(!SecureTextEntry)
     //   }
@@ -92,7 +98,8 @@ const AdminViewDriver = ({navigation,route})=>{
                     <Title>{Name}</Title>
                 </View>
 
-                <Card style={styles.mycard}>
+                <Card style={styles.mycard}
+                        onPress={()=>openDial(Phone)}>
                     <View style={styles.cardContent}>
                         <Feather
                             name="phone"
@@ -102,7 +109,8 @@ const AdminViewDriver = ({navigation,route})=>{
                     </View>  
                 </Card>
             
-                <Card style={styles.mycard}>
+                <Card style={styles.mycard}
+                    onPress={()=>Linking.openURL(`mailto:${Email}`)}>
                     <View style={styles.cardContent}>
                         <Feather
                             name="mail"

@@ -1,18 +1,14 @@
-import React, {useState, useEffect,Component} from 'react';
+import React, {Component} from 'react';
 import { StyleSheet,
    Text,
    View, 
    Platform, 
    TextInput,
    Alert,
-   Dimensions,
-   Modal,
-   Picker,
    NativeModules,
    Image,
-   FlatList, 
+   TouchableOpacity 
   } from 'react-native';
-import {MaterialIcons} from '@expo/vector-icons';
 import {Button} from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Animatable from 'react-native-animatable';
@@ -21,9 +17,9 @@ import AlertView from "../components/AlertView";
 import Loading from '../components/Loading';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
-import {Card,Title,FAB} from 'react-native-paper';
+import {FAB} from 'react-native-paper';
 import {FontAwesome5} from '@expo/vector-icons';
 import GoogleMap from '../components/GoogleMap';
 import moment from 'moment';
@@ -585,18 +581,6 @@ export default class AddFacility extends Component {
                   ContactInfo:this.state.ContactInfo,
                   Location:this.state.Location,
                   AcceptedMaterials:this.state.Category
-                }).then((result)=>{
-                  // firebase.database().ref('RecyclingFacility/'+FacilityId).set({
-                  //   Name:this.state.Name,
-                  //   WorkingDays:this.state.WorkingD,
-                  //   WorkingHours:this.state.WorkingH,
-                  //   ContactInfo:this.state.ContactInfo,
-                  //   Location:this.state.Location,
-                  //   AcceptedMaterials:this.state.Category
-                  // })
-                  // if(this.state.Logo!=""){
-                  //   this.uploadImage(this.state.Logo,FacilityId)
-                  // }
                 }).catch((error)=>{
                   Alert.alert(error.message)
                 })
@@ -652,47 +636,6 @@ export default class AddFacility extends Component {
                 })
             }
         });
-
-        // firebase.database().ref('RecyclingFacility/'+FacilityId).set({
-        //   Name:this.state.Name,
-        //   WorkingDays:this.state.WorkingD,
-        //   WorkingHours:this.state.WorkingH,
-        //   ContactInfo:this.state.ContactInfo,
-        //   Location:this.state.Location,
-        //   AcceptedMaterials:this.state.Category
-        // }).catch((error)=>{
-        //   Alert.alert(error.message)
-        // })
-        // if(this.state.Logo!=""){
-        //   this.uploadImage(this.state.Logo,FacilityId)
-        // }
-        //   this.setState({isLoading:false})
-        //   this.setState(
-        //     prevState => {
-        //       return {
-        //         alert: {
-        //           ...prevState.alert,
-        //           alertVisible:true,
-        //           Title:"اضافة منشأة",
-        //           Message:"تم اضافة المنشأة بنجاح",
-        //           jsonPath:"suss"
-        //         }
-        //       };
-        //     })
-        //     setTimeout(()=>{
-        //       this.setState(
-        //         prevState => {
-        //           return {
-        //             alert: {
-        //               ...prevState.alert,
-        //               alertVisible:false,
-        //             }
-        //           };
-        //         })
-        //         const { navigation } = this.props;
-        //         navigation.navigate("FacilityHome"); 
-        //     },4000)
-      }else{
       }
     }
 
@@ -708,21 +651,22 @@ export default class AddFacility extends Component {
 
                         <SafeAreaView>
 
-                        <View>
-                            <Text style={styles.text_header}>إضافة منشأة جديدة</Text>
-                            <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={Platform.OS === 'android' && 
-                                  NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                  NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                  NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                                  styles.iconAndroid:styles.iconIOS} 
-                                  onPress={()=>navigation.goBack()}
-                                  />
-                        </View>
+                            <View>
+                                <Text style={styles.text_header}>إضافة منشأة جديدة</Text>
+                                <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={Platform.OS === 'android' && 
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+                                      styles.iconAndroid:styles.iconIOS} 
+                                      onPress={()=>navigation.goBack()}
+                                      />
+                            </View>
 
                         </SafeAreaView>
 
                     </LinearGradient>
                 </View>
+
                 <View style={{flex:8}}>
                   <KeyboardAwareScrollView>
 
@@ -740,7 +684,7 @@ export default class AddFacility extends Component {
 
                       <View>
                         <Text style={styles.text_footer}>اسم المنشأة:</Text>
-                        <View style={styles.action}>
+                        <View style={[styles.action,styles.flexDirectionStyle]}>
                             <TextInput style={styles.textInput}
                                 label="Name"
                                 placeholder="ادخل اسم المنشأة"
@@ -764,99 +708,82 @@ export default class AddFacility extends Component {
 
                     <View>
                         <Text style={styles.text_footer}>المواد المقبولة:</Text>
-                        <View style={styles.item}>
-                        {this.state.AllCategory.map((item) => 
-                          <View style={{flexDirection: Platform.OS === 'android' && 
-                          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse'}}>
-                            <CheckBox color="#9E9D24"  checked={item.checked} onPress={()=>this.onCheckChanged(item.CategoryId)}/>
-                            <Text style={Platform.OS === 'android' && 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                              {...styles.checkBoxTxtAndroid,
-                                  color:item.checked?"#9E9D24":"gray",
-                                  fontWeight:item.checked? "bold" :"normal"
-                              }:{...styles.checkBoxTxtIos,
-                                color:item.checked?"#9E9D24":"gray",
-                                fontWeight:item.checked? "bold" :"normal"
-                            }}
-                            >{item.Name}</Text>  
+                          <View style={[styles.item,styles.flexDirectionStyle]}>
+                              {this.state.AllCategory.map((item) => 
+                                <View style={styles.flexDirectionStyle}>
+                                  <CheckBox color="#9E9D24"  checked={item.checked} onPress={()=>this.onCheckChanged(item.CategoryId)}/>
+                                  <Text style={Platform.OS === 'android' && 
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                      NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+                                    {...styles.checkBoxTxtAndroid,
+                                        color:item.checked?"#9E9D24":"gray",
+                                        fontWeight:item.checked? "bold" :"normal"
+                                    }:{...styles.checkBoxTxtIos,
+                                      color:item.checked?"#9E9D24":"gray",
+                                      fontWeight:item.checked? "bold" :"normal"
+                                  }}
+                                  >{item.Name}</Text>  
+                                </View>
+                              )}
                           </View>
-                        )}
-                    </View>
 
-                    {this.state.data.isValidCategory ?
+                          {this.state.data.isValidCategory ?
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب اضافة المنشأة لفئة واحدة على الأقل</Text>
+                              <Text style={styles.errorMsg}>يجب اختيار مادة واحدة على الأقل</Text>
                             </Animatable.View>
-                        }
-
+                          }
                     </View>
 
                     <View>
                       <Text style={styles.text_footer}>معلومات التواصل:</Text>
-                          {/* <View style={styles.action}>
-                              <TextInput style={styles.textInput} 
-                                  label="ContactInfo"
-                                  placeholder="ادخل معلومات التواصل"
-                                  autoCapitalize="none"
-                                  onChangeText={(val)=>this.setState({ContactInfo:val})}
-                                  textAlign= 'right'
-                                  onEndEditing={() => this.checkValidContactInfo()}
-                                  multiline
-                                  numberOfLines={4}
-                                  >
-                              </TextInput>  
-                          </View> */}
 
                         <View style={{padding:15}}>
-                            <View style={styles.cardContent}>
-                                <Text style={styles.textStyle}>رقم الهاتف:</Text>
-                                <View style={[styles.action]}>
-                                <TextInput style={[styles.textInput,{marginTop:-5}]} 
-                                    autoCapitalize="none"
-                                    textAlign= 'right'
-                                    keyboardType="number-pad" //number Input
-                                    onChangeText={(val)=>this.setState({Phone:val})}
-                                    onEndEditing={() => this.checkValidPhone()}
-                                    placeholder="ادخل رقم الهاتف للمنشأة "
-                                    maxLength={10}>
-                                </TextInput> 
+                            <View style={[styles.flexDirectionStyle,{alignItems:'center'}]}>
+                                <Text style={[styles.textStyle]}>رقم الهاتف:</Text>
+                                <View style={[styles.action,styles.flexDirectionStyle]}>
+                                  <TextInput style={[styles.textInput]} 
+                                      autoCapitalize="none"
+                                      textAlign= 'right'
+                                      keyboardType="number-pad" //number Input
+                                      onChangeText={(val)=>this.setState({Phone:val})}
+                                      onEndEditing={() => this.checkValidPhone()}
+                                      placeholder="ادخل رقم الهاتف للمنشأة "
+                                      maxLength={10}>
+                                  </TextInput> 
                                 </View> 
                             </View> 
                             {this.state.data.isValidPhone ?
                               null 
                               : 
                               <Animatable.View animation="fadeInRight" duration={500}>
-                              <Text style={styles.errorMsg}>يجب ادخال رقم الهاتف بشكل صحيح</Text>
+                                <Text style={styles.errorMsg}>يجب ادخال رقم الهاتف بشكل صحيح</Text>
                               </Animatable.View>
-                          } 
+                            } 
 
-                            <View style={styles.cardContent}>
+                            <View style={[styles.flexDirectionStyle,{alignItems:'center'}]}>
                                 <Text style={styles.textStyle}>البريد الإلكتروني:</Text>
-                                <View style={styles.action}>
-                                <TextInput style={[styles.textInput,{marginTop:-5}]} 
-                                    label="Email"
-                                    autoCapitalize="none"
-                                    textAlign= 'right'
-                                    onChangeText={(val)=>this.setState({Email:val})}
-                                    onEndEditing={() => this.checkValidEmail()}
-                                    placeholder="ادخل البريد الإلكتروني للمنشأة "
-                                    >
-                                </TextInput> 
+                                  <View style={[styles.action,styles.flexDirectionStyle]}>
+                                  <TextInput style={[styles.textInput]} 
+                                      label="Email"
+                                      autoCapitalize="none"
+                                      textAlign= 'right'
+                                      onChangeText={(val)=>this.setState({Email:val})}
+                                      onEndEditing={() => this.checkValidEmail()}
+                                      placeholder="ادخل البريد الإلكتروني للمنشأة "
+                                      >
+                                  </TextInput> 
                                 </View> 
                             </View> 
                             {this.state.data.isValidEmail ?
                               null 
                               : 
                               <Animatable.View animation="fadeInRight" duration={500}>
-                              <Text style={styles.errorMsg}>يجب ادخال البريد الإلكتروني بشكل صحيح</Text>
+                                <Text style={styles.errorMsg}>يجب ادخال البريد الإلكتروني بشكل صحيح</Text>
                               </Animatable.View>
-                          } 
+                            } 
                         </View> 
 
 
@@ -864,14 +791,14 @@ export default class AddFacility extends Component {
                               null 
                               : 
                               <Animatable.View animation="fadeInRight" duration={500}>
-                              <Text style={styles.errorMsg}>يجب ادخال معلومات التواصل مع المنشأة</Text>
+                                <Text style={styles.errorMsg}>يجب ادخال معلومات التواصل مع المنشأة</Text>
                               </Animatable.View>
                           }
                     </View>
 
                     <View>
                         <Text style={styles.text_footer}>ايام العمل:</Text>
-                        <View style={styles.item} >
+                        <View style={[styles.item,styles.flexDirectionStyle]} >
                             <CheckBox checked={this.state.Weekday.Sunday} 
                                       color="#9E9D24" 
                                       onPress={()=>
@@ -1066,15 +993,15 @@ export default class AddFacility extends Component {
                     </View>
 
                     <View>
-                    <Text style={styles.text_footer}>ساعات العمل:</Text>
-                        <View style={styles.action}>
-                        <Text style={[styles.textStyle,{paddingRight:5,fontSize:18}]}>من:</Text>
-                            <TextInput style={[styles.textInput,{margin:0,marginRight:5,marginTop:5}]} 
+                      <Text style={styles.text_footer}>ساعات العمل:</Text>
+                        <View style={[styles.action,styles.flexDirectionStyle,{alignItems:'center',paddingLeft:15}]}>
+                          <Text style={[styles.textStyle]}>من:</Text>
+                            <TextInput style={[styles.textInput]} 
                                 value={this.state.WorkingH.startTime}
                                 label="startTime"
-                                placeholder="ادخل وقت بدء العمل"
+                                placeholder="وقت بدء العمل"
                                 autoCapitalize="none"
-                                onChangeText={(val)=>his.setState(prevState => {
+                                onChangeText={(val)=>this.setState(prevState => {
                                                 return {
                                                   WorkingH: {
                                                   ...prevState.WorkingH,
@@ -1084,16 +1011,16 @@ export default class AddFacility extends Component {
                                               })}
                                 onFocus={()=>this.showDatePicker(true)}
                                 textAlign= 'right'
-                                onEndEditing={() => this.checkValidStartTime()}
-                            >
+                                onEndEditing={() => this.checkValidStartTime()}>
                             </TextInput> 
-                            <Text style={[styles.textStyle,{paddingRight:5,fontSize:18}]}>الى:</Text>
-                            <TextInput style={[styles.textInput,{margin:0,marginRight:5,marginTop:5}]}
+
+                            <Text style={[styles.textStyle]}>الى:</Text>
+                            <TextInput style={[styles.textInput]}
                                 value={this.state.WorkingH.endTime}
                                 label="endTime"
-                                placeholder="ادخل وقت انتهاء العمل"
+                                placeholder="وقت انتهاء العمل"
                                 autoCapitalize="none"
-                                onChangeText={(val)=>his.setState(prevState => {
+                                onChangeText={(val)=>this.setState(prevState => {
                                   return {
                                     WorkingH: {
                                     ...prevState.WorkingH,
@@ -1103,8 +1030,7 @@ export default class AddFacility extends Component {
                                 })}
                                 onFocus={()=>this.showDatePicker(false)}
                                 textAlign= 'right'
-                                onEndEditing={() => this.checkValidEndTime()}
-                            >
+                                onEndEditing={() => this.checkValidEndTime()}>
                             </TextInput> 
                         </View>
 
@@ -1112,7 +1038,7 @@ export default class AddFacility extends Component {
                           null 
                           : 
                           <Animatable.View animation="fadeInRight" duration={500}>
-                          <Text style={styles.errorMsg}>يجب ادخال وقت بدء العمل</Text>
+                            <Text style={styles.errorMsg}>يجب ادخال وقت بدء العمل</Text>
                           </Animatable.View>
                         } 
 
@@ -1120,7 +1046,7 @@ export default class AddFacility extends Component {
                           null 
                           : 
                           <Animatable.View animation="fadeInRight" duration={500}>
-                          <Text style={styles.errorMsg}>يجب ادخال وقت انتهاء العمل</Text>
+                            <Text style={styles.errorMsg}>يجب ادخال وقت انتهاء العمل</Text>
                           </Animatable.View>
                         } 
 
@@ -1128,36 +1054,43 @@ export default class AddFacility extends Component {
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب ادخال ساعات العمل بشكل صحيح</Text>
+                              <Text style={styles.errorMsg}>يجب ادخال ساعات العمل بشكل صحيح</Text>
                             </Animatable.View>
                         }
                     </View>
 
                     <View>
                         <Text style={styles.text_footer}>الموقع:</Text>
-                        <View style={styles.action}>
-                      <Text style={[styles.textInput,{flex: 1,flexWrap: 'wrap',fontSize:16,textAlign:"right"}]}>{this.state.Location.address}</Text>
-                            <Feather
-                                  onPress={()=>
+                        <View style={[styles.action,styles.flexDirectionStyle,{borderBottomWidth:1,borderBottomColor:'#E0E0E0',padding:10}]}>
+
+                        <TouchableOpacity
+                            onPress={()=>
+                              this.setState({LocationModal:!this.state.LocationModal})}
+                              style={{flexDirection:"row-reverse",flex:1}}>  
+                              <Text style={[{flex: 1,flexWrap: 'wrap',fontSize:16,textAlign:"right"}]}>{this.state.Location.address}</Text>
+                                  <Feather
+                                    onPress={()=>
                                     this.setState({LocationModal:!this.state.LocationModal})}
                                     name="chevron-left"
                                     color="grey"
                                     size={25}
                                     style={{marginTop:5}}
                                     />  
-                      
+                          </TouchableOpacity>
                         </View>
 
                         {this.state.data.LocationExist ? 
                             null : (
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب إدخال الموقع</Text>
+                              <Text style={styles.errorMsg}>يجب إدخال الموقع</Text>
                             </Animatable.View>
-                            ) }
+                            )}
                     </View>
 
                     <View style={styles.button}> 
-                        {this.state.isLoading? <Loading></Loading>:  
+                        {this.state.isLoading? 
+                          <Loading></Loading>
+                          :  
                             <Button 
                                 mode="contained" 
                                 color="#809d65" 
@@ -1169,16 +1102,23 @@ export default class AddFacility extends Component {
                             </Button>
                         }
                     </View>     
-                    </KeyboardAwareScrollView>
+                  </KeyboardAwareScrollView>
 
                 </View>
-                {this.state.LocationModal?<GoogleMap pickLocation={this.pickLocation} closeLocatiomModal={this.closeLocatiomModal}></GoogleMap>:null}
+
+                {this.state.LocationModal?
+                    <GoogleMap pickLocation={this.pickLocation} closeLocatiomModal={this.closeLocatiomModal}></GoogleMap>
+                    :
+                 
+                    null
+                }
                 {this.state.alert.alertVisible?
                     <AlertView title={this.state.alert.Title} message={this.state.alert.Message} jsonPath={this.state.alert.jsonPath}></AlertView>
                     :
                     null
-                }     
-            <DateTimePicker
+                } 
+
+                <DateTimePicker
                     mode="time"
                     isVisible={this.state.isDatePickerVisible}
                     onConfirm={this.handleDatePicked}
@@ -1187,6 +1127,7 @@ export default class AddFacility extends Component {
                     confirmTextIOS="تأكيد"
                     datePickerModeAndroid={'spinner'}
                     is24Hour={false}
+                    headerTextIOS="اختر الوقت"
                 /> 
           </View>
         )
@@ -1201,8 +1142,7 @@ const styles = StyleSheet.create({
       marginTop:8,
       width:120,
       height:120,
-    },
-    
+    },   
     fixedHeader :{
       flex:1,
       backgroundColor :'#809d65',
@@ -1215,13 +1155,6 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       marginTop:20
     },
-    headerText:{
-      fontWeight:'bold',
-      fontSize: 18,      
-      letterSpacing: 1, 
-      textAlign:'center',
-      color: '#212121'
-    },
     iconIOS:{
       position: 'absolute',
       marginTop:20,
@@ -1233,27 +1166,11 @@ const styles = StyleSheet.create({
       left: 16
     },
     action: {
-      flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
-      margin: 5,
       borderBottomWidth: 1,
       borderBottomColor: '#f2f2f2',
       paddingRight:3,
       paddingLeft:3,
-    },  
-    feather: {
-      flex: 1,
-      marginTop: Platform.OS === 'ios' ? 0 : -12,
-      color: '#9E9D24',
-      textAlign: 'left'
-    },
-    Location: {
-      marginTop: Platform.OS === 'ios' ? 0 : -12,
-      color: '#05375a',
-      flex: 5,
-      paddingLeft: 50
+      flex:1
     },
     errorMsg: {
       color: '#FF0000',
@@ -1264,13 +1181,6 @@ const styles = StyleSheet.create({
       NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
       paddingRight:20
     },
-    title: {
-      fontSize: 18,
-      fontWeight: 'bold' ,
-      textAlign :'right',
-      marginRight:15,
-      marginLeft:15
-    },
     text_footer: {
       color: '#9E9D24',
       fontSize: 18,
@@ -1280,16 +1190,18 @@ const styles = StyleSheet.create({
       NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
       marginRight:10,
       marginLeft:10,
-      // marginTop:10,
    },
    textInput: {
       marginTop: Platform.OS === 'ios' ? 5 : 0,
-      paddingLeft: 10,
+      padding: 8,
       color: '#05375a',
       textAlign: 'right',
       margin:10 , 
-      // marginLeft:10,
-      fontSize:14 
+      borderRadius:5,
+      borderWidth: 1,
+      borderColor: '#E0E0E0',
+      fontSize:14,
+      flex:1 
   },
    FABStyleAndroid:{
       marginLeft:90,
@@ -1300,46 +1212,35 @@ const styles = StyleSheet.create({
       marginLeft:90,
       marginTop:-23,
   },
-    button:{
+  button:{
       alignItems: 'center',
       margin: 15
-    },
-    profile_image:{
-      width:150,
-      height:150,
-      borderRadius:150/2,
-      marginTop:-20 
   },
   item:{
     width:"100%",
-    // backgroundColor:"#fff",
     borderRadius:20,
     padding:10,
     marginBottom:10,
-    flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
-      flex: 1,flexWrap: 'wrap',
-      alignItems:'center',
-      justifyContent:'center'
+    flex: 1,flexWrap: 'wrap',
+    alignItems:'flex-start',
+    justifyContent:'flex-start'
   },
   checkBoxTxtIos:{
-    marginRight:20
+    marginRight:20,
+    marginBottom:5,
   },
   checkBoxTxtAndroid:{
-    marginLeft:20
+    marginLeft:20,
+    marginBottom:5,
   },
-  cardContent:{
+  textStyle:{
+    color: '#9E9E9E',
+    fontSize: 16,
+  },
+  flexDirectionStyle:{
     flexDirection: Platform.OS === 'android' && 
     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
-    // paddingTop:10,
-    // paddingLeft:10,
-},
-textStyle:{
-  color: '#9E9E9E',
-  fontSize: 15,
-}
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse', 
+  }
 });

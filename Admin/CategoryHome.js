@@ -12,8 +12,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {Card,Title,FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
 import AddCategory from './AddCategory';
-import DeleteCategory from './DeleteCategory';
-import {FontAwesome5} from '@expo/vector-icons'
+import {FontAwesome5} from '@expo/vector-icons';
+import DeleteModal from '../components/DeleteModal';
 
 const HomeScreen = ({navigation})=>{
   const [modalVisible,setModalVisible]=useState(false);
@@ -26,7 +26,7 @@ const HomeScreen = ({navigation})=>{
       isLoading:false,
       isEmptyList:false         
   })
-  const [DeleteModal,setDaleteModal]=useState({
+  const [VisibleDeleteModal,setDaleteModal]=useState({
     IsVisible:false,
     Name:'',
     Id:''
@@ -62,18 +62,14 @@ const HomeScreen = ({navigation})=>{
   const renderList = ((item)=>{
     return(
         <Card style={styles.mycard} >
-          <View style={styles.cardContent}>
-              <View style={{flexDirection:Platform.OS === 'android' &&
-                      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                      NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                      'row':'row-reverse'}}>
-              <Title style={styles.title}>{item.Name}</Title>
+          <View style={[styles.cardContent,styles.flexDirectionStyle]}>
+              <View style={styles.flexDirectionStyle}>
+              <Title style={styles.title}>{item.Name} {item.Status}</Title>
               </View>
 
               <TouchableOpacity style={styles.EditIconStyle}
                 onPress={()=>setDaleteModal({
-                  ...DeleteModal,
+                  ...VisibleDeleteModal,
                   IsVisible:true,
                   Name:item.Name,
                   Id:item.CategoryId
@@ -98,12 +94,11 @@ const HomeScreen = ({navigation})=>{
 
                 <SafeAreaView>
 
-                  <View style={styles.header}>
+                  <View style={[styles.header,styles.flexDirectionStyle]}>
 
                     <Text style={styles.text_header}>الفـئـــات</Text>
                     
-                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} 
-                                  onPress={()=>navigation.goBack()}/>
+                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} onPress={()=>navigation.goBack()}/>
 
                   </View>
 
@@ -114,45 +109,45 @@ const HomeScreen = ({navigation})=>{
           </View>
 
           <View style={{flex:8}}>
-            {data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا يوجد فئات مدخلة</Title>:
-          
-            <FlatList
+            {data.isEmptyList? 
+
+              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا يوجد فئات مدخلة</Title>
+              :
+              <FlatList
                 data={CategoryList}
                 renderItem={({item})=>{
                 return renderList(item)}}
                 keyExtractor={item=>`${item.CategoryId}`}
                 style={{flex:8}}
-                
                 onRefresh={()=>fetchData()}
-                refreshing={loading}
-              /> 
-                }
+                refreshing={loading}/> 
+            }
+
             <FAB  
               onPress={()=>setModalVisible(true)}
-                style={Platform.OS === 'android' &&
-                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                styles.fabAndroid:styles.fabIOS}
+              style={Platform.OS === 'android' &&
+              NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+              NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+              NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+              styles.fabAndroid:styles.fabIOS}
               small={false}
               icon="plus"
               theme={{colors:{accent:"#9cac74"}}} 
             />
 
-            {modalVisible?<AddCategory setModalVisible={setModalVisible}></AddCategory>:null}
-
-            {DeleteModal.IsVisible?<DeleteCategory Id={DeleteModal.Id} setDaleteModal={setDaleteModal} Name={DeleteModal.Name}></DeleteCategory>:null}
+            {modalVisible?
+              <AddCategory setModalVisible={setModalVisible}></AddCategory>
+              :
+              null
+            }
+            {VisibleDeleteModal.IsVisible?
+              <DeleteModal setDaleteModal={setDaleteModal} Name={"ال"+VisibleDeleteModal.Name} Type="فئة" Id={VisibleDeleteModal.Id} ></DeleteModal>
+              :null
+            }
           </View>   
       </View>
     );
 }
-
-const {width} = Dimensions.get("screen");
-const width_logo = width* 0.22;
-const width_logout = width* 0.045;
-const {height} = Dimensions.get("screen");
-const height_logo = height* 0.17;
-const height_logout = height* 0.03;
 
 const styles = StyleSheet.create({
     container: {
@@ -163,41 +158,20 @@ const styles = StyleSheet.create({
       backgroundColor :'#9E9D24',
       overflow: 'hidden',
     },
-    back: {
-      width: width_logout ,
-      height: height_logout,
-      // marginLeft: 8 ,
-      // marginRight:8,
-      alignItems:'baseline',
-      shadowColor :'#F1F1EA',  
-    },
     text_header: {
       color: '#ffff',
       fontWeight: 'bold',
       fontSize: 22,
       textAlign: 'center',
-      // marginLeft:165,
-    },
-    logo: {
-      width: width_logo ,
-      height: height_logo,
     },
     header:{
       width: '100%',
       height: 80,
-      flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' :'row-reverse',
       alignItems: 'center',
       justifyContent: 'center',
       marginTop:Platform.OS === 'android'? 0 : -10
     },
     cardContent:{
-      flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
       justifyContent:'space-between'
     },
     mycard:{
@@ -242,6 +216,12 @@ const styles = StyleSheet.create({
       position: 'absolute',
       marginTop:20,
       left: 16
-    },  
+    },
+    flexDirectionStyle:{
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
+    }  
 });
 export default HomeScreen;

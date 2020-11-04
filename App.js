@@ -36,7 +36,9 @@ import RequestsPage from './User/RequestsPage'
 import AdminViewDriver from './Admin/AdminViewDriver'
 import AddFacility from './Admin/AddFacility';
 import FacilitiesInCategory from './User/FacilitiesInCategory';
-import ViewFacilityInfo from './components/ViewFacilityInfo'
+import ViewFacilityInfo from './components/ViewFacilityInfo';
+import FacilityInfo from './Admin/FacilityInfo';
+import EditFacilityInfo from './Admin/EditFacilityInfo'
 
 
 
@@ -106,6 +108,8 @@ function App() {
           <Stack.Screen name="AdminViewDriver" component={AdminViewDriver} options={myOptions}/>
           <Stack.Screen name="AddFacility" component={AddFacility} options={myOptions}/>
           <Stack.Screen name="ViewFacilityInfo" component={ViewFacilityInfo} options={myOptions}/>
+          <Stack.Screen name="FacilityInfo" component={FacilityInfo} options={myOptions}/>
+          <Stack.Screen name="EditFacilityInfo" component={EditFacilityInfo} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );

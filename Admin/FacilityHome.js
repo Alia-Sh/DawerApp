@@ -1,13 +1,15 @@
 import React, {useState,useEffect} from 'react';
-import { StyleSheet, Text, View, Image,
-  Dimensions,
+import { StyleSheet, 
+  Text, 
+  View, 
+  Image,
   NativeModules,
   FlatList } from 'react-native';
-import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import {Card,Title,FAB} from 'react-native-paper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import {FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
 
@@ -29,7 +31,6 @@ const HomeScreen = ({navigation})=>{
 
   // fetch all facilities Names
   const fetchData=()=>{
-    // firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
       firebase.database().ref('RecyclingFacility').orderByChild("Name").on('value',snapshot=>{
       const Data = snapshot.val();
       if(Data){
@@ -79,7 +80,7 @@ const renderList =  ({ item }) =>{
   return(
     <TouchableOpacity
       key={item.key}
-      onPress={() => setSelectedId(item.key)}
+      onPress={() => navigation.navigate("FacilityInfo",{item})}
       style={styles.mycard}>
         <View style = {{flexDirection: 'column'}}>
             {Picture==""?
@@ -141,13 +142,11 @@ SearchInList = (word) =>{
 
                 <SafeAreaView>
 
-                  <View style={styles.header}>
+                  <View style={[styles.header,styles.flexDirectionStyle]}>
 
                     <Text style={styles.text_header}>المنشــآت</Text>
                     
-                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} 
-                                  onPress={()=>navigation.goBack()}/>
-
+                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon}  onPress={()=>navigation.goBack()}/>
 
                   </View>
 
@@ -160,46 +159,47 @@ SearchInList = (word) =>{
        
 
           <View style={{flex:8,marginLeft:10,marginRight:10}}>
-          <SearchBar
-            term = {term}
-            OnTermChange = {newTerm => setTerm(newTerm)}
-            OnTermSubmit = {()=> SearchInList(term)}
-            BarWidth = {'100%'}
-            />
+            <SearchBar
+              term = {term}
+              OnTermChange = {newTerm => setTerm(newTerm)}
+              OnTermSubmit = {()=> SearchInList(term)}
+              BarWidth = {'100%'}
+              />
             
            {/* {data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا توجد منشـآت مدخلة حتى الآن</Title>:
             */}
 
-          {SearchOccur ? 
-           
-           <FlatList
-            contentContainerStyle = {styles.grid}
-            numColumns = {2}
-            data = {SearchList}
-            keyExtractor = {(item)=>item.key}
-            onRefresh = {()=>fetchData()}
-            refreshing = {loading}
-            renderItem={renderList}
-            />
-            :
-            <FlatList
-            contentContainerStyle = {styles.grid}
-            numColumns = {2}
-            data = {FacList}
-            keyExtractor = {(item)=>item.key}
-            onRefresh = {()=>fetchData()}
-            refreshing = {loading}
-            renderItem={renderList}
-            />
+            {SearchOccur ? 
+              
+                <FlatList
+                contentContainerStyle = {styles.grid}
+                numColumns = {2}
+                data = {SearchList}
+                keyExtractor = {(item)=>item.key}
+                onRefresh = {()=>fetchData()}
+                refreshing = {loading}
+                renderItem={renderList}
+                />
+              :
+                <FlatList
+                contentContainerStyle = {styles.grid}
+                numColumns = {2}
+                data = {FacList}
+                keyExtractor = {(item)=>item.key}
+                onRefresh = {()=>fetchData()}
+                refreshing = {loading}
+                renderItem={renderList}
+                />
             }
+
             <FAB  
               onPress={()=>{
-                navigation.navigate("AddFacility") }}
-                style={Platform.OS === 'android' &&
-                NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                styles.fabAndroid:styles.fabIOS}
+              navigation.navigate("AddFacility") }}
+              style={Platform.OS === 'android' &&
+              NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+              NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+              NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+              styles.fabAndroid:styles.fabIOS}
               small={false}
               icon="plus"
               theme={{colors:{accent:"#9cac74"}}} 
@@ -213,11 +213,6 @@ SearchInList = (word) =>{
       );
 }
 
-const {width} = Dimensions.get("screen");
-const {height} = Dimensions.get("screen");
-const height_logout = height* 0.03;
-const width_logout = width* 0.045;
-
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -225,14 +220,6 @@ const styles = StyleSheet.create({
     textInput: {
         textAlign: 'center', 
         marginTop: 20,  
-    },
-    back: {
-      width: width_logout ,
-      height: height_logout,
-      // marginLeft: 8 ,
-      // marginRight:8,
-      alignItems:'baseline',
-      shadowColor :'#F1F1EA',  
     },
     fixedHeader :{
       flex:1,
@@ -242,10 +229,6 @@ const styles = StyleSheet.create({
     header:{
       width: '100%',
       height: 80,
-      flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' :'row-reverse',
       alignItems: 'center',
       justifyContent: 'center',
       marginTop:Platform.OS === 'android'? 0 : -10
@@ -255,7 +238,6 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 22,
       textAlign: 'center',
-      // marginLeft:165,
     },
     cardContent:{
       flexDirection: Platform.OS === 'android' && 
@@ -280,8 +262,6 @@ const styles = StyleSheet.create({
     profile_image:{
       width:120,
       height:120,
-      //borderRadius:150/2,
-      //marginTop:-75 
     },
     fabIOS: {
       position: 'absolute',
@@ -307,6 +287,12 @@ const styles = StyleSheet.create({
       marginTop:20,
       left: 16
     },
+    flexDirectionStyle:{
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
+    }
   
 });
 export default HomeScreen;
