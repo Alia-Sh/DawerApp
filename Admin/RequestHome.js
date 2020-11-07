@@ -24,7 +24,7 @@ const Item = ({ item, onPress, style }) => (
       
     <Image
           source={require('../assets/AdminIcons/requestIcon.jpg')}
-          style={{width:40,height:40,marginRight:-5}}
+          style={{width:40,height:40,marginRight:-5,borderRadius:12}}
           resizeMode="stretch"
           />
       <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10}} >
