@@ -6,15 +6,12 @@ import LottieView from 'lottie-react-native';
 const DeleteModal=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
     const Delete=(id,Type)=>{
-        switch(Type){
-            case "فئة":
+        if(Type=="فئة"){
                 firebase.database().ref('Category/' + id).remove();
                 props.setDaleteModal({
                   IsVisible:false
                 })
-                // props.navigation.goBack()
-                break;
-            case "منشأة":
+        }else if(Type=="منشأة"){
                 firebase.database().ref('/Category/').once('value',snapshot=>{
                     snapshot.forEach(function(snapshot){
                         var CategoryId=snapshot.key
@@ -39,9 +36,8 @@ const DeleteModal=(props)=>{
                   IsVisible:false
                 })
                 props.navigation.goBack()
-                break;
         }
-      }
+    }
 return(            
 <Modal
     animationType="slide"
