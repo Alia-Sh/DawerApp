@@ -11,11 +11,10 @@ import { StyleSheet,
 } from 'react-native';
 import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import {FAB} from 'react-native-paper';
-import AddDriver from './AddDriver';
+import {FAB,Title} from 'react-native-paper';
 import {FontAwesome5} from '@expo/vector-icons'
-import SearchBar from '../components/SearchBar';
 import {MaterialIcons} from '@expo/vector-icons';
+import { ArabicNumbers } from 'react-native-arabic-numbers';
 
 
 const Item = ({ item, onPress, style }) => (
@@ -81,7 +80,9 @@ const fetchData=()=>{
             console.log(snapshot.key);
             console.log(snapshot.val().Status);
             if(snapshot.val().Status==="Pending"){
-              var temp={Date:snapshot.val().DateAndTime,Id:snapshot.key,Status:snapshot.val().Status}
+              var temp={Date:snapshot.val().DateAndTime,
+                key:snapshot.key,
+                Status:snapshot.val().Status}
               li.push(temp)
               setLoading(false)
             }
@@ -110,10 +111,10 @@ const fetchData=()=>{
           
           onPress={() => 
           { var ID =item.key;
-            var NAME=item.Date;
-            var USER = item.Status;
+            var DATE=item.Date;
+            var STATUS = item.Status;
             console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("AdminViewDriver",{ID,NAME,USER})}}
+            navigation.navigate("RequestDetails",{ID,DATE,STATUS})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
@@ -133,15 +134,22 @@ const fetchData=()=>{
         
               <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} onPress={()=>navigation.goBack()}/>
 
-              <Text style={styles.text_header}>  الـطلبـات </Text>
+              <Text style={styles.text_header}>  الـطـلـبـات </Text>
 
             </LinearGradient>
          </View>
         {//End Header 
           } 
-       {/* drivers list */}
+       {/* Request list */}
       
-
+       <Title style={[styles.text,{marginTop:10,marginBottom:3}]}
+       > عدد الطلبات المعلّقة : {ArabicNumbers(RequestList.length)}</Title>
+       <View style={{alignItems:"center"}}>
+            <Image
+                            style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
+                            source={require('../assets/line.png')}
+                            />
+</View>
             <FlatList
               data={RequestList}
               renderItem={renderItem}
@@ -151,7 +159,7 @@ const fetchData=()=>{
               refreshing={loading}
             />
           
-            {/* end drivers list */}
+            {/* end request list */}
                 
         </View>
       );
@@ -238,7 +246,14 @@ const styles = StyleSheet.create({
       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
       NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
-    } 
+    } ,
   //end flat list
+  text: {
+   // color: '#809d65',
+    fontSize: 18,
+    textAlign: 'center',
+    marginRight:9,
+    marginLeft:9,
+},
   });
 export default RequestHome;

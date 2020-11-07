@@ -38,7 +38,8 @@ import AddFacility from './Admin/AddFacility';
 import FacilitiesInCategory from './User/FacilitiesInCategory';
 import ViewFacilityInfo from './components/ViewFacilityInfo';
 import FacilityInfo from './Admin/FacilityInfo';
-import EditFacilityInfo from './Admin/EditFacilityInfo'
+import EditFacilityInfo from './Admin/EditFacilityInfo';
+import RequestDetails from './Admin/RequestDetails';
 
 
 
@@ -109,6 +110,7 @@ function App() {
           <Stack.Screen name="AddFacility" component={AddFacility} options={myOptions}/>
           <Stack.Screen name="ViewFacilityInfo" component={ViewFacilityInfo} options={myOptions}/>
           <Stack.Screen name="FacilityInfo" component={FacilityInfo} options={myOptions}/>
+          <Stack.Screen name="RequestDetails" component={RequestDetails} options={myOptions}/>
           <Stack.Screen name="EditFacilityInfo" component={EditFacilityInfo} options={myOptions}/>
         </Stack.Navigator>
     </View>
