@@ -8,14 +8,14 @@ import {View,
     FlatList,
     Dimensions,
     Modal} from 'react-native';
-import {Card,Title,FAB} from 'react-native-paper';
+import {Card,Title,FAB,Button} from 'react-native-paper';
 import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import {FontAwesome5} from '@expo/vector-icons';
 import { color } from 'react-native-reanimated';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
-const  RequestsPage= () =>{
+const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
     const[RequestList,setRequestList]= useState([]);
     const[DetailsList,setDetailsList]= useState([]);
@@ -78,7 +78,7 @@ const  RequestsPage= () =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.text}> :نوع المادة</Title>
+            <Title style={styles.text}>:نوع المادة</Title>
             <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
             </View>
             <View style={{flexDirection:Platform.OS === 'android' &&
@@ -86,7 +86,7 @@ const  RequestsPage= () =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.text}> :الكمية</Title>
+            <Title style={styles.text}>:الكمية</Title>
             <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
             </View>
             <Image
@@ -187,8 +187,14 @@ const  RequestsPage= () =>{
                                     return displayDetails(item)}}
                                     keyExtractor={item=>`${item.Id}`}
                             /> 
+                    <View style={styles.button}> 
+                    <Button mode="contained" theme={theme }>
+                     إلغاء الطلب
+                    </Button>
+                    </View>
                                 </View>
                             </View>
+                         
                     </Modal>
             </View>
         )
@@ -203,8 +209,8 @@ const  RequestsPage= () =>{
                 <TouchableOpacity onPress={()=>setAlertVisible(true)}>
                     <Title style={[styles.text,{fontWeight: 'bold',marginTop:10}]}>طلب جديد</Title>
                 </TouchableOpacity>
-                <Title style={[styles.text,{marginTop:10,marginLeft:55}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
-                <TouchableOpacity style={{margin:10}}
+                <Title style={[styles.text,{marginTop:10,marginLeft:Platform.OS=== 'android'?-55:55}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
+                <TouchableOpacity onPress={()=> navigation.navigate('HistoryRequests')} style={{margin:10}}
                     //  onPress={()=>DeleteRequest(item)}
                      >
                      <Image 
@@ -241,7 +247,12 @@ const {height} = Dimensions.get("screen");
 const {width} = Dimensions.get("screen");
 const height_logo = height * 0.09;
 const wight_logo = width * 0.090;
-
+  
+const theme= {
+    colors:{
+        primary: "#DC7025"
+    }
+}
 const styles = StyleSheet.create({
     container: {
         flex:1,
@@ -268,7 +279,7 @@ const styles = StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse',
         justifyContent:'space-between',
         backgroundColor: '#F3F3F3',
-        // marginVertical: 5,
+        margin:1,
         marginHorizontal: 10,
         borderRadius :5,
         shadowColor :'#000',
@@ -328,6 +339,14 @@ const styles = StyleSheet.create({
             shadowRadius:3.85,
             elevation:5,        
         },
+        button:{
+        flexDirection:"row",
+        justifyContent:"space-around",
+        paddingTop:20,
+        paddingLeft:40,
+        paddingRight:40,
+        paddingBottom:10
+    },
         iconIOS:{
             position:'absolute',
             right:15,

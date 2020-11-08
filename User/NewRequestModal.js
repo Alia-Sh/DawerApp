@@ -10,6 +10,8 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
 import firebase from '../Database/firebase';
 import AlertView from "../components/AlertView";
+import NumericInput from 'react-native-numeric-input';
+import { ArabicNumbers } from 'react-native-arabic-numbers';
 import Loading from '../components/Loading';
 
  const NewRequestModal=(props)=>{
@@ -129,7 +131,7 @@ import Loading from '../components/Loading';
     const ResetField=()=>{
         if(checkMaterial() && checkQuantity()){
             // data.MaterialInput.current.clear();
-            data.QuantityInput.current.clear();
+           // data.QuantityInput.current.clear();
             // data.DateAndTimeInput.current.clear();
             setMaterial(CategoryList[0].Name);
             setQantity('');
@@ -692,22 +694,22 @@ return (
                                     <View style={{flexDirection:Platform.OS === 'android' && 
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse'}}>
-                                        <View style={styles.action}>
-                                            <TextInput style={styles.textInput} 
-                                                value={Quantity+""}
-                                                label="Quantity"
-                                                placeholder="ادخل كمية المادة"
-                                                autoCapitalize="none"
-                                                onChangeText={(val)=>setQantity(val)}
-                                                textAlign= 'right'
-                                                onEndEditing={() => checkQuantity()}
-                                                // keyboardType="number-pad" //number Input
-                                                ref={data.QuantityInput}
-                                                >
-                                            </TextInput> 
-                                        </View> 
-
+                                        NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse', marginLeft:5,paddingBottom:4}}>
+                                       
+                                        
+                                       
+                                        <NumericInput 
+                                                      onChange={(val)=>setQantity(val)}
+                                                      onEndEditing={() => checkQuantity()}
+                                                      value={Quantity+""}
+                                                      totalWidth={70} 
+                                                      totalHeight={35} 
+                                                      rounded="true"
+                                                      ref={data.QuantityInput}
+                                                      minValue={1}
+                                                      initValue={0}
+                                                      />
+                                              
                                     </View>
                                       {data.isvalidQuantity ?
                                         null 
@@ -974,6 +976,7 @@ const styles=StyleSheet.create({
     button:{
         flexDirection:"row",
         justifyContent:"space-around",
+        alignItems:Platform.OS === 'ios'?'flex-start':'flex-end',
         paddingTop:40,
         paddingLeft:Platform.OS === 'ios'?210:0,
         paddingRight:Platform.OS === 'android'?200:0,

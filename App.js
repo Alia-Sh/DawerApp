@@ -40,6 +40,7 @@ import ViewFacilityInfo from './components/ViewFacilityInfo';
 import FacilityInfo from './Admin/FacilityInfo';
 import EditFacilityInfo from './Admin/EditFacilityInfo';
 import RequestDetails from './Admin/RequestDetails';
+import HistoryRequests from './User/HistoryRequests';
 
 
 
@@ -93,6 +94,7 @@ function App() {
           <Stack.Screen name="ChooseBetweenUsers" component={ChooseBetweenUsers} options={myOptions}/>
           <Stack.Screen name="DriverLogin" component={DriverLogin} options={myOptions}/>
           <Stack.Screen name="AdminLogin" component={AdminLogin} options={myOptions}/>
+          <Stack.Screen name="HistoryRequests" component={HistoryRequests} options={myOptions}/> 
           <Stack.Screen name="AdminHomePage" component={AdminHomePage} options={myOptions}/>
           <Stack.Screen name="CreateAccount" component={create} options={myOptions}/>
           <Stack.Screen name="UserLogin" component={UserLogin} options={myOptions}/>
