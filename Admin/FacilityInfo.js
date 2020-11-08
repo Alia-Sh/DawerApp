@@ -126,9 +126,12 @@ const FacilityInfo=({navigation,route,props})=>{
 
     return(
         <View style={styles.root}>
+            <LinearGradient
+                        colors={["#809d65","#9cac74"]}
+                        style={{height:"10%" ,width:"100%"}}>
             <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={[styles.header,styles.flexDirectionStyle]}>
-                    <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
+                    <FontAwesome5 name="chevron-right" size={24} color="#ffff" style={styles.icon}
                         onPress={()=>navigation.goBack()}
                       />
                     <View>
@@ -136,7 +139,7 @@ const FacilityInfo=({navigation,route,props})=>{
                     </View>
                 </View>
             </SafeAreaView>
-
+            </LinearGradient> 
             <View style={styles.footer}>
                 <KeyboardAwareScrollView>
                     <View style={{alignItems:"center"}}>
@@ -167,12 +170,14 @@ const FacilityInfo=({navigation,route,props})=>{
                     <Card style={styles.mycard}>
                         <View style={[styles.cardContent,styles.flexDirectionStyle]}>
                             <Text style={styles.textStyle}>المواد المقبولة</Text>
+                            <View style={[styles.flexDirectionStyle,{flex:1,flexWrap:'wrap'}]}>
                             {AcceptedMaterials.map((item,index) => 
                                 <View style={styles.flexDirectionStyle}>
                                     <Text style={styles.mytext}>{item.Name}</Text> 
                                     {AcceptedMaterials.length-1!=index?<Text>،</Text>:null}
                                 </View>
                             )}
+                            </View>
                         </View>  
                     </Card>  
 
@@ -246,7 +251,7 @@ const FacilityInfo=({navigation,route,props})=>{
                             <Loading></Loading>  
                             : 
                             <View style={styles.button}>
-                                <Button icon="delete" mode="contained" theme={themeDelete } dark={false}
+                                <Button icon="delete" mode="contained" theme={themeDelete } dark={true}
                                                     onPress={()=>setDaleteModal({
                                                         ...VisibleDeleteModal,
                                                         IsVisible:true,
@@ -255,7 +260,7 @@ const FacilityInfo=({navigation,route,props})=>{
                                     حذف
                                 </Button>
 
-                                <Button icon="circle-edit-outline" mode="contained" theme={theme } dark={false}
+                                <Button icon="circle-edit-outline" mode="contained" theme={theme } dark={true}
                                     onPress={() => {NavigateToUpdateFacilityInfo()}}
                                     >
                                     تحديث
@@ -271,7 +276,7 @@ const FacilityInfo=({navigation,route,props})=>{
 
 const theme= {
     colors:{
-        primary: "#9E9D24"
+        primary: "#9cac74"
     }
 }
 
@@ -299,7 +304,7 @@ const styles=StyleSheet.create({
         fontSize: 20,      
         letterSpacing: 1, 
         textAlign:'center',
-        color: '#9E9D24'
+        color: '#ffff'
     },
     icon:{
         position: 'absolute',
