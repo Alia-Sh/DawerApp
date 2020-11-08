@@ -571,28 +571,143 @@ export default class EditFacilityInfo extends Component {
       this.setState({LocationModal:false})
     }
 
+    // updateFacility=()=>{
+    //   if(this.checkValidName() && this.checkValidCategory() && 
+    //     this.checkValidContactInfo() && this.checkWorkingD() && 
+    //     this.checkValidWorkingH() && this.checkLocationExist()){
+    //       console.log(this.state.FacilityId);
+    //             // firebase.database().ref('RecyclingFacility/' + this.state.FacilityId).update({
+    //             // Name:this.state.Name,
+    //             // WorkingDays:this.state.WorkingD,
+    //             // WorkingHours:this.state.WorkingH,
+    //             // ContactInfo:this.state.ContactInfo,
+    //             // Location:this.state.Location,
+    //             // AcceptedMaterials:this.state.Category
+    //             // })
+    //     // this.setState({isLoading:true})
+
+    //     // firebase.database().ref("RecyclingFacility").orderByChild("Name")
+    //     // .equalTo(this.state.Name.toLowerCase()).on("value", snapshot => {
+    //     //     const Data = snapshot.val();
+    //     //     // Check if the Facility  exist. 
+    //     //     if (Data && this.state.CurrentName!=this.state.Name) {
+    //     //         console.log("Facility exist!");
+    //     //         // Check if the Facility doesnt exist.
+    //     //         this.setState({isLoading:false})
+    //     //         this.setState(
+    //     //           prevState => {
+    //     //             return {
+    //     //               alert: {
+    //     //                 ...prevState.alert,
+    //     //                 alertVisible:true,
+    //     //                 Title:"تحديث منشأة",
+    //     //                 Message:"اسم المنشأة مضافة بالفعل",
+    //     //                 jsonPath:"Error"
+    //     //               }
+    //     //             };
+    //     //           })
+    //     //           setTimeout(()=>{
+    //     //             this.setState(
+    //     //               prevState => {
+    //     //                 return {
+    //     //                   alert: {
+    //     //                     ...prevState.alert,
+    //     //                     alertVisible:false,
+    //     //                     Title:"",
+    //     //                     Message:"",
+    //     //                     jsonPath:""
+    //     //                   }
+    //     //                 };
+    //     //               })
+    //     //           },4000)
+    //     //     }else{
+
+    //     //       var FacilityId=this.state.FacilityId
+    //     //       // this.updateFacilityInCategory(FacilityId)
+
+    //     //       // firebase.database().ref('RecyclingFacility/'+FacilityId).update({
+    //     //         firebase.database().ref('RecyclingFacility/' + this.state.FacilityId).update({
+    //     //         Name:this.state.Name,
+    //     //         WorkingDays:this.state.WorkingD,
+    //     //         WorkingHours:this.state.WorkingH,
+    //     //         ContactInfo:this.state.ContactInfo,
+    //     //         Location:this.state.Location,
+    //     //         AcceptedMaterials:this.state.Category
+    //     //         })
+    //     //         this.setState({isLoading:false})
+    //     //                                     // const { navigation } = this.props;
+    //     //                     // navigation.navigate("FacilityHome"); 
+    //     //                     // navigation.goBack()
+    //     //         // .then((data)=>{
+    //     //         //     //success callback
+    //     //         //     if(this.state.Logo!=""){
+    //     //         //       this.uploadImage(this.state.Logo,FacilityId)
+    //     //         //     }
+    //     //         //     this.setState({isLoading:false})
+    //     //         //     setTimeout(()=>{
+    //     //         //       this.setState(
+    //     //         //         prevState => {
+    //     //         //           return {
+    //     //         //             alert: {
+    //     //         //               ...prevState.alert,
+    //     //         //               alertVisible:true,
+    //     //         //               Title:"تحديث معلومات المنشأة",
+    //     //         //               Message:"تم تحديث معلومات المنشأة بنجاح",
+    //     //         //               jsonPath:"suss"
+    //     //         //             }
+    //     //         //           };
+    //     //         //         })
+    //     //         //         setTimeout(()=>{
+    //     //         //           this.setState(
+    //     //         //             prevState => {
+    //     //         //               return {
+    //     //         //                 alert: {
+    //     //         //                   ...prevState.alert,
+    //     //         //                   alertVisible:false,
+    //     //         //                   Title:"",
+    //     //         //                   Message:"",
+    //     //         //                   jsonPath:""
+    //     //         //                 }
+    //     //         //               };
+    //     //         //             })
+    //     //         //             const { navigation } = this.props;
+    //     //         //             // navigation.navigate("FacilityHome"); 
+    //     //         //             navigation.goBack()
+    //     //         //         },3500)
+    //     //         //     },400)
+
+    //     //         //     console.log('data ' , data);
+    //     //         // }).catch((error)=>{
+    //     //         //     //error callback
+    //     //         //     this.setState({isLoading:false})
+    //     //         //     Alert.alert(error.message)
+    //     //         //     console.log('error ' , error)
+    //     //         // })
+    //     //     }
+    //     // });
+
+    //   }
+    // }
+
     updateFacility=()=>{
-      if(this.checkValidName() && this.checkValidCategory() && 
-        this.checkValidContactInfo() && this.checkWorkingD() && 
-        this.checkValidWorkingH() && this.checkLocationExist()){
-
+      if(this.checkValidName() && this.checkValidCategory() && this.checkValidContactInfo() && this.checkWorkingD() && this.checkValidWorkingH() && this.checkLocationExist()){
         this.setState({isLoading:true})
-
         firebase.database().ref("RecyclingFacility").orderByChild("Name")
-        .equalTo(this.state.Name.toLowerCase()).on("value", snapshot => {
+        .equalTo(this.state.Name.toLowerCase()).once("value", snapshot => {
             const Data = snapshot.val();
-            // Check if the Facility  exist. 
+            // Check if the Category  exist. 
             if (Data && this.state.CurrentName!=this.state.Name) {
-                console.log("Facility exist!");
-                // Check if the Facility doesnt exist.
+                console.log("Category exist!");
+                // Check if the Category doesnt exist.
                 this.setState({isLoading:false})
+                setTimeout(()=>{
                 this.setState(
                   prevState => {
                     return {
                       alert: {
                         ...prevState.alert,
                         alertVisible:true,
-                        Title:"تحديث منشأة",
+                        Title:"تحديث معلومات المنشأة",
                         Message:"اسم المنشأة مضافة بالفعل",
                         jsonPath:"Error"
                       }
@@ -612,11 +727,9 @@ export default class EditFacilityInfo extends Component {
                         };
                       })
                   },4000)
+                },400)
             }else{
-
               var FacilityId=this.state.FacilityId
-              this.updateFacilityInCategory(FacilityId)
-
               firebase.database().ref('RecyclingFacility/'+FacilityId).update({
                 Name:this.state.Name,
                 WorkingDays:this.state.WorkingD,
@@ -626,6 +739,7 @@ export default class EditFacilityInfo extends Component {
                 AcceptedMaterials:this.state.Category
                 }).then((data)=>{
                     //success callback
+                    this.updateFacilityInCategory(FacilityId)
                     if(this.state.Logo!=""){
                       this.uploadImage(this.state.Logo,FacilityId)
                     }
@@ -657,9 +771,8 @@ export default class EditFacilityInfo extends Component {
                               };
                             })
                             const { navigation } = this.props;
-                            // navigation.navigate("FacilityHome"); 
-                            navigation.goBack()
-                        },3500)
+                            navigation.navigate("FacilityInfo"); 
+                        },4000)
                     },400)
 
                     console.log('data ' , data);
@@ -671,7 +784,6 @@ export default class EditFacilityInfo extends Component {
                 })
             }
         });
-
       }
     }
 

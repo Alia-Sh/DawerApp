@@ -35,7 +35,7 @@ const DeleteModal=(props)=>{
                 props.setDaleteModal({
                   IsVisible:false
                 })
-                props.navigation.goBack()
+                props.navigation.navigate("FacilityHome"); 
         }
     }
 return(            
