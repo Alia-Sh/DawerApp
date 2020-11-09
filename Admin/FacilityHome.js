@@ -16,7 +16,6 @@ import SearchBar from '../components/SearchBar';
 const HomeScreen = ({navigation})=>{
   
 
-  //const [modalVisible,setModalVisible]=useState(false);
   const [FacList,setFacList] = useState([])
   const [loading,setLoading] = useState(true)
   const [Picture,setPicture] = useState("")
@@ -40,8 +39,9 @@ const HomeScreen = ({navigation})=>{
           console.log(snapshot.val().Name);
           // fetch the logo here..
           retriveImage(snapshot.key);
+          console.log('I AM IN THE LOOOOOOOOOPPP')
           console.log(Picture);
-          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: Picture}
+          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo:Picture, Materials:snapshot.val().AcceptedMaterials}
           li.push(temp)
           setLoading(false)
         })
@@ -74,14 +74,46 @@ const HomeScreen = ({navigation})=>{
 
 const [selectedId, setSelectedId] = useState(null);
 
+
+const Item = ({ item, onPress, style }) => (
+  <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
+    <View  style={[styles.flexDirectionStyle,{height:45}]}>
+      <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
+        style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8}}
+      />
+
+      <View style={{marginTop:Platform.OS === 'android'? -8:3,paddingLeft:10}}>
+      <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 
+          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.Name}</Text>
+      
+      <View style = {styles.flexDirectionStyle}>
+      {item.Materials.map((item2,index) => 
+                          <View style = {styles.flexDirectionStyle}>
+                            <Text style={styles.mytext}>{item2.Name}</Text> 
+                            {(item.Materials).length-1!=index?<Text style={styles.mytext}>،</Text>:null}
+                          </View>                          
+                          )}    
+              </View>
+
+      </View>
+    </View>
+
+  </TouchableOpacity>
+ 
+);
+
 const renderList =  ({ item }) =>{
   console.log("in renderList");
   console.log(item);
   return(
+    /* CODE WITH LOGO..
     <TouchableOpacity
       key={item.key}
       onPress={() => navigation.navigate("FacilityInfo",{item})}
       style={styles.mycard}>
+      <View style = {{flexDirection: "column"}}>
         <View style = {{flexDirection: 'column'}}>
             {Picture==""?
             <Image 
@@ -93,12 +125,22 @@ const renderList =  ({ item }) =>{
                 style = {styles.profile_image}
                 //source = {item.Logo}/>
                 source = {{uri:Picture}}/>
-
             }
-            <Text style={styles.title}>{item.Name}</Text>
-        </View>
-    </TouchableOpacity>
+        
+            <Text style={styles.title}> {item.Name}</Text>
+             
+      </View>
+      </View>
+          </TouchableOpacity> */
    
+        <Item
+          item={item}
+          // onPress={() => setSelectedId(item.key)}
+          onPress={() => navigation.navigate("FacilityInfo",{item})}
+          style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
+        />
+
+
       /*<View style={styles.mycard}>
         <View style={styles.cardContent}>
             <View style={{flexDirection:Platform.OS === 'android' &&
@@ -172,8 +214,8 @@ SearchInList = (word) =>{
             {SearchOccur ? 
               
                 <FlatList
-                contentContainerStyle = {styles.grid}
-                numColumns = {2}
+                //contentContainerStyle = {styles.grid}
+                //numColumns = {2}
                 data = {SearchList}
                 keyExtractor = {(item)=>item.key}
                 onRefresh = {()=>fetchData()}
@@ -182,8 +224,8 @@ SearchInList = (word) =>{
                 />
               :
                 <FlatList
-                contentContainerStyle = {styles.grid}
-                numColumns = {2}
+                //contentContainerStyle = {styles.grid}
+                //numColumns = {2}
                 data = {FacList}
                 keyExtractor = {(item)=>item.key}
                 onRefresh = {()=>fetchData()}
@@ -204,9 +246,7 @@ SearchInList = (word) =>{
               icon="plus"
               theme={{colors:{accent:"#9cac74"}}} 
             />
-                {// <Text style={styles.textInput}>
-               //هنا عن المنشآت</Text>
-                }
+              
           </View>   
 
         </View>
@@ -217,10 +257,16 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
     },  
-    textInput: {
-        textAlign: 'center', 
-        marginTop: 20,  
+    mytext:{
+      fontSize:12,
+      //marginTop:13,
+      marginRight:2,
+      color:'#808080'
     },
+    textInput: {
+      textAlign: 'center', 
+      marginTop: 20,  
+  },
     fixedHeader :{
       flex:1,
       backgroundColor :'#9E9D24',
@@ -259,6 +305,22 @@ const styles = StyleSheet.create({
       marginVertical: 8,
       alignItems: 'center',
     },
+    theItem:{
+      backgroundColor: '#F3F3F3',
+      padding: 20,
+      marginVertical: 8,
+      marginHorizontal: 16,
+      borderRadius :8,
+      shadowColor :'#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.30,
+      shadowRadius: 4.65,
+      elevation: 5,
+      padding :15,
+    },
     profile_image:{
       width:120,
       height:120,
@@ -276,11 +338,11 @@ const styles = StyleSheet.create({
       bottom: 0,
     },
     title: {
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: 'bold' ,
       textAlign :'center',
       color: '#9E9D24',
-      marginTop: 8,
+      marginTop: 5,
     },
     icon:{
       position: 'absolute',
