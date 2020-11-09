@@ -24,7 +24,7 @@ import GoogleMap from '../components/GoogleMap';
 import moment from 'moment';
 import {CheckBox} from "native-base";
 import DateTimePicker from "react-native-modal-datetime-picker";
-
+import { LinearGradient } from 'expo-linear-gradient';
 export default class EditFacilityInfo extends Component {
 
 
@@ -816,16 +816,20 @@ export default class EditFacilityInfo extends Component {
       const { navigation } = this.props;
         return (
           <View style={styles.container}>
-            <SafeAreaView style={{flexDirection:'row-reverse'}}>
-                <View style={[styles.header,styles.flexDirectionStyle]}>
-                    <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
-                        onPress={()=>navigation.goBack()}
-                      />
-                    <View>
-                        <Text style={styles.headerText}>معلومات المنشأة</Text>
-                    </View>
-                </View>
-            </SafeAreaView>
+              <LinearGradient
+                    colors={["#809d65","#9cac74"]}
+                    style={{height:"10%" ,width:"100%"}}> 
+                  <SafeAreaView style={{flexDirection:'row-reverse'}}>
+                      <View style={[styles.header,styles.flexDirectionStyle]}>
+                          <FontAwesome5 name="chevron-right" size={24} color="#ffff" style={styles.icon}
+                              onPress={()=>navigation.goBack()}
+                            />
+                          <View>
+                              <Text style={styles.headerText}>معلومات المنشأة</Text>
+                          </View>
+                      </View>
+                  </SafeAreaView>
+                </LinearGradient>
 
             <View style={{flex:8}}>
               <KeyboardAwareScrollView>
@@ -838,7 +842,7 @@ export default class EditFacilityInfo extends Component {
                         onPress={() =>this.selectImage ()}
                         small
                         icon="plus"
-                        theme={{colors:{accent:"#9E9D24"}}}
+                        theme={{colors:{accent:"#9cac74"}}}
                         style={Platform.OS === 'android'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
                     <Image
                         style={{width:'70%',margin:20}}
@@ -1315,7 +1319,7 @@ export default class EditFacilityInfo extends Component {
 }
 const theme= {
     colors:{
-        primary: "#9E9D24"
+        primary: "#9cac74"
     }
 }
 const styles = StyleSheet.create({
@@ -1333,7 +1337,7 @@ const styles = StyleSheet.create({
         fontSize: 20,      
         letterSpacing: 1, 
         textAlign:'center',
-        color: '#9E9D24'
+        color: '#ffff'
     },
     action: {
         flex:1,
