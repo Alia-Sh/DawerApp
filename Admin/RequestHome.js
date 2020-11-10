@@ -11,7 +11,7 @@ import { StyleSheet,
 } from 'react-native';
 import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import {FAB,Title} from 'react-native-paper';
+import {Title} from 'react-native-paper';
 import {FontAwesome5} from '@expo/vector-icons'
 import {MaterialIcons} from '@expo/vector-icons';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
@@ -36,7 +36,7 @@ const Item = ({ item, onPress, style }) => (
         
         
       </View>
-      <View style={{marginRight:50,marginTop:5,alignItems:'flex-start'}}>
+      <View style={{marginRight:'15%',marginLeft:'5%',marginTop:5,alignItems:'flex-start'}}>
         
       <MaterialIcons 
                             name="error" 
@@ -89,7 +89,19 @@ const fetchData=()=>{
           })
         })
       })
+      if(li){
+        //console.log(li);
+       // console.log('((((((((((((((((((((((SORTED');
+   //  li.sort((a,b) => new Date(a) < new Date(b) ? 1 : -1);
+    // console.log(li);
+   //HERE to sort the list depending on the date
+      li.sort(function(a, b){
+        return new Date(a.Date) - new Date(b.Date);
+      });
+    
+    }
       setRequestList(li)
+
       console.log(li)
     }
   })
