@@ -19,14 +19,15 @@ import { ArabicNumbers } from 'react-native-arabic-numbers';
 
 const Item = ({ item, onPress, style }) => (
   
-  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <View  style={[styles.flexDirectionStyle,{height:45}]}>
+  <TouchableOpacity onPress={onPress} style={[styles.item, style,{flex:1}]}>
+    <View  style={[styles.flexDirectionStyle,{height:45,flex:1}]}>
       
     <Image
           source={require('../assets/AdminIcons/requestIcon.jpg')}
           style={{width:40,height:40,marginRight:-5,borderRadius:12}}
           resizeMode="stretch"
           />
+     
       <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10}} >
         <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
           NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -36,16 +37,16 @@ const Item = ({ item, onPress, style }) => (
         
         
       </View>
-      <View style={{marginRight:'15%',marginLeft:'5%',marginTop:5,alignItems:'flex-start'}}>
-        
-      <MaterialIcons 
-                            name="error" 
-                            size={30} 
-                            color="#7B7B7B"
-                            
-                        />
+      <View style={{flex:1}}>
+
+        <View style={{marginRight:'15%',marginLeft:'5%',marginTop:5,alignItems:'flex-start'}}>
+            <MaterialIcons 
+                name="error" 
+                size={30} 
+                color="#7B7B7B"
+            />
+        </View>
       </View>
- 
     
      
     </View>
