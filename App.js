@@ -41,7 +41,7 @@ import FacilityInfo from './Admin/FacilityInfo';
 import EditFacilityInfo from './Admin/EditFacilityInfo';
 import RequestDetails from './Admin/RequestDetails';
 import HistoryRequests from './User/HistoryRequests';
-
+import DriverFacilities from './Driver/DriverFacilities';
 
 
 
@@ -114,6 +114,7 @@ function App() {
           <Stack.Screen name="FacilityInfo" component={FacilityInfo} options={myOptions}/>
           <Stack.Screen name="RequestDetails" component={RequestDetails} options={myOptions}/>
           <Stack.Screen name="EditFacilityInfo" component={EditFacilityInfo} options={myOptions}/>
+          <Stack.Screen name="DriverFacilities" component={DriverFacilities} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );

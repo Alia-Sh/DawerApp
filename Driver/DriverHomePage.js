@@ -39,7 +39,8 @@ const DriverHomePage = ({navigation})=>{
 
                </TouchableOpacity>
 
-               <TouchableOpacity style={styles.TouchableOpacityStyle}>
+               <TouchableOpacity style={styles.TouchableOpacityStyle}
+                                  onPress={()=> navigation.navigate("DriverFacilities")}>
 
                 <Image
                   style={styles.imageCenter}

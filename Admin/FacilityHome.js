@@ -38,9 +38,9 @@ const HomeScreen = ({navigation})=>{
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
           // fetch the logo here..
-          retriveImage(snapshot.key);
+          //retriveImage(snapshot.key);
           console.log('I AM IN THE LOOOOOOOOOPPP')
-          console.log(Picture);
+          //console.log(Picture);
           var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo:Picture, Materials:snapshot.val().AcceptedMaterials}
           li.push(temp)
           setLoading(false)
