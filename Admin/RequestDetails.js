@@ -1,5 +1,5 @@
 import React,{useState,useEffect}from 'react';
-import { StyleSheet, Text, View,NativeModules } from 'react-native';
+import { StyleSheet, Text, View,NativeModules,Image,Linking} from 'react-native';
 import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons'
@@ -8,6 +8,7 @@ import { Tile } from 'react-native-elements';
 import { Card, Title } from 'react-native-paper';
 import firebase from '../Database/firebase';
 import RejectRequestModal from './RejectRequestModal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
@@ -17,6 +18,14 @@ const RequestDetails = ({navigation,route})=>{
     console.log(UserId);
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
+    const [UserName,setUserName]=useState("");
+    const [Name,setName]=useState("");
+    const [Location,setLocation] = useState({
+      address:"",
+      latitude:0,
+      longitude:0
+    });
+    const [Picture,setPicture] = useState("")
 
     const fetchMaterials=(ID)=>{
       firebase.database().ref("Material/"+ID).on('value',snapshot=>{
@@ -36,12 +45,42 @@ const RequestDetails = ({navigation,route})=>{
         })
   }
 
-  const rejectRequest=()=>{
+  const fetchUserInfo=(UserId)=>{
+    firebase.database().ref('User/' + UserId).on('value',snapshot=>{
+      const userData = snapshot.val();
+      setName(userData.Name);
+      setUserName(userData.UserName);
+      setLocation({
+        ...Location,
+        address:userData.Location.address,
+        latitude:userData.Location.latitude,
+        longitude:userData.Location.longitude           
+      })
+    })
+  }
 
+  const retriveImage= async (UserId)=>{
+    var imageRef = firebase.storage().ref('images/' + UserId);
+    imageRef
+      .getDownloadURL()
+      .then((url) => {
+        //from url you can fetched the uploaded image easily
+        setPicture(url);
+      })
+      .catch((e) => console.log('getting downloadURL of image error => ', e));
+  }
+
+  const openMaps = (latitude, longitude) => {
+    const daddr = `${latitude},${longitude}`;
+    // const company = Platform.OS === "ios" ? "apple" : "google";
+    const company = "google";
+    Linking.openURL(`http://maps.${company}.com/maps?daddr=${daddr}`);
   }
 
   useEffect(()=>{
     fetchMaterials(RequestId)
+    fetchUserInfo(UserId)
+    retriveImage(UserId)
   },[])
 
     return (
@@ -64,7 +103,30 @@ const RequestDetails = ({navigation,route})=>{
           </View>
 
           <View style={{flex:8}}>
+            <KeyboardAwareScrollView >
             <Card style={styles.item}>
+            <View style={{alignItems:"center"}}>
+                    {Picture==""?
+                        <Image
+                            style={styles.profile_image}
+                            source={require('../assets/DefaultImage.png')}
+                            />
+                        :
+                        <Image
+                            style={styles.profile_image}
+                            source={{uri:Picture}}
+                            />
+                    }
+                    <View style={{flexDirection:'row-reverse'}}>
+                      <Title style={[styles.text,{fontSize: 15}]}>:صاحب الطلب</Title>
+                      <Text style={{textAlign:"right",fontSize: 15,marginTop:7}}>{Name}</Text>
+                    </View>
+                    <Text style={styles.user}>@{UserName}</Text>
+                    <Image
+                            style={{width:'80%',marginTop:10}}
+                            source={require('../assets/line.png')}
+                            />
+              </View>
               <Title style={styles.text}> :وقت وتاريخ الاستلام</Title>
               <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{DATE}</Text>
               <Title style={styles.text}> :المواد</Title>
@@ -83,9 +145,13 @@ const RequestDetails = ({navigation,route})=>{
               </View>
               )
               }
+              <Title style={styles.text}> : موقع الاستلام</Title>
+              <TouchableOpacity onPress={()=>{openMaps(Location.latitude,Location.longitude)}}>
+              <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{Location.address}</Text>
+              </TouchableOpacity>
             </Card> 
-
-            <View style={[styles.flexDirectionStyle,styles.button,{position:'absolute',bottom:10,left: 0, right: 0}]}>
+            </KeyboardAwareScrollView>
+            <View style={[styles.flexDirectionStyle,styles.button,{marginTop:15}]}>
               <TouchableOpacity style={[styles.button,]}>
                 <LinearGradient
                     colors={["#809d65","#9cac74"]}
@@ -102,7 +168,8 @@ const RequestDetails = ({navigation,route})=>{
                   <Text style={[styles.textSign,{color:'#fff'}]}>رفض</Text>
                 </LinearGradient>  
                 </TouchableOpacity> 
-            </View> 
+            </View>
+             
           </View>
 
           {RejectModal?
@@ -183,7 +250,9 @@ const styles = StyleSheet.create({
     button: {
       alignItems: 'center',
       justifyContent: 'center',
-      padding:15,
+      paddingLeft:15,
+      paddingRight:15,
+      paddingBottom:5
     },
     signIn: {
       width: '100%',
@@ -202,6 +271,17 @@ const styles = StyleSheet.create({
       flex:1,
       backgroundColor :'#9E9D24',
       overflow: 'hidden',
+    },
+    profile_image:{
+      width:100,
+      height:100,
+      borderRadius:150/2,
+      // marginTop:-75 
+    },
+    user: {
+      fontSize: 15,
+      textAlign :'right',
+      color :'#ADADAD',
     }
   });
 export default RequestDetails;
