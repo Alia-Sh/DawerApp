@@ -126,20 +126,26 @@ const FacilityInfo=({navigation,route,props})=>{
 
     return(
         <View style={styles.root}>
-            <LinearGradient
-                        colors={["#809d65","#9cac74"]}
-                        style={{height:"10%" ,width:"100%"}}>
-            <SafeAreaView style={{flexDirection:'row-reverse'}}>
-                <View style={[styles.header,styles.flexDirectionStyle]}>
-                    <FontAwesome5 name="chevron-right" size={24} color="#ffff" style={styles.icon}
-                        onPress={()=>navigation.goBack()}
-                      />
-                    <View>
-                        <Text style={styles.headerText}>معلومات المنشأة</Text>
-                    </View>
-                </View>
-            </SafeAreaView>
-            </LinearGradient> 
+           <View style={styles.fixedHeader}>
+              <LinearGradient
+                colors={["#809d65","#9cac74"]}
+                style={{height:"100%" ,width:"100%"}}> 
+
+                <SafeAreaView>
+
+                  <View style={[styles.header,styles.flexDirectionStyle]}>
+
+                    <Text style={styles.text_header}>المنشــآت</Text>
+                    
+                    <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon}  onPress={()=>navigation.goBack()}/>
+
+                  </View>
+
+                </SafeAreaView>
+
+              </LinearGradient>
+
+          </View>
             <View style={styles.footer}>
                 <KeyboardAwareScrollView>
                     <View style={{alignItems:"center"}}>
@@ -294,26 +300,27 @@ const styles=StyleSheet.create({
     },
     header:{
         width: '100%',
-        height: 30,
+        height: 80,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:15
-    },
-    headerText:{
-        fontWeight:'bold',
-        fontSize: 20,      
-        letterSpacing: 1, 
-        textAlign:'center',
-        color: '#ffff'
-    },
+        marginTop:Platform.OS === 'android'? 0 : -10
+      },
+      text_header: {
+        color: '#ffff',
+        fontWeight: 'bold',
+        fontSize: 22,
+        textAlign: 'center',
+      },
     icon:{
         position: 'absolute',
+        marginTop:20,
         left: 16
     },
     footer: {
+        flex:8,
         paddingHorizontal: 20,
-        paddingVertical: 30,
-        marginTop:-20,
+        paddingVertical: 10,
+
     },
     Logo_image:{
         width:100,
@@ -360,6 +367,11 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
-    }
+    },
+    fixedHeader :{
+        flex:1,
+        backgroundColor :'#9E9D24',
+        overflow: 'hidden',
+      }
 });
 export default FacilityInfo
