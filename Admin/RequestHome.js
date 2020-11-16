@@ -76,14 +76,16 @@ const fetchData=()=>{
         snapshot.forEach(function(snapshot){
         console.log(snapshot.key);
         console.log(snapshot.val());
-        firebase.database().ref('/PickupRequest/'+snapshot.key).on('value',snapshot=>{
+        var UserId=snapshot.key
+        firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
           snapshot.forEach(function(snapshot){
             console.log(snapshot.key);
             console.log(snapshot.val().Status);
             if(snapshot.val().Status==="Pending"){
               var temp={Date:snapshot.val().DateAndTime,
                 key:snapshot.key,
-                Status:snapshot.val().Status}
+                Status:snapshot.val().Status,
+                UserId:UserId}
               li.push(temp)
               setLoading(false)
             }
@@ -126,8 +128,9 @@ const fetchData=()=>{
           { var ID =item.key;
             var DATE=item.Date;
             var STATUS = item.Status;
+            var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("RequestDetails",{ID,DATE,STATUS})}}
+            navigation.navigate("RequestDetails",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );

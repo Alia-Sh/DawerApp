@@ -7,11 +7,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Tile } from 'react-native-elements';
 import { Card, Title } from 'react-native-paper';
 import firebase from '../Database/firebase';
+import RejectRequestModal from './RejectRequestModal';
 const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
     var STATUS=route.params.STATUS
+    var UserId=route.params.UserId
+    console.log(RequestId);
+    console.log(UserId);
     const[Materials,setMaterials]= useState([]);
+    const[RejectModal,setRejectModal]= useState(false);
 
     const fetchMaterials=(ID)=>{
       firebase.database().ref("Material/"+ID).on('value',snapshot=>{
@@ -89,7 +94,8 @@ const RequestDetails = ({navigation,route})=>{
                 </LinearGradient>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.button]}>
+              <TouchableOpacity style={[styles.button]}
+                    onPress={()=>setRejectModal(true)}>
                 <LinearGradient
                   colors={["#B71C1C","#D32F2F"]}
                   style={styles.signIn}>   
@@ -98,6 +104,12 @@ const RequestDetails = ({navigation,route})=>{
                 </TouchableOpacity> 
             </View> 
           </View>
+
+          {RejectModal?
+                <RejectRequestModal UserId={UserId} RequestId={RequestId} setRejectModal={setRejectModal} navigation={navigation}></RejectRequestModal>
+              :
+                null
+          }
         </View>  
 
       );

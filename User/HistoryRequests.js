@@ -59,8 +59,11 @@ var userId = firebase.auth().currentUser.uid;
                 case "Delivered":
                     return "تم توصيل الطلب"
 
+                case "Rejected":
+                    return "تم رفض الطلب"
+                    
                 case "Canceled":
-                    return "تم الغاء الطلب"
+                        return "تم الغاء الطلب"
             }
         }
 
@@ -70,7 +73,7 @@ var userId = firebase.auth().currentUser.uid;
                     return "#FBC02D"
                 
                 case "Accepted":
-                    return "#9CCC65"
+                    return "#7CB342"
 
                 case "OutForPickup":
                         return "#0288D1"
@@ -78,8 +81,11 @@ var userId = firebase.auth().currentUser.uid;
                 case "Delivered":
                     return "#BDBDBD"
 
-                case "Canceled":
+                case "Rejected":
                     return "#BF360C"
+
+                case "Canceled":
+                    return "#FF9800"
             }
         }
         const Status=getStatus(item.Status)
