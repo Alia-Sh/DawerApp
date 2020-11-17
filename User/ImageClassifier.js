@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 //import { fetch } from '@tensorflow/tfjs-react-native';
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'; 
+import firebase from '../Database/firebase';
 
 // There is an ERROR here, so i commneted the functions below..
 
@@ -20,6 +21,33 @@ const ImageClassifier = ({navigation})=> {
   const [isModelReady,setIsModelReady] = useState(false)
   const [predictions,setPredictions] = useState(null)
   const [image,setImage] = useState(null)
+  const [link,setLink] = useState(null)
+
+
+  const getPred = async()=>{
+    const model = await tf.loadLayersModel(link);
+    const example = tf.fromPixels(image); 
+    const predict = model.predict(example);
+      return (
+        <View style={styles.welcomeContainer}>
+          <Text>predict</Text>
+            </View>
+      )
+  }
+
+
+
+  const getModel= async ()=>{
+    var modelRef = firebase.storage().ref('Model');
+    modelRef
+      .getDownloadURL()
+      .then((url) => {
+        //from url you can fetched the uploaded image easily
+        setLink(url);
+      })
+      .catch((e) => console.log('getting downloadURL of model error => ', e));
+  }
+
 /*
   componentDidMount = async ()  =>  {
     await tf.ready(); // preparing TensorFlow
@@ -28,8 +56,8 @@ const ImageClassifier = ({navigation})=> {
     setIsModelReady(true);
     this.getPermissionAsync(); // get permission for accessing camera on mobile device
   }
-
-  getPermissionAsync = async () => {
+*/
+  const getPermissionAsync = async () => {
     if (Constants.platform.ios) {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
         if (status !== 'granted') {
@@ -39,7 +67,7 @@ const ImageClassifier = ({navigation})=> {
   }
 
   // image classification options
-  camOptions = async () => {
+  const camOptions =  () => {
     ActionSheetIOS.showActionSheetWithOptions(
     {
       options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
@@ -50,16 +78,16 @@ const ImageClassifier = ({navigation})=> {
       if (buttonIndex === 0) {
         // cancel action
       } else if (buttonIndex === 1) {
-        this.pickFromCamera();
+        pickFromCamera();
       } else if (buttonIndex === 2) {
-        this.selectImage();
+        selectImage();
       }
     }
     );
   }
 
   // take photo from camera
-  pickFromCamera = async ()=>{
+  const pickFromCamera = async ()=>{
     const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
     if(granted){
         let data =  await ImagePicker.launchCameraAsync({
@@ -71,7 +99,7 @@ const ImageClassifier = ({navigation})=> {
         if(!data.cancelled){
           const source = { uri: data.uri }
           setImage(source);
-          this.classifyImage()
+          //this.classifyImage()
         }
     }else{
       alert("you need to give the permission to work!")
@@ -79,7 +107,7 @@ const ImageClassifier = ({navigation})=> {
   }
 
   // select image from gallery
-  selectImage = async () => {
+  const selectImage = async() => {
     try {
       let response = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -89,14 +117,14 @@ const ImageClassifier = ({navigation})=> {
       if (!response.cancelled) {
           const source = { uri: response.uri }
           setImage(source);
-          this.classifyImage()
+          //this.classifyImage()
       }
     } catch (error) {
       console.log(error)
       }
   }
 
-  classifyImage = async () => {
+  const classifyImage = async () => {
     try {
       const imageAssetPath = Image.resolveAssetSource(this.state.image)
       const response = await fetch(imageAssetPath.uri, {}, { isBinary: true })
@@ -109,7 +137,7 @@ const ImageClassifier = ({navigation})=> {
     }
   }
 
-  imageToTensor = (rawImageData)=> {
+  const imageToTensor = (rawImageData)=> {
     const TO_UINT8ARRAY = true
     const { width, height, data } = jpeg.decode(rawImageData, TO_UINT8ARRAY)
     // Drop the alpha channel info for mobilenet
@@ -125,7 +153,7 @@ const ImageClassifier = ({navigation})=> {
   }
 
   // prediction
-  renderPrediction = (prediction) => {
+  const renderPrediction = (prediction) => {
     return (
       <View style={styles.welcomeContainer}>
         <Text key={prediction.className} style={styles.text}>
@@ -308,17 +336,19 @@ render() {
             <ActivityIndicator size='small' />
           )}
         </View>
+          {getPred}
       </View>
   
      {/* My code ! */}
 
      <TouchableOpacity
         style={styles.ButtonSty}
-        //onPress={this.camOptions}
+        onPress={camOptions}
         >
             
         <Text>تصنيف الصورة</Text>
       </TouchableOpacity>
+      
       
         {/*
         <Button 

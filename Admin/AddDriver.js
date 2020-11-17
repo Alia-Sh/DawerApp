@@ -118,14 +118,14 @@ import Loading from '../components/Loading';
             setData({
                 ...data,
                 isValidPhone:false,
-                PhoneErrorMessage:'يجب ادخال رقم الهاتف'
+                PhoneErrorMessage:'يجب ادخال رقم الجوال'
             });
             return false; 
         }else if(Phone.length<10){
             setData({
                 ...data,
                 isValidPhone:false,
-                PhoneErrorMessage:'يجب ان يتكون رقم الهاتف من ١٠ ارقام'
+                PhoneErrorMessage:'يجب ان يتكون رقم الجوال من ١٠ ارقام'
             });
             return false;       
         }else{
@@ -216,7 +216,8 @@ import Loading from '../components/Loading';
                                     setAlert({
                                         ...alert,
                                         Title:'',
-                                        Message:'تم إضافة السائق بنجاح',
+                                        //Message:'تم إضافة السائق بنجاح',
+                                        Message:'تم إرسال طلبك بنجاح',
                                         jsonPath:"success",
                                         alertVisible:true,
                                         isLoading:false
@@ -238,7 +239,8 @@ import Loading from '../components/Loading';
                                     setAlert({
                                         ...alert,
                                         Title:'',
-                                        Message:'لم يتم إضافة السائق بنجاح',
+                                        //Message:'لم يتم إضافة السائق بنجاح',
+                                        Message:'لم يتم إرسال طلبك بنجاح',
                                         jsonPath:"Error",
                                         alertVisible:true,
                                         isLoading:false
@@ -320,7 +322,8 @@ import Loading from '../components/Loading';
                 <View backgroundColor ='#ffffff' marginTop= {40} marginBottom={100} borderRadius={30} width={width*.90} height={height*.90} >
                     <View style={styles.header}>
                         <MaterialIcons style={Platform.OS === 'android'? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff"  onPress={resetData} />
-                        <Text style={styles.text_header_modal}>إضافة سائق توصيل</Text>
+                        {/* <Text style={styles.text_header_modal}>إضافة سائق توصيل</Text> */}
+                            <Text style={styles.text_header_modal}>طلب انضمام كسائق</Text> 
                     </View>
 
                     <View>
@@ -387,11 +390,11 @@ import Loading from '../components/Loading';
                             </Animatable.View>
                         }
 
-                        <Text style={styles.text_footer}> رقم الهاتف:</Text>
+                        <Text style={styles.text_footer}> رقم الجوال:</Text>
                         <View style={styles.action}>
                             <TextInput style={styles.textInput} 
                                 label="Phone"
-                                placeholder="ادخل رقم الهاتف"
+                                placeholder="ادخل رقم الجوال"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setPhone(val)}
                                 // textAlign= 'right'
@@ -452,7 +455,7 @@ import Loading from '../components/Loading';
                                 compact={true} 
                                 style={{width:100}} 
                                 onPress={AddDriver}>
-                                <Text style={{color:"#fff",fontSize:18,fontWeight: 'bold'}}>إضافة</Text>
+                                <Text style={{color:"#fff",fontSize:18,fontWeight: 'bold'}}>إرسال</Text>
                             </Button>
                         }
                     </View>          

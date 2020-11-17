@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, 
   Text,
   View, 
@@ -11,6 +11,7 @@ import { StyleSheet,
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import firebase from '../Database/firebase';
+import AddDriver from '../Admin/AddDriver';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -19,7 +20,9 @@ import {FontAwesome5} from '@expo/vector-icons';
 
 
 const DriverLogin =({navigation}) => {
-  
+
+  const [modalVisible,setModalVisible]=useState(false);
+
   const [data,setData] = React.useState({
     UserName: '',
     password: '',
@@ -316,7 +319,7 @@ const createUser=()=>{
             </TouchableOpacity>
             
             <TouchableOpacity onPress={() => userLogin()}>
-                <View style={styles.button}>
+                <View style={styles.button,{marginTop: 25}}>
 
                   {data.isLoading ? 
                       <Loading></Loading>  
@@ -327,9 +330,21 @@ const createUser=()=>{
 
                         <Text style={[styles.textSign,{color:'#fff'}]}>تسجيل الدخول </Text>
                       </LinearGradient>
-                  }      
+                  } 
+                  
                 </View>
             </TouchableOpacity> 
+            
+          {/* DRIVER JOIN */}
+                <TouchableOpacity style={{flexDirection:'row',justifyContent:'center'}} 
+                   // onPress={()=>{navigation.navigate("AddDriver")}}>
+                      onPress={() => setModalVisible(true)}>
+
+                  <Text style={[styles.text_forgetPass,{marginTop: 12, color: '#9E9D24', fontWeight:'bold'}]}> قدّم هنـا</Text>
+                  <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل ترغب بالانضمام لنا ؟</Text>
+                </TouchableOpacity>
+          {modalVisible?<AddDriver setModalVisible={setModalVisible}></AddDriver>:null}
+
         </Animatable.View>
         </KeyboardAwareScrollView>
       </View>
