@@ -607,7 +607,7 @@ return (
                                         source={require('../assets/send.png')}
                                         resizeMethod='scale'
                                     />
-                                    
+                                   
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -773,14 +773,14 @@ return (
                                             NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                             'row-reverse':'row',
                                             justifyContent:'space-between',
-                                            margin:15,marginVertical:250}}>
+                                            margin:15,marginVertical:207}}>
                                     <TouchableOpacity onPress={() =>DisplayRequests()}>
                                         <Image
                                             style={styles.ImageStyle}
                                             source={require('../assets/back.png')}
                                             resizeMethod='scale'
                                         />
-                                        
+                                         
                                     </TouchableOpacity>
                                     <TouchableOpacity 
                                     // onPress={Send}

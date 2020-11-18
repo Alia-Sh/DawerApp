@@ -41,6 +41,7 @@ import FacilityInfo from './Admin/FacilityInfo';
 import EditFacilityInfo from './Admin/EditFacilityInfo';
 import RequestDetails from './Admin/RequestDetails';
 import HistoryRequests from './User/HistoryRequests';
+import CancelModal from './User/CancelModal';
 import DriverFacilities from './Driver/DriverFacilities';
 
 

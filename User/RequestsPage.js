@@ -8,38 +8,51 @@ import {View,
     FlatList,
     Dimensions,
     Modal} from 'react-native';
+    
 import {Card,Title,FAB,Button} from 'react-native-paper';
 import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import {FontAwesome5} from '@expo/vector-icons';
 import { color } from 'react-native-reanimated';
+import CancelModal from '../User/CancelModal'
 import { ArabicNumbers } from 'react-native-arabic-numbers';
 const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
     const[RequestList,setRequestList]= useState([]);
+    const [fullList,setFullList]=useState([]);
     const[DetailsList,setDetailsList]= useState([]);
     const[loading,setLoading]=useState(true);
     const [DetailsModal,setDetailsModal]=useState(false)
+    const [OpenCancel,setOpenCancel]=useState(false)
     const [tempItem,setTempItem]=useState('')
+    
     var userId = firebase.auth().currentUser.uid;
+  
     const fetchData=()=>{
         firebase.database().ref("PickupRequest/"+userId).orderByChild("DateAndTime").on('value',snapshot=>{
           const Data = snapshot.val();
           if(Data){
             var li = []
+            var full=[]
             snapshot.forEach(function(snapshot){
             console.log(snapshot.key);
             console.log(snapshot.val().DateAndTime);
+             if(snapshot.val().Status==="Pending" ||snapshot.val().Status==="Accepted"||snapshot.val().Status==="OutForPickup"){
             var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
             li.push(temp)
-            setLoading(false)
+            setLoading(false)}
+            
+            var temp2={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
+            full.push(temp2)
             })
+            setFullList(full)
             setRequestList(li)
             console.log(li) 
           }
-        })
-      }
+        })}
+        
+     
     
       useEffect(()=>{
         fetchData()
@@ -70,6 +83,17 @@ const  RequestsPage= ({navigation}) =>{
         setDetailsModal(true)
     }
 
+    
+
+      const setCanceled=(ID)=>{
+            
+           firebase.database().ref('/PickupRequest/'+userId+'/'+ID).update({
+                Status:'Canceled' 
+            })
+        setOpenCancel(false)
+        setDetailsModal(false)
+    }
+
     const displayDetails=((item)=>{
         return(
         <Card>
@@ -78,7 +102,7 @@ const  RequestsPage= ({navigation}) =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.text}>:نوع المادة</Title>
+            <Title style={styles.textH}>:نوع المادة</Title>
             <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
             </View>
             <View style={{flexDirection:Platform.OS === 'android' &&
@@ -86,7 +110,7 @@ const  RequestsPage= ({navigation}) =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.text}>:الكمية</Title>
+            <Title style={styles.textH}>:الكمية</Title>
             <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
             </View>
             <Image
@@ -138,9 +162,10 @@ const  RequestsPage= ({navigation}) =>{
                     return "#BF360C"
 
                 case "Canceled":
-                        return "#FF9800"
+                        return "#ACADAC"
             }
         }
+        
         const Status=getStatus(item.Status)
         const StatusColor=getColor(item.Status)
         return(
@@ -170,6 +195,7 @@ const  RequestsPage= ({navigation}) =>{
                             onPress={()=>{ setDetails(item)}}
                         />
                     </View>
+                    
                     <Modal 
                     visible={DetailsModal} 
                     transparent={true} 
@@ -194,7 +220,11 @@ const  RequestsPage= ({navigation}) =>{
                                     keyExtractor={item=>`${item.Id}`}
                             /> 
                     <View style={styles.button}> 
-                    <Button mode="contained" theme={theme }>
+                    <Button  onPress={()=>{
+
+                            setOpenCancel(true)
+            
+                        }} mode="contained" theme={theme }>
                      إلغاء الطلب
                     </Button>
                     </View>
@@ -202,6 +232,50 @@ const  RequestsPage= ({navigation}) =>{
                             </View>
                          
                     </Modal>
+
+                    
+      <Modal
+    animationType="fade"
+    transparent={true}
+    visible={OpenCancel}>
+         <View style={styles.centeredView}>
+                            <View style={styles.modalC}>
+                            <View style={{backgroundColor:'#AFB42B',height:40,width:'100%',position:'absolute'}}/>
+            
+                <Text style={styles.modalText}>إلغاء الطلب</Text>
+                
+                
+                <View style={{width:'100%',height:0.5,backgroundColor:"#757575",marginVertical:15}}></View>
+
+
+                <Text style={styles.textC}>هل انت متاكد من إلغاء الطلب </Text>
+                <View style={{flexDirection:Platform.OS === 'android' &&
+                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse',
+                        alignItems:'center',justifyContent:'center'}}>
+                    <TouchableOpacity 
+                        style={styles.okButton}
+                        onPress={()=>{
+                            setCanceled(tempItem.Id)
+                    }}>
+                      <Text style={styles.okStyle}>تأكيد</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={styles.cancelButton}
+                        onPress={()=>{
+                            setOpenCancel(false)
+                        }}>
+                            <Text style={styles.okStyle}>تراجع</Text>
+                    </TouchableOpacity>
+                  </View>
+            </View>
+           
+        </View>
+</Modal>
+
+                  
             </View>
         )
       });
@@ -215,7 +289,7 @@ const  RequestsPage= ({navigation}) =>{
                 <TouchableOpacity onPress={()=>setAlertVisible(true)}>
                     <Title style={[styles.text,{fontWeight: 'bold',marginTop:10}]}>طلب جديد</Title>
                 </TouchableOpacity>
-                <Title style={[styles.text,{marginTop:10,marginLeft:Platform.OS=== 'android'?-55:55}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
+                <Title style={[styles.text,{marginTop:10,marginLeft:Platform.OS=== 'android'?-55:55}]}> عدد الطلبات: {ArabicNumbers(fullList.length)}</Title>
                 <TouchableOpacity onPress={()=> navigation.navigate('HistoryRequests')} style={{margin:10}}
                     //  onPress={()=>DeleteRequest(item)}
                      >
@@ -256,7 +330,7 @@ const wight_logo = width * 0.090;
   
 const theme= {
     colors:{
-        primary: "#DC7025"
+        primary: "#C8310C"
     }
 }
 const styles = StyleSheet.create({
@@ -299,6 +373,7 @@ const styles = StyleSheet.create({
         padding:8
     },
     text: {
+
         color: '#b2860e',
         fontSize: 18,
         textAlign: Platform.OS === 'android' && 
@@ -307,6 +382,13 @@ const styles = StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
         marginRight:5,
         marginLeft:5,
+    },
+     textC: {
+
+        color: '#b2860e',
+        fontSize: 20,
+        fontWeight:"bold"
+      
     },
     RectangleShapeView: {
         marginTop: 10,
@@ -345,6 +427,22 @@ const styles = StyleSheet.create({
             shadowRadius:3.85,
             elevation:5,        
         },
+          modalC:{
+            width:'80%',
+            margin:10,
+            backgroundColor:"#fff",
+            borderRadius:10,
+            // padding:15,
+            alignItems:'center',
+            shadowColor:'#161924',
+            shadowOffset:{
+                width:0,
+                height:2
+            },
+            shadowOpacity:0.25,
+            shadowRadius:3.85,
+            elevation:5,        
+        },
         button:{
         flexDirection:"row",
         justifyContent:"space-around",
@@ -361,7 +459,42 @@ const styles = StyleSheet.create({
         iconAndroid:{
             position:'absolute',
             left:15,
-        }
+        },
+    okStyle:{
+        color:"#ffff",
+        textAlign:'center',
+        fontSize:15
+    },
+    okButton:{
+        backgroundColor:'#C8310C',
+        borderRadius:5,
+        padding:10,
+        elevation:2,
+        width:'25%',
+        margin:15,
+    },
+    cancelButton:{
+      backgroundColor:'#9E9E9E',
+      borderRadius:5,
+      padding:10,
+      elevation:2,
+      width:'25%',
+      margin:15,
+    },
+    modalText:{
+      textAlign:'center',
+      
+      fontSize:20,
+      shadowColor:'#161924',
+      shadowOffset:{
+          width:0,
+          height:2
+      },
+      shadowOpacity:0.3,
+      shadowRadius:3.84,
+      elevation:5,
+      marginTop:5      
+    },
 });
 
 export default RequestsPage;

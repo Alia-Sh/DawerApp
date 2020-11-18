@@ -1,19 +1,18 @@
 ﻿
 import React,{useState,useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet,Modal,Image} from 'react-native';
 import {Card,Title} from 'react-native-paper';
 import { NativeModules,FlatList ,Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {FontAwesome5} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
+import {MaterialIcons} from '@expo/vector-icons';
 const  HistoryRequests= ({navigation}) =>{
-
-const[RequestList,setRequestList]= useState([]);
- const [tempItem,setTempItem]=useState('')
+const[HistoryReq,setHistoryReq]= useState([]);
  const[DetailsList,setDetailsList]= useState([]);
  const[loading,setLoading]=useState(true);
-
-
+ const [DetailsModal,setDetailsModal]=useState(false)
+    const [tempItem,setTempItem]=useState('')
 
 
 
@@ -28,11 +27,12 @@ var userId = firebase.auth().currentUser.uid;
             snapshot.forEach(function(snapshot){
             console.log(snapshot.key);
             console.log(snapshot.val().DateAndTime);
+             if(snapshot.val().Status==="Canceled" ||snapshot.val().Status==="Delivered"||snapshot.val().Status==="Rejected"){
             var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
             li.push(temp)
-            setLoading(false)
+            setLoading(false)}
             })
-            setRequestList(li)
+            setHistoryReq(li)
             console.log(li) 
           }
         })
@@ -42,19 +42,66 @@ var userId = firebase.auth().currentUser.uid;
         fetchData()
     },[])
       
+    //fech deatals
+      const fetchDetails=(ID)=>{
+        firebase.database().ref("Material/"+ID).on('value',snapshot=>{
+            const Data = snapshot.val();
+            if(Data){
+              var li = []
+              snapshot.forEach(function(snapshot){
+              console.log(snapshot.key);
+              console.log(snapshot.val().MaterialType);
+              var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity}
+              li.push(temp)
+            //   setLoading(false)
+              })
+              setDetailsList(li)
+              console.log(li) 
+            }
+          })
+    }
+     const setDetails=(item)=>{
+        setDetailsList([])
+        setTempItem(item)
+        fetchDetails(item.Id);
+        setDetailsModal(true)
+    }
+
+     const displayDetails=((item)=>{
+        return(
+        <Card>
+            <View style={{flexDirection:Platform.OS === 'android' &&
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
+                                    'row':'row-reverse'}}>
+            <Title style={styles.textH}>نوع المادة: </Title>
+            <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
+            </View>
+            <View style={{flexDirection:Platform.OS === 'android' &&
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
+                                    'row':'row-reverse'}}>
+            <Title style={styles.textH}>الكمية:</Title>
+            <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+            </View>
+            <Image
+                style={{width:'100%',marginTop:15}}
+                source={require('../assets/line.png')}
+                />
+        </Card>
+        );
+    });
+
+
+
+
 
       //Request List
         const renderList = ((item)=>{
         const getStatus=(status)=>{
             switch(status){
-                case "Pending":
-                    return "الطلب معلق"
-                
-                case "Accepted":
-                    return "تم قبول الطلب"
-
-                case "OutForPickup":
-                        return "في الطريق للاستلام"
 
                 case "Delivered":
                     return "تم توصيل الطلب"
@@ -69,15 +116,7 @@ var userId = firebase.auth().currentUser.uid;
 
         const getColor=(status)=>{
             switch(status){
-                case "Pending":
-                    return "#FBC02D"
-                
-                case "Accepted":
-                    return "#7CB342"
-
-                case "OutForPickup":
-                        return "#0288D1"
-
+               
                 case "Delivered":
                     return "#BDBDBD"
 
@@ -85,13 +124,13 @@ var userId = firebase.auth().currentUser.uid;
                     return "#BF360C"
 
                 case "Canceled":
-                    return "#FF9800"
+                    return "#ACADAC"
             }
         }
         const Status=getStatus(item.Status)
         const StatusColor=getColor(item.Status)
-        return(
-            <View style={{flex:1,margin:1}}>
+         return(
+            <View style={{flex:1}}>
                 <View style={{flexDirection:Platform.OS === 'android' &&
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -107,15 +146,48 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse',flex:1}}>
-                            <Title style={styles.text}>تاريخ و وقت الاستلام</Title>
+                            <Title style={styles.text}>  تاريخ و وقت الاستلام:</Title>
                             <Title style={{flexWrap: 'wrap',flex:1,marginTop:3,fontSize:16,textAlign:"right"}}>{item.DateAndTime}</Title>
                         </View>
-                       
+                        <MaterialIcons 
+                            name="error" 
+                            size={30} 
+                            color="#212121"
+                            onPress={()=>{ setDetails(item)}}
+                        />
                     </View>
-            </View>
+                    
+                    <Modal 
+                    visible={DetailsModal} 
+                    transparent={true} 
+                    onRequestClose={()=>{ setDetailsModal(false) }}
+                    animationType="fade">
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                            <View style={{backgroundColor:'#AFB42B',height:40,width:'100%',position:'absolute'}}/>
+                                <MaterialIcons style={Platform.OS === 'android' && 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="clear" size={25} color="#424242" 
+                         onPress={()=>{ setDetailsModal(false) }}
+                         />
+                         <Title style={[styles.textH,{color:'#424242'}]}>تفاصيل الطلب</Title>
+                         <Title style={[styles.textH,{marginTop:5}]}>تاريخ و وقت الاستلام :</Title>
+                         <Title style={{fontSize:16,textAlign:"right"}}>{tempItem.DateAndTime}</Title>
+                                <FlatList
+                                    data={DetailsList}
+                                    renderItem={({item})=>{
+                                    return displayDetails(item)}}
+                                    keyExtractor={item=>`${item.Id}`}
+                            /> 
+                    
+                                </View>
+                            </View>
+                         
+                    </Modal>
+     </View>
         )
       });
-
 
       //***************************************** header 
 
@@ -137,7 +209,7 @@ var userId = firebase.auth().currentUser.uid;
        
 
              <FlatList
-                data={RequestList}
+                data={HistoryReq}
                 renderItem={({item})=>{
                 return renderList(item)}}
                 keyExtractor={item=>`${item.Id}`}
@@ -222,5 +294,47 @@ const styles=StyleSheet.create({
         elevation: 5,
         padding:8
     },
+    centeredView:{
+            justifyContent:'center',
+            alignItems:'center',
+            alignContent:'center',
+            flex:1,
+        },
+        modalView:{
+            width:'80%',
+            margin:10,
+            backgroundColor:"#fff",
+            borderRadius:10,
+            // padding:15,
+            alignItems:'center',
+            shadowColor:'#161924',
+            shadowOffset:{
+                width:0,
+                height:2
+            },
+            shadowOpacity:0.25,
+            shadowRadius:3.85,
+            elevation:5,        
+        },
+         textH: {
+
+        color: '#b2860e',
+        fontSize: 18,
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
+        marginRight:5,
+        marginLeft:5,
+    },
+    iconIOS:{
+            position:'absolute',
+            right:15,
+            padding:5
+        },
+        iconAndroid:{
+            position:'absolute',
+            left:15,
+        },
 });
 export default HistoryRequests;
