@@ -1,18 +1,46 @@
 import React,{useState,useEffect}from 'react';
-import { StyleSheet, Text,View,NativeModules,TouchableOpacity,Modal,Image,FlatList,TouchableHighlight, Alert,RefreshControl} from 'react-native';
+import { StyleSheet, 
+    Text,
+    View,
+    NativeModules,
+    TouchableOpacity,
+    Modal,
+    Image,
+    TouchableHighlight,
+    Alert,
+    Animated} from 'react-native';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import moment from 'moment';
+import Loading from '../components/Loading';
+import AlertView from "../components/AlertView";
 
 const AssignModal=(props)=>{
     var DATEANDTIME=props.DATE
     var INDEX=DATEANDTIME.indexOf(" ");
     var DATE=moment(DATEANDTIME.substring(0,INDEX)).format('Y/M/D');
     var TIME=DATEANDTIME.substring(INDEX+1);
+    var  RequestId = props.ID;
+    var UserId=props.UserId;
+    var AssignList=props.AssignList;
     const [alertVisible,setAlertVisible]= useState(true)
-    const [DriverList,setDriverList] = useState(props.AssignList)
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',   
+    })
+    const [isLoading,setIsLoading]= useState(false)
+    const [DriverList,setDriverList] = useState(
+        AssignList.map((AssignList,index)=>({
+            key:`${index}`,
+            DriverId:AssignList.DriverId,
+            DriverUserName:AssignList.DriverUserName,
+            DriverName:AssignList.DriverName
+        })),
+        );
 
     const fetchData=()=>{
         for (var i in DriverList) {
@@ -46,12 +74,43 @@ const AssignModal=(props)=>{
         }    
     }
 
-    const closeRow=(rowMap,rowKey)=>{
-        
-    }
+    const closeRow = (rowMap, rowKey) => {
+        if(rowMap[rowKey]){
+            rowMap[rowKey].closeRow();
+        }
+      }
 
-    const deleteRow=(rowMap,rowKey)=>{
+    const AssignRow=(rowMap,rowKey,DriverId)=>{
+        closeRow(rowMap,rowKey);
+        setTimeout(()=>{
+            setIsLoading(true)
 
+            setTimeout(()=>{
+                firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
+                    Status:"Accepted",
+                    DeliveryDriverId:DriverId
+                }).then(()=>{
+                    setIsLoading(false)
+                    setTimeout(()=>{
+                        setAlert({
+                            ...alert,
+                            Title:'اسناد الطلب',
+                            Message:'تم اسناد الطلب بنجاح',
+                            jsonPath:"success",
+                            alertVisible:true,
+                        });
+                        setTimeout(() => {
+                            setAlert({
+                                ...alert,
+                                alertVisible:false,
+                            });
+                            props.setVisibleAssignModal(false)
+                            props.navigation.goBack();
+                        }, 4000)
+                    },300)
+                })
+            },500)
+        },500)
     }
     const VisibleItem=props=>{
         const data=props;
@@ -74,12 +133,26 @@ const AssignModal=(props)=>{
         );
     }
     const HiddenItemWithActions=props=>{
-        const {onClose,onDelete}=props;
+        const {swipeAnimatedValue,onClose,onAssign}=props;
 
         return(
-            <View style={styles.rowBack}>
-                <TouchableOpacity style={[styles.backRightBtn,styles.backRightBtnRight]}>
-                    <Text style={styles.textSign}>إسناد</Text>
+            <View style={styles.rowBack}>             
+                <TouchableOpacity style={[styles.backRightBtn,styles.backRightBtnRight]} onPress={onAssign}>
+                    <Animated.View
+                        style={[
+                            {transform: [
+                                {
+                                    scale: swipeAnimatedValue.interpolate({
+                                    inputRange: [-90, -1],
+                                    outputRange: [1, 0],
+                                    extrapolate: 'clamp',
+                                    }),
+                                },
+                            ],
+                            },
+                        ]}>
+                        <Text style={styles.textSign}>إســناد</Text>
+                    </Animated.View>
                 </TouchableOpacity>
             </View>
         );
@@ -94,12 +167,13 @@ const AssignModal=(props)=>{
     }
         
     const renderHiddenItem=(data,rowMap)=>{
+
         return(
             <HiddenItemWithActions
                 data={data}
                 rowMap={rowMap}
                 onClose={()=> closeRow(rowMap,data.item.key)}
-                onDelete={()=> deleteRow(rowMap,data.item.key)}/>
+                onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId)}/>
         );
     }
     useEffect(()=>{
@@ -128,10 +202,23 @@ const AssignModal=(props)=>{
                             renderItem={renderItem}
                             renderHiddenItem={renderHiddenItem}
                             rightOpenValue={-75}
+                            disableRightSwipe
                             style={{marginTop:10}}>
                         </SwipeListView>
+                        {
+                            isLoading?
+                                <Loading></Loading>
+                            : 
+                            null
+                        }
                     </View>
                 </View>
+                {
+                    alert.alertVisible?
+                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+                    :
+                        null
+                }
         </Modal>)
 }
 
@@ -261,9 +348,9 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 5,
       },
       textSign: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
-        color:'#fff'  
+        color:'#fff' ,
     },
     user: {
         fontSize: 12,
@@ -283,6 +370,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 16,
         top:10
-        }   
+    },  
 });
 export default AssignModal;

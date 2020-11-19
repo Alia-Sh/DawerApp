@@ -197,7 +197,7 @@ const RequestDetails = ({navigation,route})=>{
           }
 
           {VisibleAssignModal?
-                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal}></AssignModal>
+                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal} UserId={UserId} navigation={navigation}></AssignModal>
               :
                 null
           }
