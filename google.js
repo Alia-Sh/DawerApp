@@ -7,9 +7,10 @@ import {
   Modal,
   TouchableOpacity
 } from "react-native";
-import MapView from "react-native-maps";
+import MapView ,{Polyline}from "react-native-maps";
 import { NativeModules } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
+import GeoFencing from 'react-native-geo-fencing';
 
 const Google=(props)=> {
     const [alertVisible,setAlertVisible]= useState(true)
@@ -76,16 +77,78 @@ const Google=(props)=> {
     })
   }
 
-  udpateUserLocation=()=>{
-    props.pickLocation(state.formatted_address,state.focusedLocation.latitude,state.focusedLocation.longitude);
-    closeModal();
+//   udpateUserLocation=()=>{
+
+//       navigator.geolocation.getCurrentPosition(
+//     (position) => {
+//       let point = {
+//         lat: state.focusedLocation.latitude,
+//         lng: state.focusedLocation.longitude
+//       };
+
+//       GeoFencing.containsLocation(point, south)
+//         .then(() => console.log('point is within polygon'))
+//         .catch(() => console.log('point is NOT within polygon'))
+//     },
+//     (error) => alert(error.message),
+//     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+//   );
+// }
+
+udpateUserLocation=()=>{
+    const polygon = [
+        { lat: 3.1336599385978805, lng: 101.31866455078125 },
+        { lat: 3.3091633559540123, lng: 101.66198730468757 },
+        { lat: 3.091150714460597, lng: 101.92977905273438 },
+        { lat: 3.1336599385978805, lng: 101.31866455078125 }
+        ];
+        
+        let point = {
+        lat: 3.3091633559540123,
+        lng: 101.66198730468757
+        };
+  GeoFencing.containsLocation(point, polygon)
+    .then(() => console.log('point is within polygon'))
+    .catch((error) => console.log(error))
   }
+
 
   const closeModal=()=>{
     props.closeLocatiomModal();
     setAlertVisible(false)
   }
 
+  const south =[
+    { latitude: 46.9133617, longitude: 24.6289015},
+    { latitude: 46.6812946, longitude: 24.681821},
+    { latitude: 46.7279674, longitude: 24.527119 },
+    { latitude: 46.9010021, longitude: 24.575835},
+    { latitude: 46.9133617, longitude: 24.6289015 }
+  ];
+
+  const east =[
+    { latitude: 46.8882355, longitude: 24.8463879},
+    { latitude: 46.6758014, longitude: 24.9286455},
+    { latitude: 46.6812946, longitude: 24.681821 },
+    { latitude: 46.9133617, longitude: 24.6289015},
+    { latitude: 46.9596466, longitude: 24.644343 },
+    { latitude: 46.8882355, longitude: 24.8463879 }
+  ];
+  const north =[
+    { latitude: 46.6812946, longitude: 24.681821},
+    { latitude: 46.6758014, longitude: 24.9286455},
+    { latitude: 46.4780475, longitude: 24.9261548 },
+    { latitude: 46.5027667, longitude: 24.6793253},
+    { latitude: 46.6812946, longitude: 24.681821 }
+  ];
+
+  const west =[
+    { latitude: 46.6812946, longitude: 24.681821},
+    { latitude: 46.5027667, longitude: 24.6793253},
+    { latitude: 46.5178729, longitude: 24.5444844 },
+    { latitude: 46.7307331, longitude: 24.509502},
+    { latitude: 46.6812946, longitude: 24.681821 }
+  ];
     let marker = null;
 
     if (state.locationChosen) {
@@ -115,6 +178,64 @@ const Google=(props)=> {
                         onPress={pickLocationHandler}
                         ref={ref => map = ref}>
                         {marker}
+
+
+
+<Polyline
+coordinates={east}
+strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+strokeColors={[
+    '#7F0000',
+    '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+    '#B24112',
+    '#E5845C',
+    '#238C23',
+    '#7F0000'
+]}
+strokeWidth={6}
+/>
+
+<Polyline
+coordinates={west}
+strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+strokeColors={[
+    '#7F0000',
+    '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+    '#B24112',
+    '#E5845C',
+    '#238C23',
+    '#7F0000'
+]}
+strokeWidth={6}
+/>
+
+<Polyline
+coordinates={north}
+strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+strokeColors={[
+    '#7F0000',
+    '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+    '#B24112',
+    '#E5845C',
+    '#238C23',
+    '#7F0000'
+]}
+strokeWidth={6}
+/>
+
+<Polyline
+coordinates={south}
+strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+strokeColors={[
+    '#7F0000',
+    '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+    '#B24112',
+    '#E5845C',
+    '#238C23',
+    '#7F0000'
+]}
+strokeWidth={6}
+/>
                     </MapView>
 
                     <View style={styles.bottomView}>
