@@ -43,7 +43,7 @@ import CancelModal from './User/CancelModal';
 import DriverFacilities from './Driver/DriverFacilities';
 import Google from './google'
 import AssignModal from './Admin/AssignModal'
-
+import AssignedRequests from './Driver/AssignedRequests';
 
 
 const Stack = createStackNavigator();
@@ -114,6 +114,7 @@ function App() {
           <Stack.Screen name="RequestDetails" component={RequestDetails} options={myOptions}/>
           <Stack.Screen name="EditFacilityInfo" component={EditFacilityInfo} options={myOptions}/>
           <Stack.Screen name="DriverFacilities" component={DriverFacilities} options={myOptions}/>
+          <Stack.Screen name="AssignedRequests" component={AssignedRequests} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );

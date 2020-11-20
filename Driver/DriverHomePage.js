@@ -31,7 +31,9 @@ const DriverHomePage = ({navigation})=>{
           </View>
           <View style={{flex:4}}>
             <View style={styles.viewImage}>
-              <TouchableOpacity style={styles.TouchableOpacityStyle}>
+              <TouchableOpacity style={styles.TouchableOpacityStyle}
+              onPress={()=> navigation.navigate("AssignedRequests")}
+              >
 
                 <Image 
                   style={styles.imageCenter}
