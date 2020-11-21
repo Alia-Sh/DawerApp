@@ -41,8 +41,6 @@ import RequestDetails from './Admin/RequestDetails';
 import HistoryRequests from './User/HistoryRequests';
 import CancelModal from './User/CancelModal';
 import DriverFacilities from './Driver/DriverFacilities';
-import Google from './google'
-import AssignModal from './Admin/AssignModal'
 import AssignedRequests from './Driver/AssignedRequests';
 
 

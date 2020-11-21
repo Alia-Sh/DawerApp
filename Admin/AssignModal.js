@@ -7,15 +7,16 @@ import { StyleSheet,
     Modal,
     Image,
     TouchableHighlight,
-    Alert,
-    Animated} from 'react-native';
+    Animated,
+    LayoutAnimation, Platform, UIManager} from 'react-native';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import moment from 'moment';
 import Loading from '../components/Loading';
-import AlertView from "../components/AlertView";
+import {FontAwesome5} from '@expo/vector-icons';
+import FilterModal from './FilterModal';
 
 const AssignModal=(props)=>{
     var DATEANDTIME=props.DATE
@@ -26,21 +27,35 @@ const AssignModal=(props)=>{
     var UserId=props.UserId;
     var AssignList=props.AssignList;
     const [alertVisible,setAlertVisible]= useState(true)
-    const [alert,setAlert]=React.useState({
-        alertVisible:false,
-        Title:'',
-        Message:'',
-        jsonPath:'',   
-    })
+    const [FilterModalVisible,setFilterModalVisible]= useState(false)
     const [isLoading,setIsLoading]= useState(false)
     const [DriverList,setDriverList] = useState(
         AssignList.map((AssignList,index)=>({
             key:`${index}`,
             DriverId:AssignList.DriverId,
             DriverUserName:AssignList.DriverUserName,
-            DriverName:AssignList.DriverName
+            DriverName:AssignList.DriverName,
+            DeliveryArea:AssignList.DeliveryArea
         })),
         );
+    const [DriverList2,setDriverList2] = useState(
+        AssignList.map((AssignList,index)=>({
+            key:`${index}`,
+            DriverId:AssignList.DriverId,
+            DriverUserName:AssignList.DriverUserName,
+            DriverName:AssignList.DriverName,
+            DeliveryArea:AssignList.DeliveryArea
+        })),
+        );
+    const [expanded,setExpanded]=useState(false)
+    if (Platform.OS === 'android') {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+      }
+    const changeLayout = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setFilterModalVisible(!FilterModalVisible)
+        setExpanded(!expanded);
+    }
 
     const fetchData=()=>{
         for (var i in DriverList) {
@@ -119,12 +134,25 @@ const AssignModal=(props)=>{
                 })
     }
 
+    const FilterDrivers=(area)=>{
+        if(area!=""){
+            setDriverList(DriverList2.filter(item => item.DeliveryArea == area))
+            console.log(DriverList2);
+        }
+        if(area=="جميع المناطق"){
+            setDriverList(DriverList2)
+        }
+        console.log(area);
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setFilterModalVisible(!FilterModalVisible)
+        setExpanded(!expanded);
+    }
+
     const onRowDidOpen = rowKey => {
         console.log('This row opened', rowKey);
       };
 
     const VisibleItem=props=>{
-        console.log(" on VisibleItem");
         const {
             data,
             rowHeightAnimatedValue,
@@ -138,7 +166,6 @@ const AssignModal=(props)=>{
               duration: 200,
               useNativeDriver: false,
             }).start(() => {
-                console.log("on VisibleItem");
                 onAssign();
             });
           }
@@ -161,7 +188,6 @@ const AssignModal=(props)=>{
         );
     }
     const HiddenItemWithActions=props=>{
-        console.log(" on HiddenItemWithActions");
         const {
             swipeAnimatedValue,
             leftActionActivated,
@@ -230,24 +256,40 @@ const AssignModal=(props)=>{
     useEffect(()=>{
         fetchData()
       },[])
-    return(   
+      const test=()=>{
+          console.log("on test");
+      }
+    return(  
+        
             <Modal
-            animationType="slide"
-            transparent={true}
-            visible={alertVisible}
-            >
+                animationType="slide"
+                transparent={true}
+                visible={alertVisible}
+                >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <LinearGradient 
                             colors={["#809d65","#9cac74"]}
                             style={{borderRadius:5}}>
-                        <Text style={styles.modalText}>اسناد الطلب</Text>
-                        <MaterialIcons name="clear" size={30} color="#212121" style={styles.icon}
-                            onPress={()=>{
-                                props.setVisibleAssignModal(false)
-                            }}
-                            />
+                            <View style={{alignItems:'center', justifyContent:'space-between' ,flexDirection:'row'}}>
+                                <FontAwesome5 name="filter" size={19} color="#212121" style={styles.filterIcon}
+                                    onPress={()=> changeLayout()}/>
+                                <Text style={styles.modalText}>اسناد الطلب</Text>
+                                <MaterialIcons name="clear" size={30} color="#212121" style={styles.icon}
+                                    onPress={()=>{props.setVisibleAssignModal(false)}}
+                                />
+                            </View>
                         </LinearGradient>
+
+                        <View style={{ height: expanded ? null : 0, overflow: 'hidden',paddingBottom:6}}>
+                            {
+                                FilterModalVisible?
+                                <FilterModal changeLayout={changeLayout} FilterDrivers={FilterDrivers}></FilterModal>
+                            :
+                                null
+                            }
+                        </View>
+            
                         <SwipeListView
                             data={DriverList}
                             renderItem={renderItem}
@@ -268,12 +310,6 @@ const AssignModal=(props)=>{
                             : 
                                 null
                         }
-                        {/* {
-                            alert.alertVisible?
-                                <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
-                            :
-                                null
-                        } */}
                     </View>
                 </View>
         </Modal>
@@ -303,29 +339,7 @@ const styles = StyleSheet.create({
         shadowRadius:3.85,
         elevation:5,                
     },
-    okStyle:{
-        color:"#ffff",
-        textAlign:'center',
-        fontSize:20
-    },
-    okButton:{
-        backgroundColor:'#B71C1C',
-        borderRadius:5,
-        padding:10,
-        elevation:2,
-        width:'30%',
-        margin:15,
-    },
-    cancelButton:{
-      backgroundColor:'#9E9E9E',
-      borderRadius:5,
-      padding:10,
-      elevation:2,
-      width:'30%',
-      margin:15,
-    },
     modalText:{
-    //   color:'#fff',
       textAlign:'center',
       fontWeight:'bold',
       fontSize:25,
@@ -339,15 +353,8 @@ const styles = StyleSheet.create({
       elevation:5,
       margin:10      
     },
-    textStyle:{
-      color:"#161924",
-      textAlign:'center',
-      fontSize:15,
-      marginTop:20
-    },
     item: {
         backgroundColor: '#F3F3F3',
-        // padding: 20,
         marginVertical: 5,
         marginHorizontal: 10,
         borderRadius :10,
@@ -360,33 +367,25 @@ const styles = StyleSheet.create({
         shadowRadius: 4.65,
         elevation: 5,
         padding :15,
-      },
-      flexDirectionStyle:{
+    },
+    flexDirectionStyle:{
         flexDirection: Platform.OS === 'android' && 
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
-      },
-      rowBack: {
+    },
+    rowBack: {
         alignItems: 'center',
-        // colors={["#809d65","#9cac74"]}
-
         backgroundColor: '#9cac74',
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        // paddingLeft: 15,
-        // marginLeft: 15,
-        // marginTop: 15,
-        // borderRadius: 5,
-        // marginBottom:15,
-        // marginRight:31
         padding :15,
         marginVertical: 10,
         marginHorizontal: 15,
         borderRadius :10,
-      },
-      backRightBtn: {
+    },
+    backRightBtn: {
         alignItems: 'flex-end',
         bottom: 0,
         justifyContent: 'center',
@@ -394,18 +393,14 @@ const styles = StyleSheet.create({
         top: 0,
         width: 75,
         paddingRight: 7,
-      },
-      backRightBtnLeft: {
-        backgroundColor: '#1f65ff',
-        right: 75,
-      },
-      backRightBtnRight: {
+    },
+    backRightBtnRight: {
         backgroundColor: '#9cac74',
         right: 0,
         borderTopRightRadius: 5,
         borderBottomRightRadius: 5,
-      },
-      textSign: {
+    },
+    textSign: {
         fontSize: 20,
         fontWeight: 'bold',
         color:'#fff' ,
@@ -425,9 +420,11 @@ const styles = StyleSheet.create({
         marginTop:0,
     },
     icon:{
-        position: 'absolute',
-        right: 16,
-        top:10
-    },  
+        paddingRight:10 
+    },
+    filterIcon:{
+        paddingLeft:10    
+    }
+
 });
 export default AssignModal;

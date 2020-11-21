@@ -16,11 +16,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {FontAwesome5} from '@expo/vector-icons';
 
-        
-
-
-
-
 const AdminHomePage = ({navigation})=>{
   //backend
 

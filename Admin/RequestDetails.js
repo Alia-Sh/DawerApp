@@ -10,6 +10,7 @@ import RejectRequestModal from './RejectRequestModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AssignModal from './AssignModal';
 import AlertView from "../components/AlertView";
+
 const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
@@ -90,7 +91,7 @@ const RequestDetails = ({navigation,route})=>{
              snapshot.forEach(function(snapshot){
              var DriverId=snapshot.key
              if(snapshot.val().Status=="Accepted"){
-              var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName}
+              var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName,DeliveryArea:snapshot.val().DeliveryArea}
               li.push(temp)
              }
            })
@@ -126,6 +127,7 @@ const RequestDetails = ({navigation,route})=>{
   },[])
 
     return (
+     
         <View style={styles.container}>
           <View style={styles.fixedHeader}>
               <LinearGradient
@@ -227,12 +229,13 @@ const RequestDetails = ({navigation,route})=>{
                 null
           }
           {
-                            alert.alertVisible?
-                                <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
-                            :
-                                null
-                        }
+              alert.alertVisible?
+                  <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+              :
+                  null
+          }
         </View>  
+
 
       );
 }
