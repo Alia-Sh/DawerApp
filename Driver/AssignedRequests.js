@@ -32,7 +32,7 @@ const Item = ({ item, onPress, style }) => (
         <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
           NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
           NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب معلّق </Text>
+          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب بواسطة : {item.UserName} </Text>
         <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>
         
         
@@ -62,11 +62,24 @@ const AssignedRequests = ({navigation})=>{
     const [term, setTerm] = useState('')
     const [SearchList, setSearchList] = useState([])
     const [SearchOccur, setSearchOccur] = useState(false) 
+    
   
 //backend
     
+var n =' hello'
+var currentUser = firebase.auth().currentUser.uid;  
 
-   
+const fetchUser=(UserId)=>{
+
+   // var n='None'
+                var query = firebase.database().ref('User/' + UserId);
+                query.once("value").then(function(result) {
+                const userData = result.val();
+                  n = userData.Name;
+                   console.log(n);
+                    });
+
+}
 const fetchData=()=>{
   firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
     const Data = snapshot.val();
@@ -78,17 +91,24 @@ const fetchData=()=>{
         console.log(snapshot.val());
         var UserId=snapshot.key
         firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
+           // setUser(UserId)
           snapshot.forEach(function(snapshot){
             console.log(snapshot.key);
             console.log(snapshot.val().Status);
-            if(snapshot.val().Status==="Pending"){
+            fetchUser(UserId)
+            if(snapshot.val().DeliveryDriverId == currentUser){
+                fetchUser(UserId)
               var temp={Date:snapshot.val().DateAndTime,
                 key:snapshot.key,
                 Status:snapshot.val().Status,
-                UserId:UserId}
+                UserId:UserId,
+                UserName:n
+            }
+            console.log(n+'check again ');
               li.push(temp)
               setLoading(false)
             }
+            
           })
         })
       })
@@ -112,6 +132,7 @@ const fetchData=()=>{
 
   useEffect(()=>{
     fetchData()
+   // fetchUser(UserId)
   },[])
 
   const [selectedId, setSelectedId] = useState(null);
@@ -159,7 +180,7 @@ const fetchData=()=>{
        {/* Request list */}
       
        <Title style={[styles.text,{marginTop:10,marginBottom:3}]}
-       > عدد الطلبات المعلّقة : {ArabicNumbers(RequestList.length)}</Title>
+       > عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
        <View style={{alignItems:"center"}}>
             <Image
                             style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
