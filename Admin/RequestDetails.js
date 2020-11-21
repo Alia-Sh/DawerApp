@@ -4,11 +4,11 @@ import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'; 
-import { Tile } from 'react-native-elements';
 import { Card, Title } from 'react-native-paper';
 import firebase from '../Database/firebase';
 import RejectRequestModal from './RejectRequestModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import AssignModal from './AssignModal';
 const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
@@ -16,6 +16,7 @@ const RequestDetails = ({navigation,route})=>{
     var UserId=route.params.UserId
     console.log(RequestId);
     console.log(UserId);
+    const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
     const [UserName,setUserName]=useState("");
@@ -26,6 +27,7 @@ const RequestDetails = ({navigation,route})=>{
       longitude:0
     });
     const [Picture,setPicture] = useState("")
+    const [VisibleAssignModal,setVisibleAssignModal] = useState(false)
 
     const fetchMaterials=(ID)=>{
       firebase.database().ref("Material/"+ID).on('value',snapshot=>{
@@ -33,8 +35,6 @@ const RequestDetails = ({navigation,route})=>{
           if(Data){
             var li = []
             snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().MaterialType);
             var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity}
             li.push(temp)
             })
@@ -77,10 +77,27 @@ const RequestDetails = ({navigation,route})=>{
     Linking.openURL(`http://maps.${company}.com/maps?daddr=${daddr}`);
   }
 
+  const fetchDrivers=async()=>{
+    await firebase.database().ref('/DeliveryDriver/').on('value',snapshot=>{
+       const Data = snapshot.val();
+       if(Data){
+           var li = []
+             snapshot.forEach(function(snapshot){
+             var DriverId=snapshot.key
+             var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName}
+             li.push(temp)
+           })
+           setDriverList(li);
+         }
+   }) 
+ }
+
   useEffect(()=>{
     fetchMaterials(RequestId)
     fetchUserInfo(UserId)
     retriveImage(UserId)
+    fetchDrivers();
+
   },[])
 
     return (
@@ -152,7 +169,8 @@ const RequestDetails = ({navigation,route})=>{
             </Card> 
             </KeyboardAwareScrollView>
             <View style={[styles.flexDirectionStyle,styles.button,{marginTop:15}]}>
-              <TouchableOpacity style={[styles.button,]}>
+              <TouchableOpacity style={[styles.button,]}
+                onPress={()=>setVisibleAssignModal(true)}>
                 <LinearGradient
                     colors={["#809d65","#9cac74"]}
                     style={styles.signIn}>   
@@ -177,6 +195,12 @@ const RequestDetails = ({navigation,route})=>{
               :
                 null
           }
+
+          {VisibleAssignModal?
+                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal} UserId={UserId} navigation={navigation}></AssignModal>
+              :
+                null
+          }
         </View>  
 
       );
@@ -185,10 +209,6 @@ const RequestDetails = ({navigation,route})=>{
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-    },  
-    textInput: {
-        textAlign: 'center', 
-        marginTop: 20,  
     },
     header:{
       width: '100%',
@@ -276,7 +296,6 @@ const styles = StyleSheet.create({
       width:100,
       height:100,
       borderRadius:150/2,
-      // marginTop:-75 
     },
     user: {
       fontSize: 15,
