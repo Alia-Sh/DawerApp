@@ -13,7 +13,7 @@ import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {FAB} from 'react-native-paper';
 import AddDriver from './AddDriver';
-import {FontAwesome5} from '@expo/vector-icons'
+import {FontAwesome5, MaterialIcons} from '@expo/vector-icons'
 import SearchBar from '../components/SearchBar';
 //import { TabView, SceneMap } from 'react-native-tab-view';
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,7 +29,7 @@ const ViewDriver=(driver)=>{
   navigation.navigate("AdminViewDriver",driver)  
 }
 
-const Item = ({ item, onPress, style }) => (
+const Item1 = ({ item, onPress, style }) => (
   
   <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
     <View  style={[styles.flexDirectionStyle,{height:45}]}>
@@ -44,6 +44,38 @@ const Item = ({ item, onPress, style }) => (
           NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.name}</Text>
         <Text style={styles.user}>@{item.username}</Text>
       </View>
+    </View>
+  </TouchableOpacity>
+ 
+);
+
+const Item2 = ({ item, onPress, style }) => (
+  
+  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
+    <View  style={[styles.flexDirectionStyle,{height:45}]}>
+      
+    <Image
+          source={require('../assets/PendingUser.png')}
+          style={{width:55,height:55,marginRight:-8,marginTop:0,marginLeft:-20}}
+          />
+     
+      <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10,alignItems:'flex-end'}} >
+        <View  style={{flexDirection:'row'}}>
+            <MaterialIcons style={{marginRight:120,marginTop:0}}
+                name="error" 
+                size={30} 
+                color="#7B7B7B"
+            />
+          <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
+            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب انضمام </Text>
+        </View>
+
+        <Text style={styles.date}>السائق:  {item.name} ، منطقة: {item.area}</Text>
+        
+      </View>
+     
     </View>
   </TouchableOpacity>
  
@@ -75,7 +107,7 @@ const DriverHome = ({ navigation })=> {
             indicatorStyle :  {backgroundColor:'green' },
           }}>
         <Tab.Screen name="طلبات الانضمام" component={joinReqs} />
-        <Tab.Screen name="السائقون المعتمدون" component={Appproved} />
+        <Tab.Screen name="السائقون المعتمدون" component={AppprovedDrivers} />
       </Tab.Navigator>
     </View>
 
@@ -138,49 +170,49 @@ function MyTabBar({ state, descriptors, navigation, position }) {
   );
 }
 
-function Appproved  ({ navigation }){
-  const [DriverList,setDriverList] = useState([])
-  const [loading,setLoading]=useState(true)
+function AppprovedDrivers  ({ navigation }){
+  const [DriverList1,setDriverList1] = useState([])
+  const [loading1,setLoading1]=useState(true)
   const [term, setTerm] = useState('') //list
   const [SearchList, setSearchList] = useState([]) // list
   const [SearchOccur, setSearchOccur] = useState(false) // list
 
-  const fetchData=()=>{
+  const fetchData1=()=>{
     console.log('inside fe');
     firebase.database().ref("DeliveryDriver").orderByChild("UserName").on('value', (snapshot) =>{
         var li = []
         snapshot.forEach((child)=>{
+        if(child.val().Status === "Accepted"){
         var temp={
           key: child.key,
           username:child.val().UserName,
           name : child.val().Name   
         }
         li.push(temp)
-        setLoading(false)
+        setLoading1(false)
         console.log(child.key);
         console.log(child.val().UserName);
         //setDriverList(temp)
-        setLoading(false) 
+        setLoading1(false) }
       })
       //this.setState({list:li})
-  
-      setDriverList(li)
+      setDriverList1(li)
     })
   }
 
   useEffect(()=>{
-    fetchData()
+    fetchData1()
   },[])
 
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId1, setSelectedId1] = useState(null);
 
-  const renderItem = ({ item }) => {
+  const renderItem1 = ({ item }) => {
   //const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
 
     return (
-      <Item
+      <Item1
         item={item}
-        // onPress={() => setSelectedId(item.key)}
+        // onPress={() => setSelectedId1(item.key)}
         
         onPress={() => 
         { var ID =item.key;
@@ -188,14 +220,14 @@ function Appproved  ({ navigation }){
           var USER = item.username;
           console.log(ID+'      >>>>>here in gome');
           navigation.navigate("AdminViewDriver",{ID,NAME,USER})}}
-        style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
+        style={{ backgroundColor :item.key === selectedId1 ? "#EDEEEC" : "#F3F3F3"}}
       />
     );
   };
 
   // Search function
   SearchInList = (word) =>{
-    setSearchList(DriverList.filter(item => item.name.toLowerCase().includes(word)))
+    setSearchList(DriverList1.filter(item => item.name.toLowerCase().includes(word)))
     setSearchOccur(true)
   }
 
@@ -215,23 +247,23 @@ function Appproved  ({ navigation }){
     {SearchOccur ? 
       
       <FlatList
-        data = {SearchList}
-        renderItem={renderItem}
+        data = {SearchList1}
+        renderItem={renderItem1}
         keyExtractor = {(item)=>item.key}
-        extraData={selectedId}
-        onRefresh = {()=>fetchData()}
-        refreshing = {loading}
+        extraData={selectedId1}
+        onRefresh = {()=>fetchData1()}
+        refreshing = {loading1}
       />
 
     :
 
     <FlatList
-      data={DriverList}
-      renderItem={renderItem}
+      data={DriverList1}
+      renderItem={renderItem1}
       keyExtractor={(item)=>item.key}
-      extraData={selectedId}
-      onRefresh={()=>fetchData()}
-      refreshing={loading}
+      extraData={selectedId1}
+      onRefresh={()=>fetchData1()}
+      refreshing={loading1}
     />
     }
     </View>
@@ -244,10 +276,76 @@ function Appproved  ({ navigation }){
 
 //////////
 function joinReqs  ({ navigation }) {
+  const [DriverList2,setDriverList2] = useState([])
+  const [loading2,setLoading2]=useState(true)
+  
+
+  const fetchData2=()=>{
+    console.log('inside joinnnnn');
+    firebase.database().ref("DeliveryDriver").orderByChild("UserName").on('value', (snapshot) =>{
+        var li = []
+        snapshot.forEach((child)=>{
+        if(child.val().Status === "Pending"){
+        var temp={
+          key: child.key,
+          username:child.val().UserName,
+          name : child.val().Name,
+          area: child.val().DeliveryArea  
+        }
+        li.push(temp)
+        setLoading2(false)
+        console.log(child.key);
+        console.log(child.val().UserName);
+        //setDriverList(temp)
+        setLoading2(false) }
+      })
+      //this.setState({list:li})
+      setDriverList2(li)
+    })
+  }
+
+  useEffect(()=>{
+    fetchData2()
+  },[])
+
+  const [selectedId2, setSelectedId2] = useState(null);
+
+  const renderItem2 = ({ item }) => {
+
+    return (
+      <Item2
+        item={item}        
+        onPress={() => setSelectedId2(item.key)}
+
+        /*onPress={() => 
+        { var ID =item.key;
+          var NAME=item.name;
+          var USER = item.username;
+          console.log(ID+'      >>>>>here in gome');
+          navigation.navigate("AdminViewDriver",{ID,NAME,USER})}} */
+        style={{ backgroundColor :item.key === selectedId2 ? "#EDEEEC" : "#F3F3F3"}}
+      />
+    );
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>requests here!</Text>
+    <View style={{ flex: 1, justifyContent: 'center'}}>
+
+
+    <FlatList
+      data={DriverList2}
+      renderItem={renderItem2}
+      keyExtractor={(item)=>item.key}
+      extraData={selectedId2}
+      onRefresh={()=>fetchData2()}
+      refreshing={loading2}
+    />
+    
     </View>
+
+    /*<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>list here!</Text>
+    </View>*/
   );
 }
 
@@ -511,6 +609,20 @@ const styles = StyleSheet.create({
       marginRight:30,
       marginTop:5,
       color :'#ADADAD',
+    },
+    Status: {
+      fontSize: 18,
+      fontWeight: 'bold' ,
+      textAlign :'right',
+      marginRight:30,
+      marginTop:5, 
+    },
+    date: {
+      fontSize: 14,
+      textAlign :'right',
+      marginRight:30,
+      marginTop:5,
+      color :'#7B7B7B',
     },
     fabIOS: {
       position: 'absolute',

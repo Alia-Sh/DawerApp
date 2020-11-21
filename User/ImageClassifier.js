@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, StatusBar, ActivityIndicator, TouchableOpacity, Image, Button, ActionSheetIOS, NativeModules} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as tf from '@tensorflow/tfjs';
@@ -9,9 +9,11 @@ import * as Permissions from 'expo-permissions';
 import * as jpeg from 'jpeg-js';
 import * as ImagePicker from 'expo-image-picker';
 //import { fetch } from '@tensorflow/tfjs-react-native';
+import {bundleResourceIO} from "@tensorflow/tfjs-react-native";
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'; 
 import firebase from '../Database/firebase';
+import { TextInput } from 'react-native';
 
 // There is an ERROR here, so i commneted the functions below..
 
@@ -25,16 +27,31 @@ const ImageClassifier = ({navigation})=> {
 
 
   const getPred = async()=>{
-    const model = await tf.loadLayersModel(link);
-    const example = tf.fromPixels(image); 
-    const predict = model.predict(example);
-      return (
-        <View style={styles.welcomeContainer}>
-          <Text>predict</Text>
-            </View>
-      )
+    await tf.ready(); // preparing TensorFlow
+
+    //const model = await tf.loadLayersModel(link);
+    //const example = tf.image.cropAndResize(image.next().value.reshape([1, 224, 224, 3]));
+    //const predict = model.predict(example);
+    const modelJSON = require('../assets/tfjs_files/model.json');
+    const modelWeights = require('../assets/tfjs_files/group1-shard1of21.bin');
+    const model = await tf.loadLayersModel(bundleResourceIO(modelJSON, modelWeights))
+      .catch(e => console.log(e));
+    console.log("Model loaded!");
+    const predicted = await model.predict(image); 
+    console.log(predicted); 
+    setLink(predicted);
   }
 
+  /*
+   const loadModel = async()=>{
+    const modelJSON = require('../assets/tfjs_files/model.json');
+    const modelWeights = require('../assets/tfjs_files/group1-shard1of21.bin');
+    const model = await tf
+      .loadLayersModel(bundleResourceIO(modelJSON, modelWeights))
+      .catch(e => console.log(e));
+    console.log("Model loaded!");
+    return model;
+  };
 
 
   const getModel= async ()=>{
@@ -47,7 +64,7 @@ const ImageClassifier = ({navigation})=> {
       })
       .catch((e) => console.log('getting downloadURL of model error => ', e));
   }
-
+  */
 /*
   componentDidMount = async ()  =>  {
     await tf.ready(); // preparing TensorFlow
@@ -99,6 +116,7 @@ const ImageClassifier = ({navigation})=> {
         if(!data.cancelled){
           const source = { uri: data.uri }
           setImage(source);
+          getPred();
           //this.classifyImage()
         }
     }else{
@@ -117,6 +135,7 @@ const ImageClassifier = ({navigation})=> {
       if (!response.cancelled) {
           const source = { uri: response.uri }
           setImage(source);
+          getPred();
           //this.classifyImage()
       }
     } catch (error) {
@@ -329,16 +348,14 @@ render() {
         </Text>
 
         <View style={styles.loadingModelContainer}>
-          <Text style={styles.text}>MobileNet model ready? </Text>
+          <Text style={styles.text}>Custom model ready? </Text>
           {setIsModelReady ? (
             <Text style={styles.text}>✅</Text>
           ) : (
             <ActivityIndicator size='small' />
           )}
         </View>
-          {getPred}
       </View>
-  
      {/* My code ! */}
 
      <TouchableOpacity
@@ -349,6 +366,10 @@ render() {
         <Text>تصنيف الصورة</Text>
       </TouchableOpacity>
       
+      <View>
+      <Text style = {{color: 'white', marginTop: 14}}> Prediction is HERE : {link}</Text>
+
+      </View>
       
         {/*
         <Button 

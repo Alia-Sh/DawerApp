@@ -102,6 +102,7 @@ const userLogin = () => {
           console.log("Driver exist!");
           snapshot.forEach(function(snapshot){
             try{
+              if(snapshot.val().Status === "Accepted"){
               firebase.auth().signInWithEmailAndPassword(snapshot.val().Email,data.password)
               .then(user => {
                 setData({
@@ -125,6 +126,16 @@ const userLogin = () => {
                   });
                   console.log(error);
                 })
+                 }else{
+                  console.log("Driver exists but not accepted yet!");
+                  setData({
+                    ...data,
+                    isValidUser: true,
+                    isValidPassword: true,
+                    isValidUserAndPassword:false,
+                    isLoading:false
+                  });
+                 }
               }catch(error){
                 setData({
                   ...data,

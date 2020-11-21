@@ -204,7 +204,8 @@ import Loading from '../components/Loading';
                                 firebase.database().ref('DeliveryDriver/' + userId).set({
                                 Email:Email.toLowerCase(),
                                 Name:Name,
-                                Password:Password,
+                                //Password:Password,
+                                Status:"Pending",
                                 PhoneNumber:Phone,
                                 UserName:UserName.toLowerCase(),
                                 DeliveryArea:selectedValue
@@ -240,7 +241,7 @@ import Loading from '../components/Loading';
                                         ...alert,
                                         Title:'',
                                         //Message:'لم يتم إضافة السائق بنجاح',
-                                        Message:'لم يتم إرسال طلبك بنجاح',
+                                        Message:'حصلت مشكلة في إرسال طلبك',
                                         jsonPath:"Error",
                                         alertVisible:true,
                                         isLoading:false
