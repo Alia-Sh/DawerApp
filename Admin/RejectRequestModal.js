@@ -11,7 +11,7 @@ const RejectRequestModal=(props)=>{
             Status:"Rejected"
         }).then(()=>{
             props.setRejectModal(false);
-            props.navigation.goBack();
+            props.navigation.navigate("RequestHome");
         })
     }
 return(            

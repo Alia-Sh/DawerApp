@@ -14,7 +14,7 @@ import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import {FontAwesome5} from '@expo/vector-icons';
 
         
 
@@ -79,16 +79,11 @@ const AdminHomePage = ({navigation})=>{
         }}> 
         <SafeAreaView>
           <View style={styles.header}>
-         <TouchableOpacity  onPress={()=> logout()} >
-         <Image
-          source={require('../assets/AdminIcons/shutdown.png')}
-          style={styles.logout}
-          resizeMode="stretch"
-          />
-          </TouchableOpacity>
+          <FontAwesome5 name="power-off" size={26} color="#fff" style={{paddingLeft:10,marginBottom:10}}
+                        onPress={()=> logout()}/>
          <Image
           source={require('../assets/AdminIcons/HomePageLogo.png')}
-          style={styles.logo}
+          style={[styles.logo]}
           resizeMode="stretch"
           />
           </View>

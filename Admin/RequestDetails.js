@@ -9,13 +9,12 @@ import firebase from '../Database/firebase';
 import RejectRequestModal from './RejectRequestModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AssignModal from './AssignModal';
+import AlertView from "../components/AlertView";
 const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
     var STATUS=route.params.STATUS
     var UserId=route.params.UserId
-    console.log(RequestId);
-    console.log(UserId);
     const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
@@ -28,6 +27,12 @@ const RequestDetails = ({navigation,route})=>{
     });
     const [Picture,setPicture] = useState("")
     const [VisibleAssignModal,setVisibleAssignModal] = useState(false)
+    const [alert,setAlert]=React.useState({
+      alertVisible:false,
+      Title:'',
+      Message:'',
+      jsonPath:'',   
+    })
 
     const fetchMaterials=(ID)=>{
       firebase.database().ref("Material/"+ID).on('value',snapshot=>{
@@ -84,13 +89,33 @@ const RequestDetails = ({navigation,route})=>{
            var li = []
              snapshot.forEach(function(snapshot){
              var DriverId=snapshot.key
-             var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName}
-             li.push(temp)
+             if(snapshot.val().Status=="Accepted"){
+              var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName}
+              li.push(temp)
+             }
            })
            setDriverList(li);
          }
    }) 
  }
+
+    const ShowModal=()=>{
+      setVisibleAssignModal(false)
+      setAlert({
+        ...alert,
+        Title:'اسناد الطلب',
+        Message:'تم اسناد الطلب بنجاح',
+        jsonPath:"success",
+        alertVisible:true,
+    });
+    setTimeout(() => {
+        setAlert({
+            ...alert,
+            alertVisible:false,
+        });
+        navigation.navigate("RequestHome");
+    }, 4000)
+    }
 
   useEffect(()=>{
     fetchMaterials(RequestId)
@@ -109,7 +134,7 @@ const RequestDetails = ({navigation,route})=>{
                 <SafeAreaView style={{flexDirection:'row-reverse'}}>
                     <View style={[styles.header,styles.flexDirectionStyle]}>
                         <FontAwesome5 name="chevron-right" size={24} color="#ffff" style={styles.icon}
-                            onPress={()=>navigation.goBack()}
+                            onPress={()=>navigation.navigate("RequestHome")}
                           />
                         <View>
                             <Text style={styles.headerText}> تفاصيل الطلب</Text>
@@ -168,7 +193,7 @@ const RequestDetails = ({navigation,route})=>{
               </TouchableOpacity>
             </Card> 
             </KeyboardAwareScrollView>
-            <View style={[styles.flexDirectionStyle,styles.button,{marginTop:15}]}>
+            <View style={[styles.flexDirectionStyle,styles.button,{marginTop:5}]}>
               <TouchableOpacity style={[styles.button,]}
                 onPress={()=>setVisibleAssignModal(true)}>
                 <LinearGradient
@@ -197,10 +222,16 @@ const RequestDetails = ({navigation,route})=>{
           }
 
           {VisibleAssignModal?
-                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal} UserId={UserId} navigation={navigation}></AssignModal>
+                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal} UserId={UserId} navigation={navigation} ShowModal={ShowModal}></AssignModal>
               :
                 null
           }
+          {
+                            alert.alertVisible?
+                                <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+                            :
+                                null
+                        }
         </View>  
 
       );
@@ -272,7 +303,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       paddingLeft:15,
       paddingRight:15,
-      paddingBottom:5
+      paddingBottom:10,
     },
     signIn: {
       width: '100%',

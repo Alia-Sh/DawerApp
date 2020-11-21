@@ -62,7 +62,7 @@ const RequestHome = ({navigation})=>{
     const [term, setTerm] = useState('')
     const [SearchList, setSearchList] = useState([])
     const [SearchOccur, setSearchOccur] = useState(false) 
-  
+
 //backend
     
 
@@ -70,17 +70,13 @@ const RequestHome = ({navigation})=>{
 const fetchData=()=>{
   firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
     const Data = snapshot.val();
-    console.log(Data);
+    
     if(Data){
       var li = []
         snapshot.forEach(function(snapshot){
-        console.log(snapshot.key);
-        console.log(snapshot.val());
         var UserId=snapshot.key
         firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
           snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().Status);
             if(snapshot.val().Status==="Pending"){
               var temp={Date:snapshot.val().DateAndTime,
                 key:snapshot.key,
@@ -104,11 +100,11 @@ const fetchData=()=>{
     
     }
       setRequestList(li)
-
-      console.log(li)
     }
   })
 }
+
+
 
   useEffect(()=>{
     fetchData()
@@ -148,7 +144,7 @@ const fetchData=()=>{
                 colors={["#809d65","#9cac74"]}
                 style={[styles.flexDirectionStyle,{height:"100%" ,width:"100%",justifyContent:'center'}]}> 
         
-              <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} onPress={()=>navigation.goBack()}/>
+              <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} onPress={()=>navigation.navigate("AdminHomePage")}/>
 
               <Text style={styles.text_header}>  الـطـلـبـات </Text>
 

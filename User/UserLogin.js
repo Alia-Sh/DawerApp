@@ -141,9 +141,10 @@ const  UserLogin =({navigation}) => {
   
   return (  
 
-    <KeyboardAwareScrollView >
+    
 
     <View style={styles.container}>
+      <KeyboardAwareScrollView >
         <FirebaseRecaptchaVerifierModal ref={recaptchaVerifier} firebaseConfig={firebase.app().options}/>
         <View style={styles.header}>
        {/* <StatusBar backgroundColor='#009387' barStyle="light=content"/> */}
@@ -292,8 +293,8 @@ const  UserLogin =({navigation}) => {
           </Text>
         </TouchableOpacity>
       ) : undefined}
-      </View>
       </KeyboardAwareScrollView>
+      </View>
 
       
     );

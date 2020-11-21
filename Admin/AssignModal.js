@@ -82,61 +82,105 @@ const AssignModal=(props)=>{
 
     const AssignRow=(rowMap,rowKey,DriverId)=>{
         closeRow(rowMap,rowKey);
-        setTimeout(()=>{
-            setIsLoading(true)
+        // setTimeout(()=>{
+        //     setIsLoading(true)
 
-            setTimeout(()=>{
+        //     setTimeout(()=>{
+        //         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
+        //             Status:"Accepted",
+        //             DeliveryDriverId:DriverId
+        //         }).then(()=>{
+        //             setIsLoading(false)
+        //             setTimeout(()=>{
+        //                 setAlert({
+        //                     ...alert,
+        //                     Title:'اسناد الطلب',
+        //                     Message:'تم اسناد الطلب بنجاح',
+        //                     jsonPath:"success",
+        //                     alertVisible:true,
+        //                 });
+        //                 setTimeout(() => {
+        //                     setAlert({
+        //                         ...alert,
+        //                         alertVisible:false,
+        //                     });
+        //                     // props.setVisibleAssignModal(false)
+        //                     // props.navigation.navigate("RequestHome");
+        //                 }, 4000)
+        //             },300)
+        //         })
+        //     },500)
+        // },500)            
                 firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
                     Status:"Accepted",
                     DeliveryDriverId:DriverId
                 }).then(()=>{
-                    setIsLoading(false)
-                    setTimeout(()=>{
-                        setAlert({
-                            ...alert,
-                            Title:'اسناد الطلب',
-                            Message:'تم اسناد الطلب بنجاح',
-                            jsonPath:"success",
-                            alertVisible:true,
-                        });
-                        setTimeout(() => {
-                            setAlert({
-                                ...alert,
-                                alertVisible:false,
-                            });
-                            props.setVisibleAssignModal(false)
-                            props.navigation.goBack();
-                        }, 4000)
-                    },300)
+                        props.ShowModal()
                 })
-            },500)
-        },500)
     }
+
+    const onRowDidOpen = rowKey => {
+        console.log('This row opened', rowKey);
+      };
+
     const VisibleItem=props=>{
-        const data=props;
+        console.log(" on VisibleItem");
+        const {
+            data,
+            rowHeightAnimatedValue,
+            onAssign,
+            rightActionState,
+          } = props;
+
+          if (rightActionState) {
+            Animated.timing(rowHeightAnimatedValue, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: false,
+            }).start(() => {
+                console.log("on VisibleItem");
+                onAssign();
+            });
+          }
         return(
             <TouchableHighlight style={styles.item}>
-                <View  style={[styles.flexDirectionStyle,{height:35}]}>
+                <View  style={[styles.flexDirectionStyle,{height:30}]}>
                     <Image source={require('../assets/DriverProfile2.png')} 
-                        style={{height:50 ,width:50,marginRight:-8,marginTop:-8}}
+                        style={{height:50 ,width:50,marginRight:-8,marginTop:-10}}
                     />
 
-                    <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10}} >
+                    <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10,justifyContent :'center'}} >
                         <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 
                             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{data.data.item.DriverName}</Text>
-                        <Text style={styles.user}>@{data.data.item.DriverUserName}</Text>
+                            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{data.item.DriverName}</Text>
+                        <Text style={styles.user}>@{data.item.DriverUserName}</Text>
                     </View>
                 </View>
             </TouchableHighlight>
         );
     }
     const HiddenItemWithActions=props=>{
-        const {swipeAnimatedValue,onClose,onAssign}=props;
+        console.log(" on HiddenItemWithActions");
+        const {
+            swipeAnimatedValue,
+            leftActionActivated,
+            rightActionActivated,
+            rowActionAnimatedValue,
+            rowHeightAnimatedValue,
+            onClose,
+            onAssign,
+          } = props;
+
+        if (rightActionActivated) {
+            Animated.spring(rowActionAnimatedValue, {
+              toValue: 500,
+              useNativeDriver: false
+            }).start();
+          }
 
         return(
-            <View style={styles.rowBack}>             
+            <Animated.View style={[styles.rowBack,{height: rowHeightAnimatedValue}]}>             
                 <TouchableOpacity style={[styles.backRightBtn,styles.backRightBtnRight]} onPress={onAssign}>
                     <Animated.View
                         style={[
@@ -154,24 +198,31 @@ const AssignModal=(props)=>{
                         <Text style={styles.textSign}>إســناد</Text>
                     </Animated.View>
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
         );
 
     }
 
     const renderItem=(data,rowMap)=>{
+        const rowHeightAnimatedValue = new Animated.Value(60);
         return(
-            <VisibleItem data={data}/>
+            <VisibleItem 
+                data={data}    
+                rowHeightAnimatedValue={rowHeightAnimatedValue} 
+                onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId)}/>
         );
 
     }
         
     const renderHiddenItem=(data,rowMap)=>{
-
+        const rowActionAnimatedValue = new Animated.Value(75);
+        const rowHeightAnimatedValue = new Animated.Value(60);
         return(
             <HiddenItemWithActions
                 data={data}
                 rowMap={rowMap}
+                rowActionAnimatedValue={rowActionAnimatedValue}
+                rowHeightAnimatedValue={rowHeightAnimatedValue}
                 onClose={()=> closeRow(rowMap,data.item.key)}
                 onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId)}/>
         );
@@ -179,8 +230,8 @@ const AssignModal=(props)=>{
     useEffect(()=>{
         fetchData()
       },[])
-    return(            
-        <Modal
+    return(   
+            <Modal
             animationType="slide"
             transparent={true}
             visible={alertVisible}
@@ -202,24 +253,31 @@ const AssignModal=(props)=>{
                             renderItem={renderItem}
                             renderHiddenItem={renderHiddenItem}
                             rightOpenValue={-75}
+                            leftOpenValue={75}
                             disableRightSwipe
+                            onRowDidOpen={onRowDidOpen}
+                            leftActivationValue={100}
+                            rightActivationValue={-150}
+                            leftActionValue={0}
+                            rightActionValue={-500}
                             style={{marginTop:10}}>
                         </SwipeListView>
                         {
                             isLoading?
                                 <Loading></Loading>
                             : 
-                            null
+                                null
                         }
+                        {/* {
+                            alert.alertVisible?
+                                <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+                            :
+                                null
+                        } */}
                     </View>
                 </View>
-                {
-                    alert.alertVisible?
-                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
-                    :
-                        null
-                }
-        </Modal>)
+        </Modal>
+        )
 }
 
 const styles = StyleSheet.create({
@@ -324,7 +382,7 @@ const styles = StyleSheet.create({
         // marginBottom:15,
         // marginRight:31
         padding :15,
-        marginVertical: 5,
+        marginVertical: 10,
         marginHorizontal: 15,
         borderRadius :10,
       },
@@ -335,7 +393,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: 75,
-        paddingRight: 17,
+        paddingRight: 7,
       },
       backRightBtnLeft: {
         backgroundColor: '#1f65ff',
@@ -364,7 +422,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold' ,
         textAlign :'right',
         marginRight:15,
-        marginTop:0, 
+        marginTop:0,
     },
     icon:{
         position: 'absolute',

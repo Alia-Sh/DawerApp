@@ -176,10 +176,11 @@ const adminLogin = () => {
   
   return (            
         <View style={styles.container}>
-          <KeyboardAwareScrollView>
+          
 
             <StatusBar backgroundColor='#009387' barStyle="light=content"/>
 
+              <KeyboardAwareScrollView>
             <View style={styles.header}>
             <FontAwesome5 name="chevron-right" size={24} color="#161924" style={Platform.OS === 'android' && 
               NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
