@@ -6,7 +6,7 @@ import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { Card, Title } from 'react-native-paper';
 import firebase from '../Database/firebase';
-import RejectRequestModal from './RejectRequestModal';
+import RejectRequestModal from '../components/RejectModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AssignModal from './AssignModal';
 import AlertView from "../components/AlertView";
@@ -218,7 +218,7 @@ const RequestDetails = ({navigation,route})=>{
           </View>
 
           {RejectModal?
-                <RejectRequestModal UserId={UserId} RequestId={RequestId} setRejectModal={setRejectModal} navigation={navigation}></RejectRequestModal>
+                <RejectRequestModal UserId={UserId} RequestId={RequestId} setRejectModal={setRejectModal} navigation={navigation} title="رفض الطلب" message="هل انت متاكد من رفض الطلب" type="reject Request"></RejectRequestModal>
               :
                 null
           }

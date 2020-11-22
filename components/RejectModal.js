@@ -3,7 +3,7 @@ import { StyleSheet, Text,View,NativeModules,TouchableOpacity,Modal} from 'react
 import firebase from '../Database/firebase';
 import LottieView from 'lottie-react-native';
 
-const RejectRequestModal=(props)=>{
+const RejectModal=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
 
     const rejectRequest=(UserId,RequestId)=>{
@@ -14,6 +14,10 @@ const RejectRequestModal=(props)=>{
             props.navigation.navigate("RequestHome");
         })
     }
+
+    const rejectDriver=()=>{
+        console.log("rejectDriver");
+    }
 return(            
 <Modal
     animationType="slide"
@@ -21,7 +25,7 @@ return(
     visible={alertVisible}>
         <View style={styles.centeredView}>
             <View style={styles.modalView}>
-                <Text style={styles.modalText}>رفض الطلب</Text>
+                <Text style={styles.modalText}>{props.title}</Text>
                 <View style={{width:'100%',height:0.5,backgroundColor:"#757575",marginVertical:15}}></View>
 
                 <View style={{justifyContent:'center',alignItems:'center'}}>
@@ -30,7 +34,7 @@ return(
                   </View>
                 </View>
 
-                <Text style={styles.textStyle}>هل انت متاكد من رفض الطلب </Text>
+                <Text style={styles.textStyle}>{props.message}</Text>
                 <View style={{flexDirection:Platform.OS === 'android' &&
                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -38,8 +42,12 @@ return(
                         alignItems:'center',justifyContent:'center'}}>
                     <TouchableOpacity 
                         style={styles.okButton}
-                        onPress={()=>{
+                        onPress={()=>{{props.type=="reject Request"?
                             rejectRequest(props.UserId,props.RequestId)
+                        :
+                            rejectDriver()
+                        }
+                            
                     }}>
                       <Text style={styles.okStyle}>رفض</Text>
                     </TouchableOpacity>
@@ -119,4 +127,4 @@ const styles = StyleSheet.create({
       marginTop:20
     },   
 });
-export default RejectRequestModal;
+export default RejectModal;
