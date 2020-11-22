@@ -14,7 +14,7 @@
     "@react-native-community/datetimepicker": "^3.0.3",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/slider": "^3.0.3",
-    "@react-navigation/bottom-tabs": "^5.9.1",
+    "@react-navigation/bottom-tabs": "^5.11.2",
     "@react-navigation/drawer": "^5.9.0",
     "@react-navigation/material-bottom-tabs": "^5.2.18",
     "@react-navigation/material-top-tabs": "^5.3.9",
