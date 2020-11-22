@@ -102,12 +102,32 @@ const DriverHome = ({ navigation })=> {
       <Tab.Navigator 
         initialRouteName="السائقون المعتمدون"
         tabBarOptions={{
-            labelStyle: { fontSize: 14 },
+            labelStyle: { fontSize: 14},
             activeTintColor :'black',
-            indicatorStyle :  {backgroundColor:'green' },
-          }}>
-        <Tab.Screen name="طلبات الانضمام" component={joinReqs} />
-        <Tab.Screen name="السائقون المعتمدون" component={AppprovedDrivers} />
+            showIcon: true,
+            indicatorStyle :  {backgroundColor:'#b79f57'},
+            style: { backgroundColor: "#F3F3F3"},
+            tabStyle:{
+              height : 60,
+              flexDirection: 'row-reverse',
+            }
+           }}
+          >
+
+        <Tab.Screen name="طلبات الانضمام" component={joinReqs} 
+                    options={{
+                      borderRadius:30,
+                      tabBarIcon: ({ color}) => (
+                           <FontAwesome5 name="user-plus" size={18} color={color}/> ),
+                          }}
+          />
+
+        <Tab.Screen name="السائقون المعتمدون" component={AppprovedDrivers} 
+                    options={{
+                      tabBarIcon: ({ color}) => (
+                          <FontAwesome5 name="user-check" size={18} color={color} /> ),
+                          }}
+        />
       </Tab.Navigator>
     </View>
 
@@ -315,14 +335,14 @@ function joinReqs  ({ navigation }) {
     return (
       <Item2
         item={item}        
-        onPress={() => setSelectedId2(item.key)}
+        //onPress={() => setSelectedId2(item.key)}
 
-        /*onPress={() => 
+        onPress={() => 
         { var ID =item.key;
           var NAME=item.name;
           var USER = item.username;
-          console.log(ID+'      >>>>>here in gome');
-          navigation.navigate("AdminViewDriver",{ID,NAME,USER})}} */
+          console.log(ID+'      >>>>>here in join');
+          navigation.navigate("JoinDetails",{ID,NAME,USER})}}
         style={{ backgroundColor :item.key === selectedId2 ? "#EDEEEC" : "#F3F3F3"}}
       />
     );

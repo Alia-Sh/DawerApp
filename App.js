@@ -42,6 +42,7 @@ import HistoryRequests from './User/HistoryRequests';
 import CancelModal from './User/CancelModal';
 import DriverFacilities from './Driver/DriverFacilities';
 import AssignedRequests from './Driver/AssignedRequests';
+import JoinDetails from './Admin/JoinDetails';
 
 
 const Stack = createStackNavigator();
@@ -113,6 +114,7 @@ function App() {
           <Stack.Screen name="EditFacilityInfo" component={EditFacilityInfo} options={myOptions}/>
           <Stack.Screen name="DriverFacilities" component={DriverFacilities} options={myOptions}/>
           <Stack.Screen name="AssignedRequests" component={AssignedRequests} options={myOptions}/>
+          <Stack.Screen name="JoinDetails" component={JoinDetails} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );

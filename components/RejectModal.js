@@ -15,7 +15,13 @@ const RejectModal=(props)=>{
         })
     }
 
-    const rejectDriver=()=>{
+    const rejectDriver=(userId)=>{
+        firebase.database().ref('DeliveryDriver/' + userId).update({
+            Status:"Rejected" 
+        }).then(()=>{
+            props.setRejectModal(false);
+            props.navigation.navigate("DriverHome");
+        })
         console.log("rejectDriver");
     }
 return(            
@@ -45,7 +51,7 @@ return(
                         onPress={()=>{{props.type=="reject Request"?
                             rejectRequest(props.UserId,props.RequestId)
                         :
-                            rejectDriver()
+                            rejectDriver(props.userId)
                         }
                             
                     }}>
@@ -118,7 +124,7 @@ const styles = StyleSheet.create({
       shadowOpacity:0.3,
       shadowRadius:3.84,
       elevation:5,
-      marginTop:5      
+      marginTop:10      
     },
     textStyle:{
       color:"#161924",
