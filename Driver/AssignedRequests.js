@@ -38,7 +38,7 @@ const Item = ({ item, onPress, style }) => (
           <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب بواسطة : {item.UserName} </Text>
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب  </Text>
           <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>
           
           
@@ -63,59 +63,6 @@ const Item = ({ item, onPress, style }) => (
 
 
 //backend
-
-const Item1 = ({ item, onPress, style }) => (
-  
-  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <View  style={[styles.flexDirectionStyle,{height:45}]}>
-      <Image source={require('../assets/DriverProfile2.png')} 
-        style={{height:60 ,width:60,marginRight:-8,marginTop:-8}}
-      />
-
-      <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10}} >
-        <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 
-          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.name}</Text>
-        <Text style={styles.user}>@{item.username}</Text>
-      </View>
-    </View>
-  </TouchableOpacity>
- 
-);
-
-const Item2 = ({ item, onPress, style }) => (
-  
-  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <View  style={[styles.flexDirectionStyle,{height:45}]}>
-      
-    <Image
-          source={require('../assets/PendingUser.png')}
-          style={{width:55,height:55,marginRight:-8,marginTop:0,marginLeft:-20}}
-          />
-     
-      <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10,alignItems:'flex-end'}} >
-        <View  style={{flexDirection:'row'}}>
-            <MaterialIcons style={{marginRight:120,marginTop:0}}
-                name="error" 
-                size={30} 
-                color="#7B7B7B"
-            />
-          <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
-            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب انضمام </Text>
-        </View>
-
-        <Text style={styles.date}>السائق:  {item.name} ، منطقة: {item.area}</Text>
-        
-      </View>
-     
-    </View>
-  </TouchableOpacity>
- 
-);
-
 const AssignedRequests = ({ navigation })=> {
 
   return (
@@ -221,7 +168,7 @@ function OntheWay  ({ navigation }){
   
 //backend
     
-var n =' hello'
+var n =''
 var currentUser = firebase.auth().currentUser.uid;  
 
 const fetchUser=(UserId)=>{
@@ -306,7 +253,7 @@ const fetchData=()=>{
             var STATUS = item.Status;
             var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("RequestDetails",{ID,DATE,STATUS,UserId})}}
+            navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
@@ -441,7 +388,7 @@ const fetchData=()=>{
             var STATUS = item.Status;
             var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("RequestDetails",{ID,DATE,STATUS,UserId})}}
+            navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
@@ -578,7 +525,7 @@ const fetchData=()=>{
             var STATUS = item.Status;
             var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("RequestDetails",{ID,DATE,STATUS,UserId})}}
+            navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
