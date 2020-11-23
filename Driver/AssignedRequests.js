@@ -82,10 +82,18 @@ const AssignedRequests = ({ navigation })=> {
          </View>
     
       <Tab.Navigator style ={ {backgroundColor:'#F3F3F3'} }
+      		screenOptions={({ route }) => ({
+            tabBarLabel: ({ tintColor, focused, item }) => {
+              return focused
+                ? (<Text style={{ fontWeight: 'bold',}} >{route.name}</Text>)
+                : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >{route.name}</Text>)
+            },
+            
+          })}
         initialRouteName=" الطلبات"
         tabBarOptions={{
-            labelStyle: { fontSize: 14  },
-            activeTintColor :'black',
+            labelStyle: { fontSize: 14},
+            activeTintColor :'red',
             indicatorStyle :  {backgroundColor:"#809d65" },
             style : {backgroundColor:'#F3F3F3'} 
           }}>
@@ -313,11 +321,12 @@ const fetchUser=(UserId)=>{
                 query.once("value").then(function(result) {
                 const userData = result.val();
                   n = userData.Name;
+                  return n;
                    console.log(n);
                     });
 
 }
-const fetchData=()=>{
+const fetchData=async()=>{
   firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
     const Data = snapshot.val();
     console.log(Data);
@@ -332,36 +341,28 @@ const fetchData=()=>{
           snapshot.forEach(function(snapshot){
             console.log(snapshot.key);
             console.log(snapshot.val().Status);
-            fetchUser(UserId)
+            // fetchUser(UserId)
             if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='Accepted' ){
-                fetchUser(UserId)
+              var userName= fetchUser(UserId)
               var temp={Date:snapshot.val().DateAndTime,
                 key:snapshot.key,
                 Status:snapshot.val().Status,
                 UserId:UserId,
-                UserName:n
-            }
+                UserName:userName
+              }
             console.log(n+'check again ');
               li.push(temp)
               setLoading(false)
-            }
-            
+            } 
           })
         })
       })
       if(li){
-        //console.log(li);
-       // console.log('((((((((((((((((((((((SORTED');
-   //  li.sort((a,b) => new Date(a) < new Date(b) ? 1 : -1);
-    // console.log(li);
-   //HERE to sort the list depending on the date
-      li.sort(function(a, b){
-        return new Date(a.Date) - new Date(b.Date);
-      });
-    
-    }
+        li.sort(function(a, b){
+          return new Date(a.Date) - new Date(b.Date);
+        });
+      }
       setRequestList(li)
-
       console.log(li)
     }
   })
@@ -369,7 +370,6 @@ const fetchData=()=>{
 
   useEffect(()=>{
     fetchData()
-   // fetchUser(UserId)
   },[])
 
   const [selectedId, setSelectedId] = useState(null);
@@ -380,8 +380,6 @@ const fetchData=()=>{
       return (
         <Item
           item={item}
-          // onPress={() => setSelectedId(item.key)}
-          
           onPress={() => 
           { var ID =item.key;
             var DATE=item.Date;
@@ -392,20 +390,19 @@ const fetchData=()=>{
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
-      };
+  };
 
       //front-end
     return (
         <View style={styles.container}>
           
-       <Title style={[styles.text,{marginTop:10,marginBottom:3}]}
-       > عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
-       <View style={{alignItems:"center"}}>
-            <Image
-                            style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
-                            source={require('../assets/line.png')}
-                            />
-</View>
+          <Title style={[styles.text,{marginTop:10,marginBottom:3}]}> عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
+            <View style={{alignItems:"center"}}>
+                <Image
+                  style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
+                  source={require('../assets/line.png')}/>
+            </View>
+
             <FlatList
               data={RequestList}
               renderItem={renderItem}
@@ -414,14 +411,8 @@ const fetchData=()=>{
               onRefresh={()=>fetchData()}
               refreshing={loading}
             />
-          
-            {/* end request list*/ }
-                
         </View>
       );
-
-      
-
 
 }
 //end of all req
@@ -487,15 +478,9 @@ const fetchData=()=>{
         })
       })
       if(li){
-        //console.log(li);
-       // console.log('((((((((((((((((((((((SORTED');
-   //  li.sort((a,b) => new Date(a) < new Date(b) ? 1 : -1);
-    // console.log(li);
-   //HERE to sort the list depending on the date
-      li.sort(function(a, b){
-        return new Date(a.Date) - new Date(b.Date);
+        li.sort(function(a, b){
+          return new Date(a.Date) - new Date(b.Date);
       });
-    
     }
       setRequestList(li)
 
@@ -542,7 +527,7 @@ const fetchData=()=>{
                             style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
                             source={require('../assets/line.png')}
                             />
-</View>
+        </View>
             <FlatList
               data={RequestList}
               renderItem={renderItem}
@@ -560,7 +545,7 @@ const fetchData=()=>{
       
 
 
-  }
+}
   
 
 

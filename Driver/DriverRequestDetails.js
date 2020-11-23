@@ -1,5 +1,5 @@
 import React,{useState,useEffect}from 'react';
-import { StyleSheet, Text, View,NativeModules,Image,Linking} from 'react-native';
+import { StyleSheet, Text, View,NativeModules,Image,Linking, Alert} from 'react-native';
 import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons'
@@ -15,6 +15,8 @@ const DriverRequestDetails = ({navigation,route})=>{
     var DATE=route.params.DATE
     var STATUS=route.params.STATUS
     var UserId=route.params.UserId
+    console.log(RequestId);
+    console.log(RequestId);
     const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
@@ -33,6 +35,7 @@ const DriverRequestDetails = ({navigation,route})=>{
       Message:'',
       jsonPath:'',   
     })
+    const [Status,setStatus]=useState(STATUS)
     const openDial=(phone)=>{
         if(Platform.OS==="android"){
             Linking.openURL(`tel:${phone}`)
@@ -56,26 +59,32 @@ const DriverRequestDetails = ({navigation,route})=>{
         })
   }
 
-const changeReq=(S)=>{
+const changeReq=()=>{
     
-    /* if(S == 'Accepted'){
-    firebase.database().ref('/PickupRequest/' +UserId+'/'+RequestId).update({
-        Status: 'OutForPickup'
-}).catch((error)=>{
-    Alert.alert(error.message)
-  })
-console.log('im here in 1') 
-console.log('im here in 1'+STATUS) 
+    if(STATUS == 'Accepted'){
+        firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
+          Status:"OutForPickup"
+        }).then(()=>{
+          STATUS="OutForPickup";
+          setStatus("OutForPickup")
+        }).catch((error)=>{
+          Alert.alert(error.message)
+        })
+        console.log('im here in 1') 
+        console.log('im here in 1'+STATUS) 
     }
-if (S == 'OutForPickup'){
-firebase.database().ref('PickupRequest/' +UserId+'/'+RequestId).update({
-    'Status': 'Delivered'
-}
-).catch((error)=>{
-    Alert.alert(error.message)
-  })
-console.log('im here in 2'+STATUS) 
-} */
+
+    if (STATUS == 'OutForPickup'){
+        firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
+          Status:"Delivered"
+        }).then(()=>{
+          STATUS="Delivered";
+          setStatus("Delivered")
+        }).catch((error)=>{
+          Alert.alert(error.message)
+        })
+        console.log('im here in 2'+STATUS) 
+    } 
 //navigation.navigate("DriverRequestDetails",{RequestId,DATE,STATUS,UserId})
 }
 
@@ -139,7 +148,6 @@ console.log('im here in 2'+STATUS)
     fetchUserInfo(UserId)
     retriveImage(UserId)
     //fetchDrivers();
-
   },[])
 
     return (
@@ -165,7 +173,7 @@ console.log('im here in 2'+STATUS)
           <View style={{flex:8}}>
             <KeyboardAwareScrollView >
             <Card style={styles.item}>
-            <View style={{alignItems:"center"}}>
+              <View style={{alignItems:"center"}}>
                     {Picture==""?
                         <Image
                             style={styles.profile_image}
@@ -207,34 +215,42 @@ console.log('im here in 2'+STATUS)
               }
               <Title style={styles.text}> : موقع الاستلام</Title>
               <TouchableOpacity onPress={()=>{openMaps(Location.latitude,Location.longitude)}}>
-              <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{Location.address}</Text>
+                <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{Location.address}</Text>
               </TouchableOpacity>
               <Title style={styles.text}> : رقم الهاتف</Title>
               <TouchableOpacity onPress={()=>{openDial(Phone)}}>
-              <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{Phone}</Text>
+                <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{Phone}</Text>
               </TouchableOpacity>
 
             </Card> 
             </KeyboardAwareScrollView>
+            {Status =='Delivered'?   
+            null:
             <View style={[styles.flexDirectionStyle,styles.button,{marginTop:5}]}>
-
-                { STATUS =='Accepted'?
               <TouchableOpacity style={[styles.button,]}
-              // onPress={changeReq(STATUS)}
+              onPress={()=>changeReq()}
               >
-                  
+                
                 <LinearGradient
                     colors={["#809d65","#9cac74"]}
                     style={styles.signIn}
-                    >   
+                    >
+                {Status =='Accepted'?   
                   <Text style={[styles.textSign,{color:'#fff'}]}>قيد الاستلام</Text>
+                  :
+                  <View>
+                    {
+                      Status =='OutForPickup'? 
+                      <Text style={[styles.textSign,{color:'#fff'}]}>تم التوصيل</Text>
+                    :
+                      null
+                    }
+                  </View>
+                } 
                 </LinearGradient>
-              </TouchableOpacity> 
-              :
-              null 
-            }  
-
-            { STATUS == 'OutForPickup'?
+              </TouchableOpacity>  
+ 
+            {/* { STATUS == 'OutForPickup'?
               <TouchableOpacity style={[styles.button,]}
               // onPress={changeReq(STATUS)}
               >
@@ -248,10 +264,10 @@ console.log('im here in 2'+STATUS)
               </TouchableOpacity> 
               :
               null
-                }    
+                }     */}
              
             </View>
-             
+          }
           </View>
 
         

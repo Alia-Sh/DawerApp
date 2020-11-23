@@ -395,6 +395,7 @@ const styles = StyleSheet.create({
         paddingRight: 7,
     },
     backRightBtnRight: {
+        // a49951
         backgroundColor: '#9cac74',
         right: 0,
         borderTopRightRadius: 5,
