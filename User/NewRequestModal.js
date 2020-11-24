@@ -23,7 +23,8 @@ import Loading from '../components/Loading';
     const [Quantity,setQantity]=useState('');
     const [counter,setCounter]=useState(0);
     const [id,setID]=useState('');
-    const [Location,setLocation] = useState('')
+    const [Location,setLocation] = useState('');
+    const [UserName,setUserName]= useState('');
     const [DateAndTime,setDateAndTime]= useState('');
     const [selectedValue, setSelectedValue] = useState("زجاج");
 
@@ -44,11 +45,13 @@ import Loading from '../components/Loading';
         isDateAndTimeStep:false,
         isDisplayRequests:false      
     });
+
     var userId = firebase.auth().currentUser.uid;
-    var query2 = firebase.database().ref('User/' + userId+'/Location');
+    var query2 = firebase.database().ref('User/' + userId);
     query2.once("value").then(function(result) {
-        const userData = result.val();
-        setLocation(userData.address);
+      const userData = result.val();
+      setUserName(userData.Name);
+      setLocation(userData.Location.address);
     });
 
     const [alert,setAlert]=React.useState({
@@ -308,6 +311,7 @@ import Loading from '../components/Loading';
                 DateAndTime:DateAndTime,
                 Status:'Pending',
                 Location:Location,
+                UserName:UserName,
                 TimeStamp: firebase.database.ServerValue.TIMESTAMP,
                 DeliveryDriverId:""
             }).then((data)=>{

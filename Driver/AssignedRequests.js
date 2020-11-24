@@ -38,7 +38,7 @@ const Item = ({ item, onPress, style }) => (
           <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب  </Text>
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.UserName}</Text>
           <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>
           
           
@@ -212,7 +212,7 @@ const fetchData=()=>{
                 key:snapshot.key,
                 Status:snapshot.val().Status,
                 UserId:UserId,
-                UserName:n
+                UserName:snapshot.val().UserName
             }
             console.log(n+'check again ');
               li.push(temp)
@@ -348,7 +348,7 @@ const fetchData=async()=>{
                 key:snapshot.key,
                 Status:snapshot.val().Status,
                 UserId:UserId,
-                UserName:userName
+                UserName:snapshot.val().UserName
               }
             console.log(n+'check again ');
               li.push(temp)
@@ -467,7 +467,7 @@ const fetchData=()=>{
                 key:snapshot.key,
                 Status:snapshot.val().Status,
                 UserId:UserId,
-                UserName:n
+                UserName:snapshot.val().UserName
             }
             console.log(n+'check again ');
               li.push(temp)
