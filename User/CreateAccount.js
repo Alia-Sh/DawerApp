@@ -6,6 +6,7 @@ import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import {FontAwesome, Feather, Octicons, AntDesign} from '@expo/vector-icons';
 import { YellowBox } from 'react-native';
+import GoogleMap from '../components/GoogleMap';
 YellowBox.ignoreWarnings(["Warning:"]);
 console.disableYellowBox = true;
 
@@ -31,10 +32,12 @@ const [data, setdata]= React.useState({
      
      query2.once("value").then(function(result) {
          const userData = result.val();
-         setLocation(userData.address);
-         setLatitude(userData.latitude);
-         setLongitude(userData.longitude)
-
+         setLocation({
+          ...Location,
+          address:userData.address,
+          latitude:userData.latitude,
+          longitude:userData.longitude
+      })
      });
  
 //if (Location){
@@ -48,10 +51,26 @@ const [data, setdata]= React.useState({
 const [Name,setName] = useState('')
 const [Phone,setPhone] = useState('')
 const [UserName,setUserName] = useState('')
-const [Location,setLocation] = useState('')
-const [Latitude,setLatitude] = useState('')
-const [Longitude,setLongitude] = useState('')
+const [Location,setLocation] = useState({
+  address:"",
+  latitude:0,
+  longitude:0
+})
+const [LocationModal,setLocationModal]=useState(false)
 
+const pickLocation=(address,latitude,longitude)=>{
+  setLocation({
+      ...Location,
+      address:address,
+      latitude:latitude,
+      longitude:longitude
+  })
+  setLocationModal(false)
+}
+
+const closeLocatiomModal=()=>{
+  setLocationModal(false)
+}
 
  const remove = () => {
   firebase.database().ref('User/' + userId).remove()
@@ -125,12 +144,9 @@ const [Longitude,setLongitude] = useState('')
                 Name: Name,
                 UserName: UserName,
                 PhoneNumber: Phone,
+                Location:Location,
+                ProfileImage:"" 
           });
-          firebase.database().ref('User/' + userId+'/Location').set({
-            latitude: Latitude,
-            longitude: Longitude,
-            address: Location,     
-            }); 
          navigation.navigate("UserHomePage");
               }
             });
@@ -231,8 +247,11 @@ return(
               name="location"
               color="#9E9D24"
               size={20}/> 
-              <Text style={styles.Location}>{Location}</Text>
-             <Feather style={styles.feather} onPress={()=> navigation.navigate("GoogleMapCreateAccount")}
+              <Text style={styles.Location}>{Location.address}</Text>
+             <Feather style={styles.feather} 
+                      onPress={()=>        
+                      setLocationModal(
+                      true )}
              name="chevron-left"
              size={23}/>  
              </View>
@@ -269,6 +288,7 @@ return(
             </TouchableOpacity> 
   
 </Animatable.View>
+{LocationModal?<GoogleMap pickLocation={pickLocation} closeLocatiomModal={closeLocatiomModal}></GoogleMap>:null}
 </View>
 </KeyboardAvoidingView>
 
