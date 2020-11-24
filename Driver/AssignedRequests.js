@@ -39,9 +39,7 @@ const Item = ({ item, onPress, style }) => (
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
             NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.UserName}</Text>
-          <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>
-          
-          
+          <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>      
         </View>
         <View style={{flex:1}}>
   
@@ -166,7 +164,6 @@ function MyTabBar({ state, descriptors, navigation, position }) {
 
 function OntheWay  ({ navigation }){
   
-    const [modalVisible,setModalVisible]=useState(false);
     const [RequestList,setRequestList] = useState([])
     const[loading,setLoading]=useState(true)
     const [term, setTerm] = useState('')
@@ -175,133 +172,91 @@ function OntheWay  ({ navigation }){
     
   
 //backend
-    
-var n =''
-var currentUser = firebase.auth().currentUser.uid;  
+    var currentUser = firebase.auth().currentUser.uid;  
 
-const fetchUser=(UserId)=>{
-
-   // var n='None'
-                var query = firebase.database().ref('User/' + UserId);
-                query.once("value").then(function(result) {
-                const userData = result.val();
-                  n = userData.Name;
-                   console.log(n);
-                    });
-
-}
-const fetchData=()=>{
-  firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
-    const Data = snapshot.val();
-    console.log(Data);
-    if(Data){
-      var li = []
-        snapshot.forEach(function(snapshot){
-        console.log(snapshot.key);
-        console.log(snapshot.val());
-        var UserId=snapshot.key
-        firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
-           // setUser(UserId)
+    const fetchData=()=>{
+      firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
+        const Data = snapshot.val();
+        if(Data){
+          var li = []
           snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().Status);
-            fetchUser(UserId)
-            if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='OutForPickup' ){
-                fetchUser(UserId)
-              var temp={Date:snapshot.val().DateAndTime,
-                key:snapshot.key,
-                Status:snapshot.val().Status,
-                UserId:UserId,
-                UserName:snapshot.val().UserName
-            }
-            console.log(n+'check again ');
-              li.push(temp)
-              setLoading(false)
-            }
-            
+            var UserId=snapshot.key
+            firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
+              snapshot.forEach(function(snapshot){
+                if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='OutForPickup' ){
+                  var temp={Date:snapshot.val().DateAndTime,
+                    key:snapshot.key,
+                    Status:snapshot.val().Status,
+                    UserId:UserId,
+                    UserName:snapshot.val().UserName
+                  }
+                  li.push(temp)
+                  setLoading(false)
+                }
+              })
+            })
           })
-        })
+          if(li){
+            li.sort(function(a, b){
+              return new Date(a.Date) - new Date(b.Date);
+            });
+          }
+          setRequestList(li)
+        }
       })
-      if(li){
-        //console.log(li);
-       // console.log('((((((((((((((((((((((SORTED');
-   //  li.sort((a,b) => new Date(a) < new Date(b) ? 1 : -1);
-    // console.log(li);
-   //HERE to sort the list depending on the date
-      li.sort(function(a, b){
-        return new Date(a.Date) - new Date(b.Date);
-      });
-    
     }
-      setRequestList(li)
 
-      console.log(li)
-    }
-  })
-}
+    useEffect(()=>{
+      fetchData()
+    },[])
 
-  useEffect(()=>{
-    fetchData()
-   // fetchUser(UserId)
-  },[])
+    const [selectedId, setSelectedId] = useState(null);
 
-  const [selectedId, setSelectedId] = useState(null);
-
-  const renderItem = ({ item }) => {
-  //const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
-
+    const renderItem = ({ item }) => {
       return (
         <Item
           item={item}
-          // onPress={() => setSelectedId(item.key)}
-          
           onPress={() => 
-          { var ID =item.key;
+            {var ID =item.key;
             var DATE=item.Date;
             var STATUS = item.Status;
             var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
             navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
-          style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
+            style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
-      };
+    };
 
       //front-end
     return (
         <View style={styles.container}>
           
-       <Title style={[styles.text,{marginTop:10,marginBottom:3}]}
-       > عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
-       <View style={{alignItems:"center"}}>
+          <Title style={[styles.text,{marginTop:10,marginBottom:3}]}> عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
+
+          <View style={{alignItems:"center"}}>
             <Image
-                            style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
-                            source={require('../assets/line.png')}
-                            />
-</View>
-            <FlatList
-              data={RequestList}
-              renderItem={renderItem}
-              keyExtractor={(item)=>item.key}
-              extraData={selectedId}
-              onRefresh={()=>fetchData()}
-              refreshing={loading}
-            />
+                style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
+                source={require('../assets/line.png')}/>
+          </View>
+
+          <FlatList
+            data={RequestList}
+            renderItem={renderItem}
+            keyExtractor={(item)=>item.key}
+            extraData={selectedId}
+            onRefresh={()=>fetchData()}
+            refreshing={loading}
+          />
           
-            {/* end request list*/ }
-                
+            {/* end request list*/ }          
         </View>
-      );
-
-      
-
-
+    );
 }
 
 ////////// to dispaly accepted req
 function Requests  ({ navigation }) {
   
-    const [modalVisible,setModalVisible]=useState(false);
     const [RequestList,setRequestList] = useState([])
     const[loading,setLoading]=useState(true)
     const [term, setTerm] = useState('')
@@ -310,73 +265,48 @@ function Requests  ({ navigation }) {
     
   
 //backend
-    
-var n =' hello'
-var currentUser = firebase.auth().currentUser.uid;  
 
-const fetchUser=(UserId)=>{
+    var currentUser = firebase.auth().currentUser.uid;  
 
-   // var n='None'
-                var query = firebase.database().ref('User/' + UserId);
-                query.once("value").then(function(result) {
-                const userData = result.val();
-                  n = userData.Name;
-                  return n;
-                   console.log(n);
-                    });
-
-}
-const fetchData=async()=>{
-  firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
-    const Data = snapshot.val();
-    console.log(Data);
-    if(Data){
-      var li = []
-        snapshot.forEach(function(snapshot){
-        console.log(snapshot.key);
-        console.log(snapshot.val());
-        var UserId=snapshot.key
-        firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
-           // setUser(UserId)
-          snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().Status);
-            // fetchUser(UserId)
-            if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='Accepted' ){
-              var userName= fetchUser(UserId)
-              var temp={Date:snapshot.val().DateAndTime,
-                key:snapshot.key,
-                Status:snapshot.val().Status,
-                UserId:UserId,
-                UserName:snapshot.val().UserName
-              }
-            console.log(n+'check again ');
-              li.push(temp)
-              setLoading(false)
-            } 
+    const fetchData=async()=>{
+      firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
+        const Data = snapshot.val();
+        if(Data){
+          var li = []
+            snapshot.forEach(function(snapshot){
+            var UserId=snapshot.key
+            firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
+              snapshot.forEach(function(snapshot){
+                if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='Accepted' ){
+                  var temp={Date:snapshot.val().DateAndTime,
+                    key:snapshot.key,
+                    Status:snapshot.val().Status,
+                    UserId:UserId,
+                    UserName:snapshot.val().UserName
+                  }
+                  li.push(temp)
+                  setLoading(false)
+                } 
+              })
+            })
           })
-        })
+          if(li){
+            li.sort(function(a, b){
+              return new Date(a.Date) - new Date(b.Date);
+            });
+          }
+          setRequestList(li)
+        }
       })
-      if(li){
-        li.sort(function(a, b){
-          return new Date(a.Date) - new Date(b.Date);
-        });
-      }
-      setRequestList(li)
-      console.log(li)
     }
-  })
-}
 
-  useEffect(()=>{
-    fetchData()
-  },[])
+    useEffect(()=>{
+      fetchData()
+    },[])
 
-  const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState(null);
 
-  const renderItem = ({ item }) => {
-  //const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
-
+    const renderItem = ({ item }) => {
       return (
         <Item
           item={item}
@@ -390,7 +320,7 @@ const fetchData=async()=>{
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
-  };
+    };
 
       //front-end
     return (
@@ -421,7 +351,6 @@ const fetchData=async()=>{
 
 function DliveredRequests  ({ navigation }) {
    
-    const [modalVisible,setModalVisible]=useState(false);
     const [RequestList,setRequestList] = useState([])
     const[loading,setLoading]=useState(true)
     const [term, setTerm] = useState('')
@@ -431,130 +360,88 @@ function DliveredRequests  ({ navigation }) {
   
 //backend
     
-var n =' hello'
-var currentUser = firebase.auth().currentUser.uid;  
+    var currentUser = firebase.auth().currentUser.uid;  
 
-const fetchUser=(UserId)=>{
-
-   // var n='None'
-                var query = firebase.database().ref('User/' + UserId);
-                query.once("value").then(function(result) {
-                const userData = result.val();
-                  n = userData.Name;
-                   console.log(n);
-                    });
-
-}
-const fetchData=()=>{
-  firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
-    const Data = snapshot.val();
-    console.log(Data);
-    if(Data){
-      var li = []
-        snapshot.forEach(function(snapshot){
-        console.log(snapshot.key);
-        console.log(snapshot.val());
-        var UserId=snapshot.key
-        firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
-           // setUser(UserId)
+    const fetchData=()=>{
+      firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
+        const Data = snapshot.val();
+        if(Data){
+          var li = []
           snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().Status);
-            fetchUser(UserId)
-            if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='Delivered' ){
-                fetchUser(UserId)
-              var temp={Date:snapshot.val().DateAndTime,
-                key:snapshot.key,
-                Status:snapshot.val().Status,
-                UserId:UserId,
-                UserName:snapshot.val().UserName
-            }
-            console.log(n+'check again ');
-              li.push(temp)
-              setLoading(false)
-            }
-            
+            var UserId=snapshot.key
+            firebase.database().ref('/PickupRequest/'+UserId).on('value',snapshot=>{
+              snapshot.forEach(function(snapshot){
+                if(snapshot.val().DeliveryDriverId == currentUser && snapshot.val().Status =='Delivered' ){
+                  var temp={Date:snapshot.val().DateAndTime,
+                    key:snapshot.key,
+                    Status:snapshot.val().Status,
+                    UserId:UserId,
+                    UserName:snapshot.val().UserName
+                  }
+                  li.push(temp)
+                  setLoading(false)
+                } 
+              })
+            })
           })
-        })
+          if(li){
+            li.sort(function(a, b){
+              return new Date(a.Date) - new Date(b.Date);
+            });
+          }
+          setRequestList(li)
+        }
       })
-      if(li){
-        li.sort(function(a, b){
-          return new Date(a.Date) - new Date(b.Date);
-      });
     }
-      setRequestList(li)
 
-      console.log(li)
-    }
-  })
-}
-
-  useEffect(()=>{
-    fetchData()
-   // fetchUser(UserId)
-  },[])
+    useEffect(()=>{
+      fetchData()
+    },[])
 
   const [selectedId, setSelectedId] = useState(null);
 
   const renderItem = ({ item }) => {
-  //const backgroundColor = item.key === selectedId ? "#EDEEEC" : "#F3F3F3";
-
       return (
         <Item
           item={item}
-          // onPress={() => setSelectedId(item.key)}
-          
           onPress={() => 
-          { var ID =item.key;
-            var DATE=item.Date;
-            var STATUS = item.Status;
-            var UserId=item.UserId;
-            console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
+          {var ID =item.key;
+          var DATE=item.Date;
+          var STATUS = item.Status;
+          var UserId=item.UserId;
+          console.log(ID+'      >>>>>here in gome');
+          navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
-      };
+  };
 
       //front-end
     return (
         <View style={styles.container}>
           
-       <Title style={[styles.text,{marginTop:10,marginBottom:3}]}
-       > عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
-       <View style={{alignItems:"center"}}>
+          <Title style={[styles.text,{marginTop:10,marginBottom:3}]}> عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
+
+          <View style={{alignItems:"center"}}>
             <Image
-                            style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
-                            source={require('../assets/line.png')}
-                            />
-        </View>
-            <FlatList
-              data={RequestList}
-              renderItem={renderItem}
-              keyExtractor={(item)=>item.key}
-              extraData={selectedId}
-              onRefresh={()=>fetchData()}
-              refreshing={loading}
-            />
-          
+                style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
+                source={require('../assets/line.png')}/>
+          </View>
+
+          <FlatList
+            data={RequestList}
+            renderItem={renderItem}
+            keyExtractor={(item)=>item.key}
+            extraData={selectedId}
+            onRefresh={()=>fetchData()}
+            refreshing={loading}
+          />
             {/* end request list*/ }
                 
         </View>
       );
-
-      
-
-
 }
   
-
-
-
-
-
-
-
-
 // here styles
 const {height} = Dimensions.get("screen");
 const height_logo = height* 0.17;
@@ -607,13 +494,6 @@ const styles = StyleSheet.create({
       marginRight:30,
       marginTop:10, 
     },
-    user: {
-      fontSize: 12,
-      textAlign :'right',
-      marginRight:30,
-      marginTop:5,
-      color :'#ADADAD',
-    },
     Status: {
       fontSize: 18,
       fontWeight: 'bold' ,
@@ -627,18 +507,6 @@ const styles = StyleSheet.create({
       marginRight:30,
       marginTop:5,
       color :'#7B7B7B',
-    },
-    fabIOS: {
-      position: 'absolute',
-      margin: 16,
-      left: 0,
-      bottom: 0,
-    },
-    fabAndroid: {
-      position: 'absolute',
-      margin: 16,
-      right: 0,
-      bottom: 0,
     },
     icon:{
       position: 'absolute',
