@@ -1272,6 +1272,7 @@ const styles = StyleSheet.create({
       marginTop:8,
       width:120,
       height:120,
+      borderRadius:5
     },
     headerText:{
         fontWeight:'bold',

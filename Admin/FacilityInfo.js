@@ -326,6 +326,7 @@ const styles=StyleSheet.create({
     Logo_image:{
         width:100,
         height:100,
+        borderRadius:5
     },
     mycard:{
         margin:3,

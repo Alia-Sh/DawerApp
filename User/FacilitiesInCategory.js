@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
     profile_image: {
         width:110,
         height:110,
+        borderRadius:5
         //borderRadius:150/2,
         //marginTop:-75 
     },
