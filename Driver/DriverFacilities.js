@@ -35,7 +35,7 @@ const DriverFacilities = ({navigation})=>{
           //retriveImage(snapshot.key);
           console.log('I AM IN THE LOOOOOOOOOPPP')
           //console.log(Picture);
-          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo:Picture, Materials:snapshot.val().AcceptedMaterials}
+          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo:snapshot.val().Logo, Materials:snapshot.val().AcceptedMaterials}
           li.push(temp)
           setLoading(false)
         })
@@ -60,9 +60,16 @@ const DriverFacilities = ({navigation})=>{
     const Item = ({ item, onPress, style }) => (
       <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
         <View  style={[styles.flexDirectionStyle,{height:45}]}>
+        {item.Logo==""?
           <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
             style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8}}
           />
+        :
+        <Image
+            style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8}}
+            source={{uri:item.Logo}}
+            />
+        }
     
           <View style={{marginTop:Platform.OS === 'android'? -8:3,paddingLeft:10}}>
           <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 

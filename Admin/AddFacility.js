@@ -100,11 +100,23 @@ export default class AddFacility extends Component {
     }
 
     uploadImage= async (uri,imageName)=>{
-      const response = await fetch(uri);
-      const blob = await response.blob();
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        var ref = firebase.storage().ref().child("Facilities/"+imageName); //new file in storage
+        return ref.put(blob)
+    }
 
-      var ref = firebase.storage().ref().child("Facilities/"+imageName); //new file in storage
-      return ref.put(blob);
+    retriveImage= async (FacilityId)=>{
+        var imageRef = firebase.storage().ref('Facilities/' + FacilityId);
+        await imageRef
+          .getDownloadURL()
+          .then((url) => {
+            //from url you can fetched the uploaded image easily
+            this.setState({Logo:url})
+          }).then(()=>{
+            console.log("logo",this.state.Logo);
+          })
+          .catch((e) => console.log('getting downloadURL of image error => ', e));       
     }
 
     checkValidName=()=>{
@@ -536,7 +548,7 @@ export default class AddFacility extends Component {
       this.setState({LocationModal:false})
   }
 
-    Add=()=>{
+    Add=async()=>{
       if(this.checkValidName() && this.checkValidCategory() && this.checkValidContactInfo() && this.checkWorkingD() && this.checkValidWorkingH() && this.checkLocationExist()){
         this.setState({isLoading:true})
         firebase.database().ref("RecyclingFacility").orderByChild("Name")
@@ -574,7 +586,10 @@ export default class AddFacility extends Component {
                       })
                   },4000)
             }else{
+
               var FacilityId=firebase.database().ref('RecyclingFacility/').push().getKey()
+              var tempCategory=this.state.Category;
+              console.log("tempCategory",tempCategory.length);
               for(var i in this.state.Category){
                 var CategoryId=this.state.Category[i].CategoryId
                 firebase.database().ref('Category/'+CategoryId+'/RecyclingFacility/'+FacilityId).set({
@@ -583,7 +598,8 @@ export default class AddFacility extends Component {
                   WorkingHours:this.state.WorkingH,
                   ContactInfo:this.state.ContactInfo,
                   Location:this.state.Location,
-                  AcceptedMaterials:this.state.Category
+                  AcceptedMaterials:this.state.Category,
+                  Logo:""
                 }).catch((error)=>{
                   Alert.alert(error.message)
                 })
@@ -595,45 +611,92 @@ export default class AddFacility extends Component {
                 WorkingHours:this.state.WorkingH,
                 ContactInfo:this.state.ContactInfo,
                 Location:this.state.Location,
-                AcceptedMaterials:this.state.Category
+                AcceptedMaterials:this.state.Category,
+                Logo:""
                 }).then((data)=>{
-                    //success callback
+                    // success callback
                     if(this.state.Logo!=""){
-                      this.uploadImage(this.state.Logo,FacilityId)
-                    }
-                    this.setState({isLoading:false})
-                    setTimeout(()=>{
-                      this.setState(
-                        prevState => {
-                          return {
-                            alert: {
-                              ...prevState.alert,
-                              alertVisible:true,
-                              Title:"اضافة منشأة",
-                              Message:"تم اضافة المنشأة بنجاح",
-                              jsonPath:"suss"
+                      this.uploadImage(this.state.Logo,FacilityId).then(()=>{
+                        this.retriveImage(FacilityId).then(()=>{
+                          firebase.database().ref('RecyclingFacility/'+FacilityId).update({
+                            Logo:this.state.Logo
+                          }).then(()=>{
+                            for(var i in tempCategory){
+                              var CategoryId=tempCategory[i].CategoryId
+                              firebase.database().ref('Category/'+CategoryId+'/RecyclingFacility/'+FacilityId).update({
+                                Logo:this.state.Logo
+                              }).catch((error)=>{
+                                Alert.alert(error.message)
+                              })
                             }
-                          };
+                            this.setState({isLoading:false})
+                            setTimeout(()=>{
+                              this.setState(
+                                prevState => {
+                                  return {
+                                    alert: {
+                                      ...prevState.alert,
+                                      alertVisible:true,
+                                      Title:"اضافة منشأة",
+                                      Message:"تم اضافة المنشأة بنجاح",
+                                      jsonPath:"suss"
+                                    }
+                                  };
+                                })
+                                setTimeout(()=>{
+                                  this.setState(
+                                    prevState => {
+                                      return {
+                                        alert: {
+                                          ...prevState.alert,
+                                          alertVisible:false,
+                                          Title:"",
+                                          Message:"",
+                                          jsonPath:""
+                                        }
+                                      };
+                                    })
+                                    const { navigation } = this.props;
+                                    navigation.navigate("FacilityHome"); 
+                                },4000)
+                            },400)
+                          })
                         })
-                        setTimeout(()=>{
-                          this.setState(
-                            prevState => {
-                              return {
-                                alert: {
-                                  ...prevState.alert,
-                                  alertVisible:false,
-                                  Title:"",
-                                  Message:"",
-                                  jsonPath:""
-                                }
-                              };
-                            })
-                            const { navigation } = this.props;
-                            navigation.navigate("FacilityHome"); 
-                        },4000)
-                    },400)
-
-                    console.log('data ' , data);
+                      })
+                    }
+                    else{
+                      this.setState({isLoading:false})
+                      setTimeout(()=>{
+                        this.setState(
+                          prevState => {
+                            return {
+                              alert: {
+                                ...prevState.alert,
+                                alertVisible:true,
+                                Title:"اضافة منشأة",
+                                Message:"تم اضافة المنشأة بنجاح",
+                                jsonPath:"suss"
+                              }
+                            };
+                          })
+                          setTimeout(()=>{
+                            this.setState(
+                              prevState => {
+                                return {
+                                  alert: {
+                                    ...prevState.alert,
+                                    alertVisible:false,
+                                    Title:"",
+                                    Message:"",
+                                    jsonPath:""
+                                  }
+                                };
+                              })
+                              const { navigation } = this.props;
+                              navigation.navigate("FacilityHome"); 
+                          },4000)
+                      },400)
+                    }
                 }).catch((error)=>{
                     //error callback
                     this.setState({isLoading:false})

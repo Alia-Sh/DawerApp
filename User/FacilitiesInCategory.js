@@ -8,9 +8,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
 import Loading from '../components/Loading';
-
-const FacilitiesInCategory = ({navigation, route}) => {
-
+import { useIsFocused } from "@react-navigation/native";
+const FacilitiesInCategory = ({navigation, route,props}) => {
+  const isFocused = useIsFocused();
   const CategoryID = route.params.ID;
   const CategoryName = route.params.Name;
 
@@ -40,7 +40,7 @@ const FacilitiesInCategory = ({navigation, route}) => {
           // fetch the logo here..
           //retriveImage(snapshot.key);
           console.log(Picture);
-          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: Picture}
+          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: snapshot.val().Logo}
           li.push(temp)
           setLoading(false)
         })
@@ -57,7 +57,7 @@ const FacilitiesInCategory = ({navigation, route}) => {
 
   useEffect(()=>{
     fetchData()
-},[])
+},[props, isFocused])
 
   //retrive facility logo
   const retriveImage = (id) =>{
@@ -84,7 +84,7 @@ const renderList =  ({ item }) =>{
       // onPress={() => setSelectedId(item.key)}
       style={styles.mycard}>
         <View style = {{flexDirection: 'column'}}>
-            {Picture==""?
+            {item.Logo==""?
             <Image 
                 style = {styles.profile_image}
                 source = {require('../assets/AdminIcons/FacilityIcon.jpg')}/> 
@@ -93,7 +93,7 @@ const renderList =  ({ item }) =>{
                 // retrieve the logo here
                 style = {styles.profile_image}
                 //source = {item.Logo}/>
-                source = {{uri:Picture}}/>
+                source = {{uri:item.Logo}}/>
 
             }
             <Text style={styles.title}>{item.Name}</Text>
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     icon: {
       position: 'absolute',
       marginTop: 25,
-      left: 350
+      right: 15
     }
   });
 export default FacilitiesInCategory;

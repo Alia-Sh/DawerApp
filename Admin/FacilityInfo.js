@@ -61,11 +61,12 @@ const FacilityInfo=({navigation,route,props})=>{
                 latitude:Data.Location.latitude,
                 longitude:Data.Location.longitude 
             })
-            retriveImage();
+            // retriveImage();
+            setPicture(Data.Logo);
             }
           })
     }
-
+//it will be remove if facility's Logo work correctly //
     const retriveImage= async ()=>{
         var imageRef = firebase.storage().ref('Facilities/' + FacilityId);
         imageRef
