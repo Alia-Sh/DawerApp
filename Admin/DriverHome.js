@@ -100,6 +100,14 @@ const DriverHome = ({ navigation })=> {
          </View>
     
       <Tab.Navigator 
+            		screenOptions={({ route }) => ({
+                  tabBarLabel: ({ tintColor, focused, item }) => {
+                    return focused
+                      ? (<Text style={{ fontWeight: 'bold',}} >{route.name}</Text>)
+                      : (<Text style={{ fontWeight: 'normal', fontSize: 16 }} >{route.name}</Text>)
+                  },
+                  
+                })}
         initialRouteName="السائقون المعتمدون"
         tabBarOptions={{
             labelStyle: { fontSize: 14},
