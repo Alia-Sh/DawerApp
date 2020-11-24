@@ -38,7 +38,7 @@ const Item = ({ item, onPress, style }) => (
           <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.UserName}</Text>
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}> طلب بواسطة : {item.UserName}</Text>
           <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>      
         </View>
         <View style={{flex:1}}>
@@ -495,10 +495,10 @@ const styles = StyleSheet.create({
       marginTop:10, 
     },
     Status: {
-      fontSize: 18,
+      fontSize: 16,
       fontWeight: 'bold' ,
       textAlign :'right',
-      marginRight:30,
+      marginRight:25,
       marginTop:5, 
     },
     date: {

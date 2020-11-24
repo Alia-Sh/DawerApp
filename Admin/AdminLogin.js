@@ -191,7 +191,7 @@ const adminLogin = () => {
                 <Animatable.Image 
                 animation="bounceIn"
                 duraton="1500"
-                source={require('../assets/AdminLogo.png')}
+                source={require('../assets/AdminIcons/AdminLoginLogo.png')}
                 style={styles.logo}
                 resizeMode="stretch"/>
         
@@ -309,8 +309,8 @@ const adminLogin = () => {
 // here styles
 const {height} = Dimensions.get("screen");
 const {width} = Dimensions.get("screen");
-const height_logo = height * 0.28;
-const wight_logo = width * 0.85;
+const height_logo = height * 0.25;
+const wight_logo = width * 0.80;
 
 const styles = StyleSheet.create({
   container: {

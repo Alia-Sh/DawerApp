@@ -29,7 +29,7 @@ const Item = ({ item, onPress, style }) => (
           <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>طلب  </Text>
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}> طلب بواسطة : {item.UserName}  </Text>
           <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>
           
           
@@ -124,10 +124,12 @@ const fetchData=()=>{
             console.log(snapshot.val().Status);
             if(snapshot.val().DeliveryDriverId == userId ){
                 
-              var temp={Date:snapshot.val().DateAndTime,
+              var temp={
+                Date:snapshot.val().DateAndTime,
                 key:snapshot.key,
                 Status:snapshot.val().Status,
                 UserId:User,
+                UserName:snapshot.val().UserName
             }
             //console.log(n+'check again ');
               li.push(temp)
@@ -169,7 +171,7 @@ const fetchData=()=>{
             var STATUS = item.Status;
             var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
-            navigation.navigate("DriverRequestDetails",{ID,DATE,STATUS,UserId})}}
+            navigation.navigate("AssignedRequestsToDriver",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
         />
       );
@@ -408,10 +410,10 @@ const styles=StyleSheet.create({
         color :'#ADADAD',
       },
       Status: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold' ,
         textAlign :'right',
-        marginRight:30,
+        marginRight:25,
         marginTop:5, 
       },
       date: {

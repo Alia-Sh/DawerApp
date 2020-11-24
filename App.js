@@ -44,6 +44,7 @@ import DriverFacilities from './Driver/DriverFacilities';
 import AssignedRequests from './Driver/AssignedRequests';
 import JoinDetails from './Admin/JoinDetails';
 import DriverRequestDetails from './Driver/DriverRequestDetails';
+import AssignedRequestsToDriver from './Admin/AssignedRequestsToDriver';
 
 
 const Stack = createStackNavigator();
@@ -117,6 +118,7 @@ function App() {
           <Stack.Screen name="AssignedRequests" component={AssignedRequests} options={myOptions}/>
           <Stack.Screen name="JoinDetails" component={JoinDetails} options={myOptions}/>
           <Stack.Screen name="DriverRequestDetails" component={DriverRequestDetails} options={myOptions}/>
+          <Stack.Screen name="AssignedRequestsToDriver" component={AssignedRequestsToDriver} options={myOptions}/>
         </Stack.Navigator>
     </View>
   );
