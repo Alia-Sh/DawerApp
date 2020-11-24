@@ -172,7 +172,7 @@ const fetchData=()=>{
             var UserId=item.UserId;
             console.log(ID+'      >>>>>here in gome');
             navigation.navigate("AssignedRequestsToDriver",{ID,DATE,STATUS,UserId})}}
-          style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
+          style={{ backgroundColor :item.key === selectedId ? "#F3F3F3":'#FFFFFF' }}
         />
       );
       };
@@ -255,14 +255,12 @@ const fetchData=()=>{
                     
                       
                             <View style={{alignItems:"center",margin:15}}>
-                           <Title style={{color: '#9E9D24',fontSize:20}}>الطلبات المسندة</Title>
+                           <Title style={{color: '#9E9D24',fontSize:20}}>الطلبات المسندة : {ArabicNumbers(RequestList.length)}</Title>
 
-                           <Title style={[styles.text,{marginTop:-5,marginBottom:3}]}
-       > عدد الطلبات  : {ArabicNumbers(RequestList.length)}</Title>
                            
                        </View>
                        <Image
-                            style={{width:'70%',marginTop:-8}}
+                            style={{width:'95%',marginTop:-8,marginBottom:3}}
                             source={require('../assets/line.png')}
                             />
                 </View>
