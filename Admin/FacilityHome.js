@@ -84,7 +84,7 @@ const Item = ({ item, onPress, style }) => (
           />
         :
         <Image
-            style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5}}
+            style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:15,borderRadius:5}}
             source={{uri:item.Logo}}
             />
         }

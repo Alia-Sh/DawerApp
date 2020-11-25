@@ -32,6 +32,7 @@ import Loading from '../components/Loading';
     const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
     const [selectedValue, setSelectedValue] = useState("زجاج");
+    const [UserName,setUserName]= useState('');
     
 
     const [data,setData]=React.useState({
@@ -54,10 +55,11 @@ import Loading from '../components/Loading';
       
     });
     var userId = firebase.auth().currentUser.uid;
-    var query2 = firebase.database().ref('User/' + userId+'/Location');
+    var query2 = firebase.database().ref('User/' + userId);
     query2.once("value").then(function(result) {
         const userData = result.val();
-        setLocation(userData.address);
+        setUserName(userData.Name);
+        setLocation(userData.Location.address);
     });
 
     const [alert,setAlert]=React.useState({
@@ -343,7 +345,8 @@ import Loading from '../components/Loading';
                 Status:'Pending',
                 Location:Location,
                 TimeStamp: firebase.database.ServerValue.TIMESTAMP,
-                DeliveryDriverId:""
+                DeliveryDriverId:"",
+                UserName:UserName,
             }).then((data)=>{
                 AddMaterialsToDatabase(RequestId);
             }).catch((error)=>{

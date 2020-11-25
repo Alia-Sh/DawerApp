@@ -354,7 +354,7 @@ const createUser=()=>{
 
                   <Text style={[styles.text_forgetPass,{marginTop: 12, color: '#9E9D24', fontWeight:'bold'}]}> قدّم هنـا</Text>
                 </TouchableOpacity>
-                <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل ترغب بالانضمام لنا ؟</Text>
+                <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل ترغب بالانضمام إلينا ؟</Text>
               </View>   
           {modalVisible?<AddDriver setModalVisible={setModalVisible}></AddDriver>:null}
 

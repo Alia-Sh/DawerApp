@@ -279,7 +279,10 @@ const DriverEditProfile  = ({navigation,route})=>{
                             small
                             icon="plus"
                             theme={{colors:{accent:"#C0CA33"}}}
-                            style={Platform.OS === 'android'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
+                            style={Platform.OS === 'android' && 
+                            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                            NativeModules.I18nManager.localeIdentifier === 'ar_SA'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
                     </View>
                         
                         <Image

@@ -58,14 +58,8 @@ const Item2 = ({ item, onPress, style }) => (
           source={require('../assets/PendingUser.png')}
           style={{width:55,height:55,marginRight:-8,marginTop:0,marginLeft:-20}}
           />
-     
       <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10,alignItems:'flex-end'}} >
         <View  style={{flexDirection:'row'}}>
-            <MaterialIcons style={{marginRight:120,marginTop:0}}
-                name="error" 
-                size={30} 
-                color="#7B7B7B"
-            />
           <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -75,7 +69,11 @@ const Item2 = ({ item, onPress, style }) => (
         <Text style={styles.date}>السائق:  {item.name} ، منطقة: {item.area}</Text>
         
       </View>
-     
+      <MaterialIcons style={{right:10,marginTop:0,position:'absolute'}}
+                name="error" 
+                size={30} 
+                color="#7B7B7B"
+            />
     </View>
   </TouchableOpacity>
  

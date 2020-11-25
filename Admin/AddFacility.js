@@ -748,7 +748,10 @@ export default class AddFacility extends Component {
                             small
                             icon="plus"
                             theme={{colors:{accent:"#9cac74"}}}
-                            style={Platform.OS === 'android'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
+                            style={Platform.OS === 'android' && 
+                            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                            NativeModules.I18nManager.localeIdentifier === 'ar_SA'?styles.FABStyleAndroid:styles.FABStyleIOS}/>
                       </View>
 
                       <View>
@@ -1211,6 +1214,8 @@ const styles = StyleSheet.create({
       marginTop:8,
       width:120,
       height:120,
+      borderColor:'#f2f2f2',
+      borderWidth:1
     },   
     fixedHeader :{
       flex:1,

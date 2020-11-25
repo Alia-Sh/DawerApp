@@ -33,7 +33,10 @@ export function DrawerContent(props){
                         style={styles.drawerItemStyle}
                         icon={({color,size})=> (
                           <Icon
-                          style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
+                          style={Platform.OS === 'android' && 
+                          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? styles.IconStyleAndroid:styles.IconStyleIOS}
                           name="account-outline"
                           color={color}
                           size={size}/>
@@ -45,7 +48,10 @@ export function DrawerContent(props){
                         style={styles.drawerItemStyle}
                         icon={({color,size})=> (
                           <Icon
-                          style={Platform.OS === 'android'? styles.IconStyleAndroid:styles.IconStyleIOS}
+                          style={Platform.OS === 'android' && 
+                          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? styles.IconStyleAndroid:styles.IconStyleIOS}
                           name="exit-to-app"
                           color={color}
                           size={size}/>
