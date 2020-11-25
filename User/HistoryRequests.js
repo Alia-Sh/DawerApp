@@ -78,16 +78,16 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.textH}> :نوع المادة</Title>
-            <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
+            <Text style={[styles.textH,{fontWeight:'500'}]}> نوع المادة :</Text>
+            <Title style={{marginTop:-2,marginRight:5,marginLeft:5,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
             </View>
             <View style={{flexDirection:Platform.OS === 'android' &&
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.textH}>:الكمية</Title>
-            <Title style={{flexWrap: 'wrap',flex:-1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+            <Text style={[styles.textH,{fontWeight:'500'}]}>الكمية :</Text>
+            <Title style={{flexWrap: 'wrap',flex:-1,marginTop:2,marginRight:5,marginLeft:5,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
             <Title style={{marginTop:2,fontSize:16,textAlign:"right"}}>{item.Type}</Title>
             </View>
             <Image
@@ -150,13 +150,13 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse',flex:1}}>
-                            <Title style={styles.textH}>:تاريخ وقت الاستلام</Title>
+                            <Text style={[styles.textH,{fontWeight:'500'}]}>تاريخ وقت الاستلام :</Text>
                             <Title style={{flexWrap: 'wrap',flex:1,marginTop:3,fontSize:16,textAlign:"right"}}>{item.DateAndTime}</Title>
                         </View>
                         <MaterialIcons 
                             name="error" 
                             size={30} 
-                            color="#212121"
+                            color="#424242"
                             onPress={()=>{ setDetails(item)}}
                         />
                     </View>
@@ -175,8 +175,8 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="clear" size={25} color="#424242" 
                          onPress={()=>{ setDetailsModal(false) }}
                          />
-                         <Title style={[styles.textH,{color:'#424242'}]}>تفاصيل الطلب</Title>
-                         <Title style={[styles.textH,{marginTop:5}]}>:تاريخ و وقت الاستلام</Title>
+                         <Text style={[styles.textH,{color:'#424242',fontWeight:'700'}]}>تفاصيل الطلب</Text>
+                         <Text style={[styles.textH,{marginTop:10,fontWeight:'500'}]}>تاريخ و وقت الاستلام :</Text>
                          <Title style={{fontSize:16,textAlign:"right"}}>{tempItem.DateAndTime}</Title>
                                 <FlatList
                                     data={DetailsList}
@@ -199,26 +199,26 @@ var userId = firebase.auth().currentUser.uid;
      <View style={styles.root}>
      <LinearGradient
                     colors={["#827717","#AFB42B"]}
-                    style={{height:"8%"}}>
+                    style={{height:"10%"}}>
                 <View style={styles.header}>
-                    <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
+                    <FontAwesome5 name="chevron-right" size={24} color="#fff" style={styles.icon}
                         onPress={()=>{
                             navigation.goBack();
                         }}/>
                     <View>
-                        <Text style={styles.headerText}>سجل طلباتي</Text>
+                        <Text style={styles.headerText}>سـجـل طلـبـاتي</Text>
                     </View>
                 </View>
             </LinearGradient>
-             <View style={{flexDirection:Platform.OS === 'android' &&
+             {/* <View style={{flexDirection:Platform.OS === 'android' &&
                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                       NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                      'row':'row-reverse',justifyContent:'space-between'}}>
+                      'row':'row-reverse',justifyContent:'space-between'}}> */}
                 
-                <Title style={[styles.textH,{marginTop:10,marginLeft:Platform.OS ==='android'?110:0,marginTop:10,marginRight:Platform.OS ==='android'?0:110}]}>عدد الطلبات السابقة: {ArabicNumbers(HistoryReq.length)}</Title>
+                <Text style={[styles.textH,{ fontWeight:'500', }]}>عدد الطلبات السابقة: {ArabicNumbers(HistoryReq.length)}</Text>
                
-            </View>
+            {/* </View> */}
             <Image
                 style={{width:'100%'}}
                 source={require('../assets/line.png')}
@@ -265,15 +265,20 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row':'row-reverse',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:-8,
+        // marginTop:8,
     },
     headerText:{
-        fontWeight:'bold',
-        fontSize: 18, 
-        marginTop:5,
-        letterSpacing: 1, 
-        textAlign:'center',
-        color: '#212121'
+        // fontWeight:'bold',
+        // fontSize: 18, 
+        // marginTop:5,
+        // letterSpacing: 1, 
+        // textAlign:'center',
+        // color: '#212121'
+        color: '#ffff',
+        fontWeight: 'bold',
+        fontSize: 20,
+
+  
     },
     icon:{
         position: 'absolute',
@@ -337,15 +342,17 @@ const styles=StyleSheet.create({
             elevation:5,        
         },
          textH: {
-
+        
         color: '#b2860e',
         fontSize: 18,
-        textAlign: Platform.OS === 'android' && 
-        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
-        marginRight:5,
-        marginLeft:5,
+        textAlign:'center',
+        margin:5
+        // textAlign: Platform.OS === 'android' && 
+        // NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        // NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        // NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
+        // marginRight:5,
+        // marginLeft:5,
     },
     iconIOS:{
             position:'absolute',

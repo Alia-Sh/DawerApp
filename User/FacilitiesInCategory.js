@@ -120,13 +120,13 @@ SearchInList = (word) =>{
           <SafeAreaView style={{flexDirection: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse'}}>
+            NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',marginTop:10}}>
                  <LinearGradient
                     colors={["transparent","#transparent"]}
-                    style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between'}}>
+                    style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between',marginTop:40}}>
 
-                      <FontAwesome5 name="filter" size={24} color="gray" style={{marginTop: 25,marginLeft:15}}/>
-
+                      <FontAwesome5 name="filter" size={24} color="gray" style={{marginLeft:15}}/>
+                      {/* style={{marginTop: 25,marginLeft:15}} */}
                       <Text style={styles.text_header}>{CategoryName}</Text>
 
                       <FontAwesome5 name="chevron-right" size={24} color="#212121" style={styles.icon} 
@@ -224,7 +224,9 @@ const styles = StyleSheet.create({
     profile_image: {
         width:110,
         height:110,
-        borderRadius:5
+        borderRadius:5,
+        borderColor:'#f2f2f2',
+        borderWidth:1
         //borderRadius:150/2,
         //marginTop:-75 
     },
@@ -255,10 +257,10 @@ const styles = StyleSheet.create({
         color: '#ffff',
         fontWeight: 'bold',
         fontSize: 22,
-        textAlign: 'center',
-        marginTop: 40,
-        marginHorizontal: 75,
-        marginRight: 150
+        // textAlign: 'center',
+        // marginTop: 40,
+        // marginHorizontal: 75,
+        // marginRight: 150
     },
     mycard: {
         backgroundColor: '#F3F3F3',
@@ -296,9 +298,7 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     icon: {
-      position: 'absolute',
-      marginTop: 25,
-      right: 15
+      marginRight: 15
     }
   });
 export default FacilitiesInCategory;

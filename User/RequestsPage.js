@@ -105,17 +105,17 @@ const  RequestsPage= ({navigation}) =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.textH}>:نوع المادة</Title>
-            <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
+            <Text style={[styles.text,{marginTop:5,fontWeight:'500'}]}>نوع المادة: </Text>
+            <Title style={{fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
             </View>
             <View style={{flexDirection:Platform.OS === 'android' &&
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.textH}>:الكمية</Title>
+            <Text style={[styles.text,{marginTop:5,fontWeight:'500'}]}>الكمية: </Text>
             
-            <Title style={{flex:-1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+            <Title style={{flex:-1,marginTop:2,marginRight:5,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
              <Title style={{marginTop:2,fontSize:16,textAlign:"right"}}>{item.Type}</Title>
             </View>
             <Image
@@ -174,13 +174,13 @@ const  RequestsPage= ({navigation}) =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse',flex:1}}>
-                            <Title style={styles.text}>:تاريخ و وقت الاستلام</Title>
+                            <Text style={[styles.text,{fontWeight:'500',marginTop:5}]}>تاريخ و وقت الاستلام :</Text>
                             <Title style={{flexWrap: 'wrap',flex:1,marginTop:3,fontSize:16,textAlign:"right"}}>{item.DateAndTime}</Title>
                         </View>
                         <MaterialIcons 
                             name="error" 
                             size={30} 
-                            color="#212121"
+                            color="#424242"
                             onPress={()=>{ setDetails(item)}}
                         />
                     </View>
@@ -199,8 +199,8 @@ const  RequestsPage= ({navigation}) =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="clear" size={25} color="#424242" 
                          onPress={()=>{ setDetailsModal(false) }}
                          />
-                         <Title style={[styles.text,{color:'#424242'}]}>تفاصيل الطلب</Title>
-                         <Title style={[styles.text,{marginTop:5}]}> :تاريخ و وقت الاستلام </Title>
+                         <Text style={[styles.text,{color:'#424242',fontWeight:'600',marginTop:5}]}>تفاصيل الطلب</Text>
+                         <Text style={[styles.text,{marginTop:15,fontWeight:'500'}]}>تاريخ و وقت الاستلام :</Text>
                          <Title style={{fontSize:16,textAlign:"right"}}>{tempItem.DateAndTime}</Title>
                                 <FlatList
                                     data={DetailsList}
@@ -276,11 +276,11 @@ const  RequestsPage= ({navigation}) =>{
                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                       NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                      'row':'row-reverse',justifyContent:'space-between'}}>
+                      'row':'row-reverse',justifyContent:'space-between',alignItems:'center'}}>
                 <TouchableOpacity onPress={()=>setAlertVisible(true)}>
-                    <Title style={[styles.text,{fontWeight: 'bold',marginTop:10}]}>طلب جديد</Title>
+                    <Title style={[styles.text,{fontWeight: 'bold',paddingRight:5}]}>طلب جديد</Title>
                 </TouchableOpacity>
-                <Title style={[styles.text,{marginTop:10,marginLeft:Platform.OS=== 'android'?-55:55}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
+                <Text style={[styles.text,{marginLeft:Platform.OS=== 'android'?-55:55,fontWeight:'600'}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Text>
                 <TouchableOpacity onPress={()=> navigation.navigate('HistoryRequests')} style={{margin:10}}
                     //  onPress={()=>DeleteRequest(item)}
                      >
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
         borderRadius:5,
         padding:10,
         elevation:2,
-        width:'27%',
+        width:'30%',
         margin:15,
     },
     cancelButton:{
@@ -482,7 +482,6 @@ const styles = StyleSheet.create({
     },
     modalText:{
       textAlign:'center',
-      
       fontSize:20,
       shadowColor:'#161924',
       shadowOffset:{

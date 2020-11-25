@@ -1044,12 +1044,15 @@ const styles=StyleSheet.create({
         height:30,
     },
     button:{
-        flexDirection:"row",
-        justifyContent:"space-around",
-        alignItems:Platform.OS === 'ios'?'flex-start':'flex-end',
-        paddingLeft:Platform.OS === 'ios'?185:0,
-        paddingRight:Platform.OS === 'android'?200:0,
-        paddingBottom:8,
+        flexDirection:Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse' ,
+        // justifyContent:"space-around",
+        // alignItems:Platform.OS === 'ios'?'flex-start':'flex-end',
+        // paddingLeft:Platform.OS === 'ios'?185:0,
+        // paddingRight:Platform.OS === 'android'?200:0,
+        padding:8,
     },
     errorMsg2: {
         color: '#FF0000',
