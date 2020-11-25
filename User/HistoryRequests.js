@@ -6,6 +6,7 @@ import { NativeModules,FlatList ,Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {FontAwesome5} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
+import { ArabicNumbers } from 'react-native-arabic-numbers';
 import {MaterialIcons} from '@expo/vector-icons';
 const  HistoryRequests= ({navigation}) =>{
 const[HistoryReq,setHistoryReq]= useState([]);
@@ -34,6 +35,8 @@ var userId = firebase.auth().currentUser.uid;
             })
             setHistoryReq(li)
             console.log(li) 
+            if(HistoryRequests.length==0)
+             setLoading(false)
           }
         })
       }
@@ -51,7 +54,7 @@ var userId = firebase.auth().currentUser.uid;
               snapshot.forEach(function(snapshot){
               console.log(snapshot.key);
               console.log(snapshot.val().MaterialType);
-              var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity}
+              var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity,Type:snapshot.val().Type}
               li.push(temp)
             //   setLoading(false)
               })
@@ -75,7 +78,7 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.textH}>نوع المادة: </Title>
+            <Title style={styles.textH}> :نوع المادة</Title>
             <Title style={{marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.MaterialType}</Title>
             </View>
             <View style={{flexDirection:Platform.OS === 'android' &&
@@ -83,8 +86,9 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
-            <Title style={styles.textH}>الكمية:</Title>
-            <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+            <Title style={styles.textH}>:الكمية</Title>
+            <Title style={{flexWrap: 'wrap',flex:-1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+            <Title style={{marginTop:2,fontSize:16,textAlign:"right"}}>{item.Type}</Title>
             </View>
             <Image
                 style={{width:'100%',marginTop:15}}
@@ -146,7 +150,7 @@ var userId = firebase.auth().currentUser.uid;
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse',flex:1}}>
-                            <Title style={styles.text}>  تاريخ و وقت الاستلام:</Title>
+                            <Title style={styles.textH}>:تاريخ وقت الاستلام</Title>
                             <Title style={{flexWrap: 'wrap',flex:1,marginTop:3,fontSize:16,textAlign:"right"}}>{item.DateAndTime}</Title>
                         </View>
                         <MaterialIcons 
@@ -172,7 +176,7 @@ var userId = firebase.auth().currentUser.uid;
                          onPress={()=>{ setDetailsModal(false) }}
                          />
                          <Title style={[styles.textH,{color:'#424242'}]}>تفاصيل الطلب</Title>
-                         <Title style={[styles.textH,{marginTop:5}]}>تاريخ و وقت الاستلام :</Title>
+                         <Title style={[styles.textH,{marginTop:5}]}>:تاريخ و وقت الاستلام</Title>
                          <Title style={{fontSize:16,textAlign:"right"}}>{tempItem.DateAndTime}</Title>
                                 <FlatList
                                     data={DetailsList}
@@ -206,6 +210,20 @@ var userId = firebase.auth().currentUser.uid;
                     </View>
                 </View>
             </LinearGradient>
+             <View style={{flexDirection:Platform.OS === 'android' &&
+                      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                      NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
+                      'row':'row-reverse',justifyContent:'space-between'}}>
+                
+                <Title style={[styles.textH,{marginTop:10,marginLeft:Platform.OS ==='android'?110:0,marginTop:10,marginRight:Platform.OS ==='android'?0:110}]}>عدد الطلبات السابقة: {ArabicNumbers(HistoryReq.length)}</Title>
+               
+            </View>
+            <Image
+                style={{width:'100%'}}
+                source={require('../assets/line.png')}
+                />
+
        
 
              <FlatList
@@ -240,18 +258,19 @@ const styles=StyleSheet.create({
     
     header:{
         width: '100%',
-        height: 80,
+        height:80,
         flexDirection: Platform.OS === 'android' && 
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row':'row-reverse',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:-10,
+        marginTop:-8,
     },
     headerText:{
         fontWeight:'bold',
-        fontSize: 18,      
+        fontSize: 18, 
+        marginTop:5,
         letterSpacing: 1, 
         textAlign:'center',
         color: '#212121'
@@ -275,21 +294,22 @@ const styles=StyleSheet.create({
         borderTopRightRadius:5
       
         },
-     cardView:{
+    cardView:{
         flexDirection:Platform.OS === 'android' && 
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse',
         justifyContent:'space-between',
         backgroundColor: '#F3F3F3',
+        margin:1,
         marginHorizontal: 10,
         borderRadius :5,
         shadowColor :'#000',
         shadowOffset: {
           width: 0,
-          height:2
+          height: 2,
         },
-           shadowOpacity: 0.30,
+        shadowOpacity: 0.30,
         shadowRadius: 4.65,
         elevation: 5,
         padding:8

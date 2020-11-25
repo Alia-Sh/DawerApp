@@ -1,3 +1,4 @@
+
 import React,{useState,useEffect} from 'react';
 import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform,Picker} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -12,6 +13,7 @@ import firebase from '../Database/firebase';
 import AlertView from "../components/AlertView";
 import NumericInput from 'react-native-numeric-input';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
+import {CheckBox} from "native-base";
 import Loading from '../components/Loading';
 
  const NewRequestModal=(props)=>{
@@ -21,12 +23,16 @@ import Loading from '../components/Loading';
     const [RequestList,setRequestList]= useState([])
     const [Material,setMaterial]=useState('');
     const [Quantity,setQantity]=useState('');
+    const [Piece,setPiece]=useState(true);
+    const [Cartons,setCartons]=useState(false);
+    const [container,setContainer]=useState(false);
+    const [Checked,setChecked]=useState('قطعة');
     const [counter,setCounter]=useState(0);
     const [id,setID]=useState('');
-    const [Location,setLocation] = useState('');
-    const [UserName,setUserName]= useState('');
+    const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
     const [selectedValue, setSelectedValue] = useState("زجاج");
+    
 
     const [data,setData]=React.useState({
         isvalidMaterial:true,
@@ -36,6 +42,7 @@ import Loading from '../components/Loading';
         MaterialInput: React.createRef(),
         QuantityInput: React.createRef(),
         DateAndTimeInput: React.createRef(),
+        Typeinput: React.createRef(),
         isVisibleList:false,
         isEdit:false, 
         isEmptyList:false,
@@ -43,15 +50,14 @@ import Loading from '../components/Loading';
         DateAndTimeErrorMsg:'',
         isLoading:false,  
         isDateAndTimeStep:false,
-        isDisplayRequests:false      
+        isDisplayRequests:false ,  
+      
     });
-
     var userId = firebase.auth().currentUser.uid;
-    var query2 = firebase.database().ref('User/' + userId);
+    var query2 = firebase.database().ref('User/' + userId+'/Location');
     query2.once("value").then(function(result) {
-      const userData = result.val();
-      setUserName(userData.Name);
-      setLocation(userData.Location.address);
+        const userData = result.val();
+        setLocation(userData.address);
     });
 
     const [alert,setAlert]=React.useState({
@@ -60,6 +66,27 @@ import Loading from '../components/Loading';
         Message:'',
         jsonPath:'',  
     })
+
+    const PieceP=()=>{
+    setPiece(true)
+    setCartons(false)
+    setContainer(false)
+    setChecked('قطعة')
+    }
+
+     const CartonP=()=>{
+     setCartons(true)
+     setPiece(false)
+     setChecked('كرتون')
+     setContainer(false)
+    }
+
+     const containerP=()=>{
+     setContainer(true)
+     setPiece(false)
+     setCartons(false)
+     setChecked('حاوية')
+    }
 
     const selectImage = async () => {
         try {
@@ -76,6 +103,8 @@ import Loading from '../components/Loading';
           Alert.alert(error.message);
         }
       }
+
+     
 
     const checkMaterial=()=>{
         if(Material==''){
@@ -131,20 +160,17 @@ import Loading from '../components/Loading';
         }
     }
 
+
     const ResetField=()=>{
         if(checkMaterial() && checkQuantity()){
-            // data.MaterialInput.current.clear();
-           // data.QuantityInput.current.clear();
-            // data.DateAndTimeInput.current.clear();
             setMaterial(CategoryList[0].Name);
             setQantity('');
-            // setDateAndTime('')
         }
     }
-
+                            //**************************************************
     const addRequest=()=>{
         if(checkMaterial() && checkQuantity()){
-        var temp={id:counter,material:Material,Quantity:Quantity}
+        var temp={id:counter,material:Material,Quantity:Quantity,Type:Checked}
         RequestList.push(temp)
         setCounter(counter+1);
         ResetField();
@@ -155,12 +181,14 @@ import Loading from '../components/Loading';
         }
     }
 
-    const UpdateRequest=(id,Material,Quantity)=>{
+    const UpdateRequest=(id,Material,Quantity,Type)=>{
         if(checkMaterial() && checkQuantity()){
         for (var i in RequestList) {
             if (RequestList[i].id == id) {
                 RequestList[i].material = Material;
                 RequestList[i].Quantity = Quantity;
+                RequestList[i].Type = Checked;
+
                break; //Stop this loop, we found it!
             }
         }
@@ -200,6 +228,7 @@ import Loading from '../components/Loading';
                         NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse'}}>
                      <Text style={styles.text}> الكمية:</Text>
                      <Text style={styles.Text}>{item.Quantity}</Text>
+                      <Text style={styles.Text}>{item.Type}</Text>
                      </View>
                 </View>
 
@@ -246,13 +275,14 @@ import Loading from '../components/Loading';
                                         'row':'row-reverse'}}>
                     <Text style={styles.text}> الكمية:</Text>
                     <Text style={styles.Text}>{item.Quantity}</Text>
+                    <Text style={styles.Text}>{item.Type}</Text>
                     </View>
                     </View>
             </Card>
         )
 
     })
-
+    //**********************************************************************************
     const EditRequest=(item)=>{
         setData({
             ...data,
@@ -261,6 +291,7 @@ import Loading from '../components/Loading';
         })
         setMaterial(item.material);
         setQantity(item.Quantity)
+        setChecked(item.Type)
         // setDateAndTime(item.DateAndTime)
         setID(item.id)
     }
@@ -311,7 +342,6 @@ import Loading from '../components/Loading';
                 DateAndTime:DateAndTime,
                 Status:'Pending',
                 Location:Location,
-                UserName:UserName,
                 TimeStamp: firebase.database.ServerValue.TIMESTAMP,
                 DeliveryDriverId:""
             }).then((data)=>{
@@ -333,6 +363,7 @@ import Loading from '../components/Loading';
         firebase.database().ref('/Material/'+RequestId).push({
             MaterialType:RequestList[i].material,
             Quantity:RequestList[i].Quantity,
+            Type:RequestList[i].Type,
         }).then(()=>{
         //success callback
         setData({
@@ -499,7 +530,7 @@ import Loading from '../components/Loading';
             console.log(Material);
         }, 400)
     },[])
-    
+ //******************************************************* header of the modal 
 return (
     
 <View style={styles.container}>   
@@ -626,9 +657,10 @@ return (
                                 :
                                 null
                             }
-
+                            
                             {data.isDateAndTimeStep?
                             <View>
+                            
                                 <Text style={styles.text}>تاريخ و وقت الإستلام:</Text>
                                 <View style={{flexDirection:Platform.OS === 'android' && 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -666,7 +698,7 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse',
-                                    paddingBottom:Platform.OS === 'android'? 0:50}}>
+                                    paddingBottom:Platform.OS === 'android'? 0:60,marginLeft:Platform.OS === 'android'? 0:12}}>
                                     <Picker
                                         selectedValue={Material}
                                         style={Platform.OS === 'android'? styles.pickerStyleAndroid:styles.pickerStyleIOS}
@@ -701,18 +733,38 @@ return (
                                         NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse', marginLeft:5,paddingBottom:4}}>
                                        
                                         
-                                       
-                                        <NumericInput 
-                                                      onChange={(val)=>setQantity(val)}
-                                                      onEndEditing={() => checkQuantity()}
-                                                      value={Quantity+""}
-                                                      totalWidth={70} 
-                                                      totalHeight={35} 
-                                                      rounded="true"
-                                                      ref={data.QuantityInput}
-                                                      minValue={1}
-                                                      initValue={0}
-                                                      />
+                                      
+
+                                                      <View style={{flexDirection:Platform.OS === 'android'?'row':'row-reverse'}}>
+                                        <View style={styles.Quan}>
+                                            <TextInput style={styles.textInput} 
+                                                value={Quantity+""}
+                                                label="Quantity"
+                                                placeholder="ادخل العدد"
+                                                autoCapitalize="none"
+                                                onChangeText={(val)=>setQantity(val)}
+                                                textAlign= 'right'
+                                                onEndEditing={() => checkQuantity()}
+                                                keyboardType="number-pad" //number Input
+                                                ref={data.QuantityInput}
+                                                >
+                                            </TextInput> 
+                                        </View> 
+                                        <View style={styles.CheckBoxStyle}>
+
+
+                                        <CheckBox style={styles.item} checked={Piece} color="#C0CA33"   onPress={()=>{ PieceP() }}/>
+                                        <Text style={{marginTop:10,margin:4}}>قطعة</Text>
+
+                                        <CheckBox style={styles.item} checked={Cartons} color="#C0CA33" onPress={()=>{ CartonP()}}/>                       
+                                        <Text style={{marginTop:10,margin:4}}>كرتون</Text>
+
+                                        <CheckBox style={styles.item} checked={container} color="#C0CA33" onPress={()=>{ containerP()}}/>
+                                        <Text style={{marginTop:10,margin:4}}>حاوية</Text>
+                                        
+                                       </View> 
+ 
+                                    </View> 
                                               
                                     </View>
                                       {data.isvalidQuantity ?
@@ -723,11 +775,11 @@ return (
                                         </Animatable.View>
                                     }
                                     
-                                       <View>
+                                       <View style={{height:'15%',marginTop:-10}}>
                                 {RequestList.map(request=> (
                                     <View key={request.id}>
                   
-                                    <Text style={{textAlign:Platform.OS=='ios'?'right':'left',color:"#999999"}}> - المادة: {request.material}  الكمية: {request.Quantity} </Text>
+                                    <Text style={{textAlign:Platform.OS=='ios'?'right':'left',color:"#999999"}}> - المادة: {request.material}  الكمية: {request.Quantity}{request.Type} </Text>
                                     </View>
                                    ))}
                                   
@@ -907,13 +959,13 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left' : 'right',
-        marginRight:5,
-        marginLeft:5,
+        marginRight:8,
+        marginLeft:8,
         margin:10
     },
     textInput: {
         marginTop: Platform.OS === 'ios' ? 0 : -12,
-        paddingLeft: 10,
+        paddingLeft: 5,
         color: '#05375a',
         textAlign: 'right',
         marginRight:10,  
@@ -929,6 +981,20 @@ const styles=StyleSheet.create({
         paddingTop: 10,
         paddingBottom:10,
         width:'70%'
+    },
+      Quan: {
+        // flexDirection: Platform.OS === 'android' && NativeModules.I18nManager.localeIdentifier === 'ar_EG' || NativeModules.I18nManager.localeIdentifier === 'ar_AE' ? 'row' : 'row-reverse',
+        margin: 8,
+        marginLeft:1,
+        borderColor:'#f2f2f2',
+        borderWidth:2,
+        borderRadius:5,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f2f2f2',
+        paddingTop:-2,
+        paddingBottom:10,
+        width:'28%',
+     
     },
     errorMsg: {
         color: '#FF0000',
@@ -981,10 +1047,9 @@ const styles=StyleSheet.create({
         flexDirection:"row",
         justifyContent:"space-around",
         alignItems:Platform.OS === 'ios'?'flex-start':'flex-end',
-        paddingTop:40,
-        paddingLeft:Platform.OS === 'ios'?210:0,
+        paddingLeft:Platform.OS === 'ios'?185:0,
         paddingRight:Platform.OS === 'android'?200:0,
-        paddingBottom:20,
+        paddingBottom:8,
     },
     errorMsg2: {
         color: '#FF0000',
@@ -1004,7 +1069,23 @@ const styles=StyleSheet.create({
     justifyContent:'space-between',
        marginLeft:Platform.OS === 'ios'?20:255,
        marginVertical:10
-    } 
+    } ,
+    CheckBoxStyle:{
+    flexDirection:Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse' ,
+    marginTop:2,
+    
+    } ,
+     item:{
+    width:"100%",
+    borderRadius:10,
+    padding:16,
+    margin:6,
+    marginBottom:10,
+    flex: 1,flexWrap: 'wrap',
+}
 });
 
 export default NewRequestModal

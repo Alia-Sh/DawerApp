@@ -8,14 +8,14 @@ import {View,
     FlatList,
     Dimensions,
     Modal} from 'react-native';
-    
 import {Card,Title,FAB,Button} from 'react-native-paper';
 import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import {FontAwesome5} from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { color } from 'react-native-reanimated';
-import CancelModal from '../User/CancelModal'
+import AlertView from "../components/AlertView";
 import { ArabicNumbers } from 'react-native-arabic-numbers';
 const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
@@ -34,7 +34,7 @@ const  RequestsPage= ({navigation}) =>{
           const Data = snapshot.val();
           if(Data){
             var li = []
-            var full=[]
+            
             snapshot.forEach(function(snapshot){
             console.log(snapshot.key);
             console.log(snapshot.val().DateAndTime);
@@ -43,12 +43,13 @@ const  RequestsPage= ({navigation}) =>{
             li.push(temp)
             setLoading(false)}
             
-            var temp2={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
-            full.push(temp2)
+            
             })
-            setFullList(full)
+         
             setRequestList(li)
             console.log(li) 
+            if (RequestList.length==0)
+            setLoading(false)
           }
         })}
         
@@ -66,7 +67,7 @@ const  RequestsPage= ({navigation}) =>{
               snapshot.forEach(function(snapshot){
               console.log(snapshot.key);
               console.log(snapshot.val().MaterialType);
-              var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity}
+              var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key,Type:snapshot.val().Type ,Quantity:snapshot.val().Quantity}
               li.push(temp)
             //   setLoading(false)
               })
@@ -75,6 +76,7 @@ const  RequestsPage= ({navigation}) =>{
             }
           })
     }
+
 
     const setDetails=(item)=>{
         setDetailsList([])
@@ -92,6 +94,7 @@ const  RequestsPage= ({navigation}) =>{
             })
         setOpenCancel(false)
         setDetailsModal(false)
+        
     }
 
     const displayDetails=((item)=>{
@@ -111,7 +114,9 @@ const  RequestsPage= ({navigation}) =>{
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?
                                     'row':'row-reverse'}}>
             <Title style={styles.textH}>:الكمية</Title>
-            <Title style={{flexWrap: 'wrap',flex:1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+            
+            <Title style={{flex:-1,marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>{item.Quantity}</Title>
+             <Title style={{marginTop:2,fontSize:16,textAlign:"right"}}>{item.Type}</Title>
             </View>
             <Image
                 style={{width:'100%',marginTop:15}}
@@ -132,15 +137,6 @@ const  RequestsPage= ({navigation}) =>{
 
                 case "OutForPickup":
                         return "في الطريق للاستلام"
-
-                case "Delivered":
-                    return "تم توصيل الطلب"
-
-                case "Rejected":
-                    return "تم رفض الطلب"
-                    
-                case "Canceled":
-                        return "تم الغاء الطلب"
             }
         }
 
@@ -155,14 +151,7 @@ const  RequestsPage= ({navigation}) =>{
                 case "OutForPickup":
                         return "#0288D1"
 
-                case "Delivered":
-                    return "#BDBDBD"
-
-                case "Rejected":
-                    return "#BF360C"
-
-                case "Canceled":
-                        return "#ACADAC"
+        
             }
         }
         
@@ -219,23 +208,19 @@ const  RequestsPage= ({navigation}) =>{
                                     return displayDetails(item)}}
                                     keyExtractor={item=>`${item.Id}`}
                             /> 
-                    <View style={styles.button}> 
-                    <Button  onPress={()=>{
-
+                     <TouchableOpacity 
+                        style={styles.okB}
+                        onPress={()=>{
                             setOpenCancel(true)
-            
-                        }} mode="contained" theme={theme }>
-                     إلغاء الطلب
-                    </Button>
-                    </View>
+                    }}>
+                      <Text style={styles.okStyle}>إلغاء الطلب</Text>
+                    </TouchableOpacity>
                                 </View>
                             </View>
-                         
-                    </Modal>
 
-                    
+                            
       <Modal
-    animationType="fade"
+    animationType="slide"
     transparent={true}
     visible={OpenCancel}>
          <View style={styles.centeredView}>
@@ -274,6 +259,12 @@ const  RequestsPage= ({navigation}) =>{
            
         </View>
 </Modal>
+                         
+                    </Modal>
+
+                    
+      
+      
 
                   
             </View>
@@ -289,7 +280,7 @@ const  RequestsPage= ({navigation}) =>{
                 <TouchableOpacity onPress={()=>setAlertVisible(true)}>
                     <Title style={[styles.text,{fontWeight: 'bold',marginTop:10}]}>طلب جديد</Title>
                 </TouchableOpacity>
-                <Title style={[styles.text,{marginTop:10,marginLeft:Platform.OS=== 'android'?-55:55}]}> عدد الطلبات: {ArabicNumbers(fullList.length)}</Title>
+                <Title style={[styles.text,{marginTop:10,marginLeft:Platform.OS=== 'android'?-55:55}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Title>
                 <TouchableOpacity onPress={()=> navigation.navigate('HistoryRequests')} style={{margin:10}}
                     //  onPress={()=>DeleteRequest(item)}
                      >
@@ -463,7 +454,7 @@ const styles = StyleSheet.create({
     okStyle:{
         color:"#ffff",
         textAlign:'center',
-        fontSize:15
+        fontSize:14
     },
     okButton:{
         backgroundColor:'#C8310C',
@@ -471,6 +462,14 @@ const styles = StyleSheet.create({
         padding:10,
         elevation:2,
         width:'25%',
+        margin:15,
+    },
+     okB:{
+        backgroundColor:'#C8310C',
+        borderRadius:5,
+        padding:10,
+        elevation:2,
+        width:'27%',
         margin:15,
     },
     cancelButton:{
