@@ -37,7 +37,7 @@ const Item1 = ({ item, onPress, style }) => (
         style={{height:60 ,width:60,marginRight:-8,marginTop:-8}}
       />
 
-      <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10}} >
+      <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10,marginTop:-5}} >
         <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 
           NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
           NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -628,13 +628,13 @@ const styles = StyleSheet.create({
       fontSize: 18,
       fontWeight: 'bold' ,
       textAlign :'right',
-      marginRight:30,
+      marginRight:15,
       marginTop:10, 
     },
     user: {
       fontSize: 12,
       textAlign :'right',
-      marginRight:30,
+      marginRight:15,
       marginTop:5,
       color :'#ADADAD',
     },

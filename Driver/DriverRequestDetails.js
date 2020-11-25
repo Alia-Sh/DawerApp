@@ -367,6 +367,8 @@ const styles = StyleSheet.create({
       width:100,
       height:100,
       borderRadius:150/2,
+      borderColor:'#f2f2f2',
+      borderWidth:1
     },
     user: {
       fontSize: 15,

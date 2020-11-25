@@ -317,7 +317,7 @@ import Loading from '../components/Loading';
     }
 
       return(
-        <Modal visible={modal} transparent={true} onRequestClose={()=>{ setModal(false) }}>
+        <Modal visible={modal} transparent={true} onRequestClose={()=>{ setModal(false) }} animationType="fade" presentationStyle='fullScreen'>
         <KeyboardAwareScrollView>
             <View backgroundColor= "#000000aa" flex= {1} style={{alignItems:'center',justifyContent:'center'}}>
                 <View backgroundColor ='#ffffff' marginTop= {40} marginBottom={100} borderRadius={30} width={width*.90} height={height*.90} >

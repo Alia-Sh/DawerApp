@@ -78,16 +78,18 @@ const ViewFacilityInfo=({navigation,route})=>{
 
     return(
         <View style={styles.root}>
-            <SafeAreaView style={{flexDirection:'row-reverse'}}>
-                <View style={[styles.header,styles.flexDirectionStyle]}>
-                    <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
-                        onPress={()=>navigation.goBack()}
-                      />
-                    <View>
+            <View style={styles.fixedHeader}>
+                <SafeAreaView>
+                    <View style={[styles.header,styles.flexDirectionStyle]}>
+                       
                         <Text style={styles.headerText}>معلومات المنشأة</Text>
+                        <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
+                            onPress={()=>navigation.goBack()}
+                        />
+                       
                     </View>
-                </View>
-            </SafeAreaView>
+                </SafeAreaView>
+            </View>
 
             <View style={styles.footer}>
                 <KeyboardAwareScrollView>
@@ -219,7 +221,7 @@ const styles=StyleSheet.create({
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:15
+        marginTop:15,
     },
     headerText:{
         fontWeight:'bold',
@@ -236,11 +238,14 @@ const styles=StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 30,
         marginTop:-20,
+        flex:8
     },
     Logo_image:{
         width:100,
         height:100,
-        borderRadius:5
+        borderRadius:5,
+        borderColor:'#f2f2f2',
+        borderWidth:1
     },
     mycard:{
         margin:3,
@@ -282,6 +287,11 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
-    }
+    },
+    fixedHeader :{
+        flex:1.1,
+        backgroundColor :'#fff',
+        overflow: 'hidden',
+      }
 });
 export default ViewFacilityInfo

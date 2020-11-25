@@ -347,13 +347,15 @@ const createUser=()=>{
             </TouchableOpacity> 
             
           {/* DRIVER JOIN */}
-                <TouchableOpacity style={{flexDirection:'row',justifyContent:'center'}} 
+              <View style={{flexDirection:'row',justifyContent:'center'}} >
+                <TouchableOpacity 
                    // onPress={()=>{navigation.navigate("AddDriver")}}>
                       onPress={() => setModalVisible(true)}>
 
                   <Text style={[styles.text_forgetPass,{marginTop: 12, color: '#9E9D24', fontWeight:'bold'}]}> قدّم هنـا</Text>
-                  <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل ترغب بالانضمام لنا ؟</Text>
                 </TouchableOpacity>
+                <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل ترغب بالانضمام لنا ؟</Text>
+              </View>   
           {modalVisible?<AddDriver setModalVisible={setModalVisible}></AddDriver>:null}
 
         </Animatable.View>

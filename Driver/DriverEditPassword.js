@@ -135,7 +135,7 @@ const DriverEditPassword = ({navigation})=>{
             navigation.navigate("DriverEditProfile")   
     }
     return(
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={styles.root}>
             <View style={styles.root}>
                 <SafeAreaView style={{flexDirection:'row-reverse'}}>
                 <View style={styles.header}>
