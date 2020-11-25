@@ -25,6 +25,26 @@ const AssignedRequestsToDriver = ({navigation,route})=>{
     });
     const [Picture,setPicture] = useState("")
 
+    switch(STATUS){
+      case "Pending":
+          STATUS="معلق"
+          break;
+      case "Accepted":
+          STATUS="مقبول"
+          break;
+      case "OutForPickup":
+          STATUS="في الطريق للاستلام"
+          break;
+      case "Delivered":
+          STATUS="تم توصيل"
+          break;
+      case "Rejected":
+          STATUS="مرفوض"
+          break;
+      case "Canceled":
+          STATUS="ملغي"
+          break;
+      }
 
     const fetchMaterials=(ID)=>{
       firebase.database().ref("Material/"+ID).on('value',snapshot=>{
@@ -127,6 +147,8 @@ const AssignedRequestsToDriver = ({navigation,route})=>{
                             source={require('../assets/line.png')}
                             />
               </View>
+              <Title style={styles.text}> :حالة الطلب</Title>
+              <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{STATUS}</Text>
               <Title style={styles.text}> :وقت وتاريخ الاستلام</Title>
               <Text style={{textAlign:"right",fontSize: 18,marginTop:5,marginRight:10}}>{DATE}</Text>
               <Title style={styles.text}> :المواد</Title>
