@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { StyleSheet,
     Text,
     View, 
@@ -164,11 +164,9 @@ return(
             </View>
 
             <Animatable.View 
-                // animation="bounceIn"
                 animation="slideInUp"
                 duraton="1500"
                 style={styles.footer}>
-                {/* <View style={styles.centerdStyle}> */}
                     <Title style={styles.text_header} >هل نسيت كلمة المرور؟</Title>
                     <View style={styles.action}>
                         <FontAwesome
@@ -177,7 +175,6 @@ return(
                             size={20}/> 
                 
                         <TextInput style={styles.textInput} 
-                        //   value={data.UserName}
                             label="Email"
                             placeholder="أدخل البريد الإلكتروني"
                             autoCapitalize="none"
@@ -196,14 +193,13 @@ return(
                             null
                         }   
                     </View>
-                {/* </View> */}
-                {data.isValidEmail ?
-                                        null 
-                                        : 
-                                        <Animatable.View animation="fadeInRight" duration={500}>
-                                        <Text style={styles.errorMsg}>{data.EmailErrorMessage}</Text>
-                                        </Animatable.View>
-                                    }
+                    {data.isValidEmail ?
+                            null 
+                        : 
+                            <Animatable.View animation="fadeInRight" duration={500}>
+                                <Text style={styles.errorMsg}>{data.EmailErrorMessage}</Text>
+                            </Animatable.View>
+                    }
 
                 <TouchableOpacity 
                     onPress={() => SendResetPasswordEmail()}
@@ -224,11 +220,12 @@ return(
             
             </Animatable.View> 
         </SafeAreaView>
+
         {alert.alertVisible?
-                        <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
-                    :
-                        null
-                    }
+                <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+            :
+                null
+        }
     </View>
     </KeyboardAwareScrollView>
 )
@@ -244,17 +241,6 @@ const styles = StyleSheet.create({
         height:150,
         marginTop:-20,
         marginBottom: 15
-    },
-    centerdStyle:{
-        alignItems:'center',
-        justifyContent:'center',
-        // marginTop:50,
-    },
-    titleStyle:{
-      color:'#212121',
-      fontWeight: 'bold',
-      fontSize:25,
-    //   marginTop:40
     },
     action: {
         flexDirection: Platform.OS === 'android' && 

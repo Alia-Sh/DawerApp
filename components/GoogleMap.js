@@ -30,7 +30,7 @@ const Google=(props)=> {
     }
   )
 
-  pickLocationHandler = event => {
+  const pickLocationHandler = event => {
     const coords = event.nativeEvent.coordinate;
     map.animateToRegion({
       ...state.focusedLocation,
@@ -82,7 +82,7 @@ const Google=(props)=> {
   }
 
   const closeModal=()=>{
-    props.closeLocatiomModal();
+    props.closeLocationModal();
     setAlertVisible(false)
   }
 
@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     fontSize: 18,      
     letterSpacing: 1, 
     textAlign:'center',
-    // color: '#fff'
     color: '#212121'
   },
   icon:{

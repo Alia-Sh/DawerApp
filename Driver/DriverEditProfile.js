@@ -1,7 +1,6 @@
-import React, {useEffect,useState}from 'react';
-import { StyleSheet, Text, View,Image,KeyboardAvoidingView,TextInput, Alert,ActivityIndicator} from 'react-native';
+import React, {useState}from 'react';
+import { StyleSheet, Text, View,Image,TextInput, Alert} from 'react-native';
 import {FontAwesome5} from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient'; 
 import {Title,Card,Button,FAB}from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
 import firebase from '../Database/firebase';

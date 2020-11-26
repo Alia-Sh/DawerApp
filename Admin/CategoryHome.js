@@ -3,7 +3,6 @@ import { StyleSheet,
    Text, 
    View,
    Image,
-   Dimensions,
    NativeModules,
    FlatList,
    TouchableOpacity} from 'react-native';
@@ -151,28 +150,28 @@ const HomeScreen = ({navigation})=>{
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
+        flex: 1,
     },  
     fixedHeader :{
-      flex:1,
-      backgroundColor :'#9E9D24',
-      overflow: 'hidden',
+        flex:1,
+        backgroundColor :'#9E9D24',
+        overflow: 'hidden',
     },
     text_header: {
-      color: '#ffff',
-      fontWeight: 'bold',
-      fontSize: 22,
-      textAlign: 'center',
+        color: '#ffff',
+        fontWeight: 'bold',
+        fontSize: 22,
+        textAlign: 'center',
     },
     header:{
-      width: '100%',
-      height: 80,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop:Platform.OS === 'android'? 0 : -10
+        width: '100%',
+        height: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop:Platform.OS === 'android'? 0 : -10
     },
     cardContent:{
-      justifyContent:'space-between'
+        justifyContent:'space-between'
     },
     mycard:{
         backgroundColor: '#F3F3F3',
@@ -206,22 +205,22 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
     title: {
-      fontSize: 18,
-      fontWeight: 'bold' ,
-      textAlign :'right',
-      marginRight:15,
-      marginLeft:15
+        fontSize: 18,
+        fontWeight: 'bold' ,
+        textAlign :'right',
+        marginRight:15,
+        marginLeft:15
     },
     icon:{
-      position: 'absolute',
-      marginTop:20,
-      left: 16
+        position: 'absolute',
+        marginTop:20,
+        left: 16
     },
     flexDirectionStyle:{
-      flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
+        flexDirection: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
     }  
 });
 export default HomeScreen;

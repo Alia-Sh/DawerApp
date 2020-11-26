@@ -8,15 +8,12 @@ import {View,
     FlatList,
     Dimensions,
     Modal} from 'react-native';
-import {Card,Title,FAB,Button} from 'react-native-paper';
+import {Card,Title} from 'react-native-paper';
 import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
-import {FontAwesome5} from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { color } from 'react-native-reanimated';
-import AlertView from "../components/AlertView";
 import { ArabicNumbers } from 'react-native-arabic-numbers';
+
 const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
     const[RequestList,setRequestList]= useState([]);
@@ -282,7 +279,6 @@ const  RequestsPage= ({navigation}) =>{
                 </TouchableOpacity>
                 <Text style={[styles.text,{marginLeft:Platform.OS=== 'android'?-55:55,fontWeight:'600'}]}> عدد الطلبات: {ArabicNumbers(RequestList.length)}</Text>
                 <TouchableOpacity onPress={()=> navigation.navigate('HistoryRequests')} style={{margin:10}}
-                    //  onPress={()=>DeleteRequest(item)}
                      >
                      <Image 
                         source={require('../assets/HistoryOfRequests.png')}
@@ -314,16 +310,8 @@ const  RequestsPage= ({navigation}) =>{
         </View>
     );
 };
-const {height} = Dimensions.get("screen");
-const {width} = Dimensions.get("screen");
-const height_logo = height * 0.09;
-const wight_logo = width * 0.090;
   
-const theme= {
-    colors:{
-        primary: "#C8310C"
-    }
-}
+
 const styles = StyleSheet.create({
     container: {
         flex:1,

@@ -1,8 +1,8 @@
 import React,{useState} from 'react';
-import {Modal,StyleSheet,Text,TouchableOpacity,View,Image} from 'react-native';
+import {Modal,StyleSheet,Text,TouchableOpacity,View} from 'react-native';
 import LottieView from 'lottie-react-native';
 
-const AlertView = ({title,message,buttonColor,jsonPath})=>{
+const AlertView = ({title,message,jsonPath})=>{
     const [alertVisible,setAlertVisible]= useState(true)
 
     return(

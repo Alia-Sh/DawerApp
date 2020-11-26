@@ -96,42 +96,13 @@ const AssignModal=(props)=>{
       }
 
     const AssignRow=(rowMap,rowKey,DriverId)=>{
-        closeRow(rowMap,rowKey);
-        // setTimeout(()=>{
-        //     setIsLoading(true)
-
-        //     setTimeout(()=>{
-        //         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
-        //             Status:"Accepted",
-        //             DeliveryDriverId:DriverId
-        //         }).then(()=>{
-        //             setIsLoading(false)
-        //             setTimeout(()=>{
-        //                 setAlert({
-        //                     ...alert,
-        //                     Title:'اسناد الطلب',
-        //                     Message:'تم اسناد الطلب بنجاح',
-        //                     jsonPath:"success",
-        //                     alertVisible:true,
-        //                 });
-        //                 setTimeout(() => {
-        //                     setAlert({
-        //                         ...alert,
-        //                         alertVisible:false,
-        //                     });
-        //                     // props.setVisibleAssignModal(false)
-        //                     // props.navigation.navigate("RequestHome");
-        //                 }, 4000)
-        //             },300)
-        //         })
-        //     },500)
-        // },500)            
-                firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
-                    Status:"Accepted",
-                    DeliveryDriverId:DriverId
-                }).then(()=>{
-                        props.ShowModal()
-                })
+        closeRow(rowMap,rowKey);          
+            firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
+                Status:"Accepted",
+                DeliveryDriverId:DriverId
+            }).then(()=>{
+                    props.ShowModal()
+            })
     }
 
     const FilterDrivers=(area)=>{

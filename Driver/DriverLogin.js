@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, 
   Text,
   View, 
@@ -161,56 +161,6 @@ const driverLogin = () => {
       });
     }
 }
-// to be removed  
-const createDriver=()=>{
-
-  firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
-    if (firebase.auth().currentUser) {
-      var userId = firebase.auth().currentUser.uid;
-      if (userId) {
-          firebase.database().ref('DeliveryDriver/' + userId).set({
-            Email:data.UserName.concat("@gmail.com"),
-            Name:"Fouz Ali",
-            Password:data.password,
-            PhoneNumber:"0555555555",
-            UserName:data.UserName,
-            DeliveryArea:"شرق الرياض"
-          });
-      }
-    }
-  }).catch(function(error) {
-    // Handle Errors here.
-      console.log('Register!');
-      console.log(error);
-  })
-}
-
-// to be removed  
-const createUser=()=>{
-
-  firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
-    if (firebase.auth().currentUser) {
-      var userId = firebase.auth().currentUser.uid;
-      if (userId) {
-          firebase.database().ref('User/' + userId).set({
-            Name:"Fouz Ali",
-            Password:data.password,
-            PhoneNumber:"0555555555",
-            UserName:data.UserName,
-          });
-          firebase.database().ref('User/' + userId+'/Location').set({
-            address:"2672 Al Buhturi, Az Zahra, Riyadh 12811 6993, Saudi Arabia",
-            latitude:24.688122806487524,
-            longitude:46.729763634502895
-          });
-      }
-    }
-  }).catch(function(error) {
-    // Handle Errors here.
-      console.log('Register!');
-      console.log(error);
-  })
-}
 
   return (
       <View style={styles.container}>
@@ -349,7 +299,6 @@ const createUser=()=>{
           {/* DRIVER JOIN */}
               <View style={{flexDirection:'row',justifyContent:'center'}} >
                 <TouchableOpacity 
-                   // onPress={()=>{navigation.navigate("AddDriver")}}>
                       onPress={() => setModalVisible(true)}>
 
                   <Text style={[styles.text_forgetPass,{marginTop: 12, color: '#9E9D24', fontWeight:'bold'}]}> قدّم هنـا</Text>
@@ -407,12 +356,11 @@ const styles = StyleSheet.create({
   text_forgetPass: {
     color: '#757575',
     fontSize: 15,
-    // marginLeft:15,
     textAlign: Platform.OS === 'android' && 
     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
     NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'right':'left',
-},
+  },
   action: {
       flexDirection: Platform.OS === 'android' && 
       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -422,14 +370,6 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: '#f2f2f2',
       paddingBottom: 5,
-
-  },
-  actionError: {
-      flexDirection: 'row',
-      marginTop: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: '#FF0000',
-      paddingBottom: 5
   },
   textInput: {
       flex: 1,
@@ -437,12 +377,11 @@ const styles = StyleSheet.create({
       paddingLeft: 10,
       color: '#05375a',
       textAlign: 'right',
-      paddingRight: 10
-      
+      paddingRight: 10    
   },
   errorMsg: {
-      color: '#FF0000',
-      fontSize: 14,
+    color: '#FF0000',
+    fontSize: 14,
     textAlign: Platform.OS === 'android' && 
     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -452,17 +391,17 @@ const styles = StyleSheet.create({
     color: '#FF0000',
     fontSize: 14,
     textAlign: 'center',
-},
+  },
   button: {
-      alignItems: 'center',
-      marginTop: 50
+    alignItems: 'center',
+    marginTop: 50
   },
   signIn: {
-      width: '100%',
-      height: 50,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 10
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
   },
   logo: {
     width: wight_logo ,
@@ -470,21 +409,21 @@ const styles = StyleSheet.create({
     marginTop: 50 ,
     alignItems: 'center',
     justifyContent: 'center',
-},
+  },
   textSign: {
-      fontSize: 18,
-      fontWeight: 'bold'  
+    fontSize: 18,
+    fontWeight: 'bold'  
   },
   iconIos:{
     position: 'absolute',
     right: 16,
     top:25
-},
-iconAndroid:{
-  position: 'absolute',
-  left: 16,
-  top:20
-}
+  },
+  iconAndroid:{
+    position: 'absolute',
+    left: 16,
+    top:20
+  }
 });
 
 export default DriverLogin
