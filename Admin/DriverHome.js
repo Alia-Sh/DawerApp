@@ -12,7 +12,6 @@ import { StyleSheet,
 import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {FAB} from 'react-native-paper';
-import AddDriver from './AddDriver';
 import {FontAwesome5, MaterialIcons} from '@expo/vector-icons'
 import SearchBar from '../components/SearchBar';
 //import { TabView, SceneMap } from 'react-native-tab-view';

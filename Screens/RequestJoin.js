@@ -20,7 +20,7 @@ import Loading from '../components/Loading';
 
 
 
-  const AddDriver=(props)=>{
+  const RequestJoin=(props)=>{
 
     const [modal,setModal] = useState(true)
     const {height} = Dimensions.get("screen");
@@ -572,4 +572,4 @@ import Loading from '../components/Loading';
         paddingRight:20
     },
   });
-  export default AddDriver
+  export default RequestJoin

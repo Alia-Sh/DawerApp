@@ -11,7 +11,7 @@ import { StyleSheet,
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import firebase from '../Database/firebase';
-import AddDriver from '../Admin/AddDriver';
+import RequestJoin from '../Screens/RequestJoin';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -65,7 +65,7 @@ const DriverLogin =({navigation}) => {
     })
   }
 
-const userLogin = () => { 
+const driverLogin = () => { 
   if(data.UserName === '' && data.password === '') {
     setData({
         ...data,
@@ -329,7 +329,7 @@ const createUser=()=>{
             <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل نسيت كلمة المرور؟</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity onPress={() => userLogin()}>
+            <TouchableOpacity onPress={() => driverLogin()}>
                 <View style={styles.button,{marginTop: 25}}>
 
                   {data.isLoading ? 
@@ -356,7 +356,7 @@ const createUser=()=>{
                 </TouchableOpacity>
                 <Text style={[styles.text_forgetPass,{marginTop: 12}]}>هل ترغب بالانضمام إلينا ؟</Text>
               </View>   
-          {modalVisible?<AddDriver setModalVisible={setModalVisible}></AddDriver>:null}
+          {modalVisible?<RequestJoin setModalVisible={setModalVisible}></RequestJoin>:null}
 
         </Animatable.View>
         </KeyboardAwareScrollView>

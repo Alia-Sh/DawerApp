@@ -117,7 +117,7 @@ const DriverEditProfile  = ({navigation,route})=>{
         }
     }
 
-    const updateUserInfo=()=>{
+    const updateDriverInfo=()=>{
         if(checkValidPhone() && checkValidEmail()){
             setData({
                 ... data,
@@ -380,7 +380,7 @@ const DriverEditProfile  = ({navigation,route})=>{
                             <Loading></Loading>  
                         : 
                         <Button icon="content-save" mode="contained" theme={theme }
-                            onPress={() => updateUserInfo()}>
+                            onPress={() => updateDriverInfo()}>
                             حفظ
                         </Button>
                         } 
