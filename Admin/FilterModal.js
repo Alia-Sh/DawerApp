@@ -35,7 +35,7 @@ export default class FilterModal extends Component {
     return(
             <View style={styles.modalView}>
                 <View style={{padding:1}}>
-                    {this.state.Area.map((item,index) => 
+                    {this.state.Area.map((item) => 
                         <TouchableOpacity onPress={()=>{this.changeSelect(item.ID)}}>
                             <View style={{flexDirection:'row-reverse'}}>
                                 <Text style={[styles.textStyle,{

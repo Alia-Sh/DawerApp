@@ -69,11 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor:"#fff"
   }, 
-  textInput: {
-      textAlign: 'center', 
-      marginTop: 20,  
-      flexDirection: 'column'
-  },
   imageButtom: {
     width: "100%" ,
     height:"100%" ,
@@ -88,30 +83,17 @@ const styles = StyleSheet.create({
   imageCenter: {
     width: 150 ,
     height: 140,
-    // marginTop: 15 ,
     alignItems: 'center',
     justifyContent: 'center',
   },
   viewImage:{
-    // marginTop: 33,
     alignItems: 'center',
     justifyContent: 'center',
     flex:3
   },
-  profileImage:{
-    width: 50,
-    height: 50,
-  },
-  profileView:{
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    marginTop: 40,
-    marginRight: 20,
-  },
   TouchableOpacityStyle:{
     alignItems: 'center',
     justifyContent: 'center',
-    // marginTop: 30,
     flex:1
   }
   });

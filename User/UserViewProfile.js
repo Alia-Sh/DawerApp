@@ -1,13 +1,12 @@
 import React, {useEffect,useState}from 'react';
 import { StyleSheet, Text, View,Image,Platform}from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import {Title,Card,Button,FAB}from 'react-native-paper';
+import {Title,Card,Button}from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
 import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import {FontAwesome5} from '@expo/vector-icons';
 import { YellowBox } from 'react-native';
-import { set } from 'react-native-reanimated';
 import { useIsFocused } from "@react-navigation/native";
 YellowBox.ignoreWarnings(['Setting a timer']);
 

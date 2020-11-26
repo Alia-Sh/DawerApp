@@ -1,6 +1,6 @@
 import React,{useState,useEffect}from 'react';
 import { StyleSheet, Text, View,NativeModules,Image,Linking} from 'react-native';
-import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'; 
@@ -14,7 +14,6 @@ import AlertView from "../components/AlertView";
 const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
-    var STATUS=route.params.STATUS
     var UserId=route.params.UserId
     const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);

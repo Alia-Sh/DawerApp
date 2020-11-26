@@ -167,7 +167,7 @@ import Loading from '../components/Loading';
         }
     }
         
-    const AddDriver=()=>{
+    const sendJounRequest=()=>{
         if(checkValidName() && checkValidUserName() && checkValidEmail() && checkValidPhone() && checkValidPassword()){ 
             setAlert({
                 ...alert,
@@ -240,7 +240,6 @@ import Loading from '../components/Loading';
                                     setAlert({
                                         ...alert,
                                         Title:'',
-                                        //Message:'لم يتم إضافة السائق بنجاح',
                                         Message:'حصلت مشكلة في إرسال طلبك',
                                         jsonPath:"Error",
                                         alertVisible:true,
@@ -323,7 +322,6 @@ import Loading from '../components/Loading';
                 <View backgroundColor ='#ffffff' marginTop= {40} marginBottom={100} borderRadius={30} width={width*.90} height={height*.90} >
                     <View style={styles.header}>
                         <MaterialIcons style={Platform.OS === 'android'? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff"  onPress={resetData} />
-                        {/* <Text style={styles.text_header_modal}>إضافة سائق توصيل</Text> */}
                             <Text style={styles.text_header_modal}>طلب انضمام كسائق</Text> 
                     </View>
 
@@ -335,7 +333,6 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل اسم السائق"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setName(val)}
-                                // textAlign= 'right'
                                 onEndEditing={() => checkValidName()}
                                 >
                             </TextInput>  
@@ -356,7 +353,6 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل اسم المستخدم"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setUserName(val)}
-                                // textAlign= 'right'
                                 onEndEditing={() => checkValidUserName()}
                                 >
                             </TextInput>  
@@ -377,7 +373,6 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل البريد الإلكتروني"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setEmail(val)}
-                                // textAlign= 'right'
                                 onEndEditing={() => checkValidEmail()}
                                 >
                             </TextInput>  
@@ -398,7 +393,6 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل رقم الجوال"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setPhone(val)}
-                                // textAlign= 'right'
                                 onEndEditing={() => checkValidPhone()}
                                 keyboardType="number-pad" //number Input
                                 maxLength={10}
@@ -421,7 +415,6 @@ import Loading from '../components/Loading';
                                 placeholder="ادخل كلمة المرور"
                                 autoCapitalize="none"
                                 onChangeText={(val)=>setPassword(val)}
-                                // textAlign= 'right'
                                 onEndEditing={() => checkValidPassword()}
                                 >
                             </TextInput>  
@@ -455,7 +448,7 @@ import Loading from '../components/Loading';
                                 dark={true} 
                                 compact={true} 
                                 style={{width:100}} 
-                                onPress={AddDriver}>
+                                onPress={sendJounRequest}>
                                 <Text style={{color:"#fff",fontSize:18,fontWeight: 'bold'}}>إرسال</Text>
                             </Button>
                         }
@@ -477,16 +470,6 @@ import Loading from '../components/Loading';
   const marginTopSpace = height * 0.020;
 
   const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor:'#809d65',
-    },
-    content: {
-        flex:4,
-        backgroundColor:'#809d65',
-        alignItems:'center',
-        justifyContent:'center'
-    },
     header:{
         height:"10%",
         backgroundColor:"#809d65",
@@ -495,13 +478,6 @@ import Loading from '../components/Loading';
         alignItems:'center',
         justifyContent:'center',
         flexDirection:'row',
-    },
-    text_header: {
-        color: '#ffff',
-        fontWeight: 'bold',
-        fontSize: 25,
-        textAlign: 'center',
-        marginTop:20
     },
     text_header_modal:{
         color: '#ffff',
@@ -531,7 +507,6 @@ import Loading from '../components/Loading';
         marginTop: Platform.OS === 'ios' ? 0 : -12,
         paddingLeft: 10,
         color: '#05375a',
-        // textAlign: 'right',
         marginRight:'8%'  
     },
     action: {

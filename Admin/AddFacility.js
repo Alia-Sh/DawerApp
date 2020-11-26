@@ -544,7 +544,7 @@ export default class AddFacility extends Component {
       this.setState({LocationModal:false})
     }
 
-    closeLocatiomModal=()=>{
+    closeLocationModal=()=>{
       this.setState({LocationModal:false})
   }
 
@@ -1179,7 +1179,7 @@ export default class AddFacility extends Component {
                 </View>
 
                 {this.state.LocationModal?
-                    <GoogleMap pickLocation={this.pickLocation} closeLocatiomModal={this.closeLocatiomModal}></GoogleMap>
+                    <GoogleMap pickLocation={this.pickLocation} closeLocationModal={this.closeLocationModal}></GoogleMap>
                     :
                  
                     null

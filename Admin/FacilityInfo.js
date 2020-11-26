@@ -1,13 +1,10 @@
 import React, {useEffect,useState}from 'react';
 import { StyleSheet, Text, View,Image,Platform,TouchableOpacity,Linking}from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import {Title,Card,Button,FAB}from 'react-native-paper';
-import Feather from 'react-native-vector-icons/Feather';
+import {Card,Button}from 'react-native-paper';
 import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import {FontAwesome5} from '@expo/vector-icons';
-import { YellowBox } from 'react-native';
-import { set } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '../components/Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -30,8 +27,6 @@ const FacilityInfo=({navigation,route,props})=>{
         endTime:"",
         startTime:"",
     })
-    const [Phone,setPhone]=useState([])
-    const [Email,setEmail]=useState([])
     const [Picture,setPicture] = useState("")
     const [data,setData] = React.useState({
         isLoading:false,
@@ -61,36 +56,11 @@ const FacilityInfo=({navigation,route,props})=>{
                 latitude:Data.Location.latitude,
                 longitude:Data.Location.longitude 
             })
-            // retriveImage();
             setPicture(Data.Logo);
             }
           })
     }
-//it will be remove if facility's Logo work correctly //
-    const retriveImage= async ()=>{
-        var imageRef = firebase.storage().ref('Facilities/' + FacilityId);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            //from url you can fetched the uploaded image easily
-            setPicture(url);
-          })
-          .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
 
-    // const setPhoneAndEmail=async()=>{
-    //    data.isPhoneAvailable=ContactInfo.some( ContactInfo => ContactInfo['Name'] === 'رقم الهاتف' ) 
-    //    data.isEmailAvailable= ContactInfo.some( ContactInfo => ContactInfo['Name'] === 'البريد الإلكتروني' )
-    //    if(data.isPhoneAvailable){
-    //     // data.PhoneIndex=ContactInfo.findIndex( ContactInfo => ContactInfo['Name'] === 'رقم الهاتف' )
-    //     setPhone(ContactInfo[ContactInfo.findIndex( ContactInfo => ContactInfo['Name'] === 'رقم الهاتف' )].value)
-    //    }
-    //    if(data.isEmailAvailable){
-    //     // data.EmailIndex=ContactInfo.findIndex( ContactInfo => ContactInfo['Name'] === 'البريد الإلكتروني' )
-    //     setEmail(ContactInfo[ContactInfo.findIndex( ContactInfo => ContactInfo['Name'] === 'البريد الإلكتروني' )].value)
-    //    }
-    //    console.log(data.isEmailAvailable);
-    // }
     const openDial=(phone)=>{
         if(Platform.OS==="android"){
             Linking.openURL(`tel:${phone}`)
@@ -193,7 +163,6 @@ const FacilityInfo=({navigation,route,props})=>{
                             <Text style={styles.textStyle}>معلومات التواصل:</Text>
                         </View> 
                         {
-                        // ContactInfo.filter(e => e.Name === "رقم الهاتف").length > 0
                             ContactInfo.some( ContactInfo => ContactInfo['Name'] === 'رقم الهاتف' ) 
                         ?
                         <TouchableOpacity onPress={()=>openDial(ContactInfo[ContactInfo.findIndex( ContactInfo => ContactInfo['Name'] === 'رقم الهاتف' )].value)}>
@@ -210,7 +179,6 @@ const FacilityInfo=({navigation,route,props})=>{
                             null
                         }
                         {
-                        // ContactInfo.filter(e => e.Name === "البريد الإلكتروني").length > 0
                             ContactInfo.some( ContactInfo => ContactInfo['Name'] === 'البريد الإلكتروني' )
                         ?
                         <TouchableOpacity onPress={()=>Linking.openURL(`mailto:${ContactInfo[ContactInfo.findIndex( ContactInfo => ContactInfo['Name'] === 'البريد الإلكتروني' )].value}`)}>
@@ -296,7 +264,6 @@ const themeDelete= {
 const styles=StyleSheet.create({
     root:{
         flex:1,
-        // backgroundColor: '#F5F5F5', 
         backgroundColor: '#fff',   
     },
     header:{
@@ -339,16 +306,8 @@ const styles=StyleSheet.create({
     },
     mytext:{
         fontSize:15,
-        // marginTop:3,
         marginRight:5,
         marginLeft: 5
-    },
-    action: {
-        margin: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f2f2f2',
-        paddingRight:3,
-        paddingLeft:3
     },
     textStyle:{
         color: '#9E9E9E',

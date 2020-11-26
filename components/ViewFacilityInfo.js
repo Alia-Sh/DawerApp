@@ -40,22 +40,10 @@ const ViewFacilityInfo=({navigation,route})=>{
                 latitude:Data.Location.latitude,
                 longitude:Data.Location.longitude 
             })
-            // retriveImage();
             setPicture(Data.Logo)
             }
           })
     }
-//it will be remove if facility's Logo work correctly 
-    const retriveImage= async ()=>{
-        var imageRef = firebase.storage().ref('Facilities/' + FacilityId);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            //from url you can fetched the uploaded image easily
-            setPicture(url);
-          })
-          .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
 
     const openDial=(phone)=>{
         if(Platform.OS==="android"){
@@ -199,18 +187,7 @@ const ViewFacilityInfo=({navigation,route})=>{
     )
 }
 
-const theme= {
-    colors:{
-        primary: "#9E9D24"
-    }
-}
 
-const themeDelete= {
-    colors:{
-        primary: "#B71C1C",
-        text: "black",
-    },
-}
 const styles=StyleSheet.create({
     root:{
         flex:1,
@@ -259,28 +236,10 @@ const styles=StyleSheet.create({
         marginRight:5,
         marginLeft: 5
     },
-    action: {
-        margin: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f2f2f2',
-        paddingRight:3,
-        paddingLeft:3
-    },
     textStyle:{
         color: '#9E9E9E',
         marginLeft:5,
         fontSize: 15
-    },
-    button:{
-        flexDirection: Platform.OS === 'android' && 
-        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-        NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row-reverse' : 'row',
-        justifyContent:"space-around",
-        paddingTop:15,
-        paddingLeft:40,
-        paddingRight:40,
-        paddingBottom:15
     },
     flexDirectionStyle:{
         flexDirection: Platform.OS === 'android' && 

@@ -1,7 +1,6 @@
 import React, {useEffect,useState}from 'react';
 import { StyleSheet, Text, View,Image,Platform}from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient'; 
-import {Title,Card,Button,FAB}from 'react-native-paper';
+import {Title,Card,Button}from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
 import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
@@ -31,7 +30,6 @@ const DriverViewProfile = ({navigation})=>{
     const [Location,setLocation] = useState("")
     const [Email,setEmail] = useState("")
     const [Picture,setPicture] = useState("")
-    // const [SecureTextEntry,setSecureTextEntry] = useState(true)
 
     const retriveImage= async ()=>{
         var imageRef = firebase.storage().ref('images/' + userId);
@@ -48,10 +46,6 @@ const DriverViewProfile = ({navigation})=>{
         retriveImage()
     },[]);
 
-
-    // const updateSecureTextEntry=()=>{
-    //     setSecureTextEntry(!SecureTextEntry)
-    //   }
     return(
 
         <View style={styles.root}>
@@ -213,16 +207,5 @@ const styles=StyleSheet.create({
         position: 'absolute',
         left: 16
     },
-    vii:{
-        height:"25%",
-        borderBottomLeftRadius:90,
-        borderBottomRightRadius:90,
-        overflow: 'hidden',
-        backgroundColor:"red"
-    },
-    icon2:{
-        position: 'absolute',
-        right: 16
-    }
 })
 export default DriverViewProfile

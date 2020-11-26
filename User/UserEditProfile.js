@@ -344,7 +344,7 @@ const UserEditProfile  = ({navigation,route})=>{
         navigation.goBack();
     }
 
-    const closeLocatiomModal=()=>{
+    const closeLocationModal=()=>{
         setData({
             ...data,
             LocationModal:false
@@ -581,7 +581,7 @@ const UserEditProfile  = ({navigation,route})=>{
                     :
                         null
                 }
-                {data.LocationModal?<GoogleMap pickLocation={pickLocation} closeLocatiomModal={closeLocatiomModal}></GoogleMap>:null}
+                {data.LocationModal?<GoogleMap pickLocation={pickLocation} closeLocationModal={closeLocationModal}></GoogleMap>:null}
 
                     {message ? (
                         <TouchableOpacity

@@ -6,13 +6,10 @@ import {MaterialIcons} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Animatable from 'react-native-animatable';
 import {Card,Button} from 'react-native-paper';
-import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
 import firebase from '../Database/firebase';
 import AlertView from "../components/AlertView";
-import NumericInput from 'react-native-numeric-input';
-import { ArabicNumbers } from 'react-native-arabic-numbers';
 import {CheckBox} from "native-base";
 import Loading from '../components/Loading';
 import * as Permissions from 'expo-permissions';
@@ -32,7 +29,6 @@ import * as Permissions from 'expo-permissions';
     const [id,setID]=useState('');
     const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
-    const [selectedValue, setSelectedValue] = useState("زجاج");
     const [UserName,setUserName]= useState('');
     
 

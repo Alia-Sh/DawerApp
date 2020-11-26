@@ -1,5 +1,5 @@
 import React, {useState}from 'react';
-import { StyleSheet, Text, View,KeyboardAvoidingView,TextInput, Alert,Image,ActivityIndicator} from 'react-native';
+import { StyleSheet, Text, View,TextInput,Image,ActivityIndicator} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
 import {Button}from 'react-native-paper';

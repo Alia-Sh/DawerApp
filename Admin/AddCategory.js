@@ -207,9 +207,6 @@ const AddCategory=(props)=>{
     );
 }
 
-const {height} = Dimensions.get("screen");
-const height_logo = height * 0.10;
-
 const styles=StyleSheet.create({
     centeredView:{
         justifyContent:'center',
@@ -262,10 +259,7 @@ const styles=StyleSheet.create({
     },
     textInput: {
         marginTop: Platform.OS === 'ios' ? 0 : 0,
-        // paddingLeft: 10,
         color: '#05375a',
-        // textAlign: 'right',
-        // marginRight:10  
     },
     header:{
         flexDirection:'row',
@@ -304,11 +298,11 @@ const styles=StyleSheet.create({
         width:'50%',
     },
     Add: {
-      width: '100%',
-      height: 50,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 10
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
   },
     
 });

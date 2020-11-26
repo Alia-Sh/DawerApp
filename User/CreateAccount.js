@@ -68,7 +68,7 @@ const pickLocation=(address,latitude,longitude)=>{
   setLocationModal(false)
 }
 
-const closeLocatiomModal=()=>{
+const closeLocationModal=()=>{
   setLocationModal(false)
 }
 
@@ -288,7 +288,7 @@ return(
             </TouchableOpacity> 
   
 </Animatable.View>
-{LocationModal?<GoogleMap pickLocation={pickLocation} closeLocatiomModal={closeLocatiomModal}></GoogleMap>:null}
+{LocationModal?<GoogleMap pickLocation={pickLocation} closeLocationModal={closeLocationModal}></GoogleMap>:null}
 </View>
 </KeyboardAvoidingView>
 
