@@ -135,7 +135,6 @@ const ResetPassword=({navigation})=>{
                 }
             });
         }else{
-Alert
         }
     }
 return(

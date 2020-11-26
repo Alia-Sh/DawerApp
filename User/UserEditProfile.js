@@ -64,6 +64,7 @@ const UserEditProfile  = ({navigation,route})=>{
         longitude:getDetails("Location").longitude
     })
     const [Picture,setPicture] = useState(getDetails("Picture"))
+    const [CurrentPicture,setCurrentPicture] = useState(Picture)
     const [data,setData] = React.useState({
         isLoading:false,
         isValidPhone:true,
@@ -132,7 +133,7 @@ const UserEditProfile  = ({navigation,route})=>{
                         Name: Name,
                         Location:Location  
                     }).then(function (){
-                        if(Picture!=""){
+                        if(Picture!="" && Picture!=CurrentPicture){
                         uploadImage(Picture,userId)
                         .then(()=> {
                             setData({
@@ -251,7 +252,7 @@ const UserEditProfile  = ({navigation,route})=>{
                     Name: Name,
                     Location:Location       
                 }).then(function (){
-                    if(Picture!=""){
+                    if(Picture!="" && Picture!=CurrentPicture){
                     uploadImage(Picture,userId)
                     .then(()=> {
                         setData({

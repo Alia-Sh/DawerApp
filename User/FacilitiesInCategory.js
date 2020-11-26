@@ -107,6 +107,21 @@ SearchInList = (word) =>{
   setSearchOccur(true)
 }
 
+const resetData=()=>{
+  setFacList([])
+  setLoading(true)
+  setPicture("")
+  setTerm('')
+  setSearchList([])
+  setSearchOccur(false)        
+
+  setData({
+    ...data,
+      isLoading:false,
+      isEmptyList:false         
+    })
+}
+
     return (
         <View style={styles.container}>
         <View style={styles.fixedHeader}>

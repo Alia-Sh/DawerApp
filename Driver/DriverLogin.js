@@ -11,7 +11,7 @@ import { StyleSheet,
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import firebase from '../Database/firebase';
-import RequestJoin from '../Screens/RequestJoin';
+import RequestJoin from '../Guest/RequestJoin';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
