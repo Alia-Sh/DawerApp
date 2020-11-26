@@ -1,6 +1,6 @@
 
 import React,{useState,useEffect} from 'react';
-import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform,Picker} from 'react-native';
+import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform,Picker,ActionSheetIOS} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {MaterialIcons} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -15,6 +15,7 @@ import NumericInput from 'react-native-numeric-input';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
 import {CheckBox} from "native-base";
 import Loading from '../components/Loading';
+import * as Permissions from 'expo-permissions';
 
  const NewRequestModal=(props)=>{
     const[CategoryList,setCategoryList]= useState([{Name:'زجاج'}])
@@ -90,21 +91,65 @@ import Loading from '../components/Loading';
      setChecked('حاوية')
     }
 
-    const selectImage = async () => {
-        try {
-          let response = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3]
-          })
-          if (!response.cancelled) {
-              //Here is the classifier
-          }
-        } catch (error) {
-          console.log(error);
-          Alert.alert(error.message);
-        }
+  // image classification options
+  const camOptions =  () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+    {
+      options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
+      destructiveButtonIndex: 2,
+      cancelButtonIndex: 0
+    },
+    buttonIndex => {
+      if (buttonIndex === 0) {
+        // cancel action
+      } else if (buttonIndex === 1) {
+        pickFromCamera();
+      } else if (buttonIndex === 2) {
+        selectImage();
       }
+    }
+    );
+  }
+
+  // take photo from camera
+  const pickFromCamera = async ()=>{
+    const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
+    if(granted){
+        let data =  await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1,1]
+            // quality: 0.5
+          })
+        if(!data.cancelled){
+          const source = { uri: data.uri }
+          setImage(source);
+          getPred();
+          //this.classifyImage()
+        }
+    }else{
+      alert("you need to give the permission to work!")
+    }
+  }
+
+  // select image from gallery
+  const selectImage = async() => {
+    try {
+      let response = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3]
+      })
+      if (!response.cancelled) {
+          const source = { uri: response.uri }
+          setImage(source);
+          getPred();
+          //this.classifyImage()
+      }
+    } catch (error) {
+      console.log(error)
+      }
+  }
 
      
 
@@ -713,7 +758,7 @@ return (
                                     </Picker>  
 
                                         <View style={{alignItems:'center',justifyContent:'center'}}>
-                                            <TouchableOpacity onPress={() =>selectImage ()}>
+                                            <TouchableOpacity onPress={() =>camOptions ()}>
                                                 <Image
                                                     style={{width:40,height:40}}
                                                     source={require('../assets/Camera.png')}
