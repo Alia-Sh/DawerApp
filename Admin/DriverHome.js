@@ -273,7 +273,7 @@ function AppprovedDrivers  ({ navigation }){
     {SearchOccur ? 
       
       <FlatList
-        data = {SearchList1}
+        data = {SearchList}
         renderItem={renderItem1}
         keyExtractor = {(item)=>item.key}
         extraData={selectedId1}
