@@ -5,6 +5,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 
 const HomeScreen = ({navigation})=>{
 
@@ -12,7 +14,45 @@ const HomeScreen = ({navigation})=>{
   const [loading, setLoading] = useState(true)
   const [term, setTerm] = useState('')
   const [SearchList, setSearchList] = useState([])
-  const [SearchOccur, setSearchOccur] = useState(false)        
+  const [SearchOccur, setSearchOccur] = useState(false)       
+  
+
+  
+  var UserID=firebase.auth().currentUser.uid;
+//to store the token expo in  our firebase 
+ 
+
+   registerForPushNotificationsAsync = async (UserID) => {
+        const { existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+        let finalStatus = existingStatus;
+
+        // only ask if permissions have not already been determined, because
+        // iOS won't necessarily prompt the user a second time.
+        if (existingStatus !== 'granted') {
+            // Android remote notification permissions are granted during the app
+            // install, so this will only ask on iOS
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+        }
+
+        // Stop here if the user did not grant permissions
+        if (finalStatus !== 'granted') {
+            return;
+        }
+
+        // Get the token that uniquely identifies this device
+        let token = await Notifications.getExpoPushTokenAsync();
+        //post to firebase
+        
+        var updates = {}
+        updates['/expoToken'] = token
+        firebase.database().ref("User").child(UserID).update(updates)
+        
+        
+      
+       
+        //call the push notification 
+    }
 
 
   const Item = ({ item, onPress, style }) => (
@@ -50,6 +90,7 @@ const HomeScreen = ({navigation})=>{
   
   useEffect(()=>{
     fetchData()
+    registerForPushNotificationsAsync(UserID)
   },[])
 
   const [selectedId, setSelectedId] = useState(null);

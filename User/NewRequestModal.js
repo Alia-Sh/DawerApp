@@ -823,21 +823,14 @@ return (
                                         </Animatable.View>
                                     }
                                     
-                                       <View style={{height:'15%',marginTop:-10}}>
-                                {RequestList.map(request=> (
-                                    <View key={request.id}>
-                  
-                                    <Text style={{textAlign:Platform.OS=='ios'?'right':'left',color:"#999999"}}> - المادة: {request.material}  الكمية: {request.Quantity}{request.Type} </Text>
-                                    </View>
-                                   ))}
-                                  
-                                </View> 
+                              
                                    
                                      <View style={styles.button}>
                                     <Button  icon="plus" mode="contained" theme={theme } onPress={() =>addRequest ()}>
                                          إضافة المادة
                                        </Button>
                                        </View>
+                                       
                                 </View>
 
                                 }
@@ -1096,10 +1089,7 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse' ,
-        // justifyContent:"space-around",
-        // alignItems:Platform.OS === 'ios'?'flex-start':'flex-end',
-        // paddingLeft:Platform.OS === 'ios'?185:0,
-        // paddingRight:Platform.OS === 'android'?200:0,
+        marginBottom:30,
         padding:8,
     },
     errorMsg2: {
@@ -1127,6 +1117,7 @@ const styles=StyleSheet.create({
     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
     NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse' ,
     marginTop:2,
+   
     
     } ,
      item:{
