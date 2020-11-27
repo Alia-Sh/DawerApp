@@ -1,8 +1,7 @@
 import React, {useEffect,useState}from 'react';
-import { StyleSheet, Text, View,Image,Platform,Linking,FlatList,TouchableOpacity}from 'react-native';
+import { StyleSheet, Text, View,Image,Platform,FlatList,TouchableOpacity}from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import {Title,Card,Button,FAB}from 'react-native-paper';
-import Feather from 'react-native-vector-icons/Feather';
 import { NativeModules } from 'react-native';
 import firebase from '../Database/firebase';
 import {FontAwesome5,MaterialIcons} from '@expo/vector-icons';
@@ -57,52 +56,20 @@ const DriverAllRequests = ({navigation,route})=>{
     var query = firebase.database().ref('DeliveryDriver/' + userId);
     query.once("value").then(function(result) {
       const userData = result.val();
-      setName(userData.Name);
-      setPhone(userData.PhoneNumber);
       setUserName(userData.UserName);
-      setLocation(userData.DeliveryArea)
-      setEmail(userData.Email)
-//retriveImage();
+     
  
     });
 
-    const [Name,setName] = useState("")
-    const [Phone,setPhone] = useState("")
     const [UserName,setUserName] = useState("")
-    const [Location,setLocation] = useState("")
-    const [Email,setEmail] = useState("")
-    const [Picture,setPicture] = useState("")
-    // const [SecureTextEntry,setSecureTextEntry] = useState(true)
 
-    const retriveImage= async ()=>{
-        var imageRef = firebase.storage().ref('images/' + userId);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            //from url you can fetched the uploaded image easily
-            setPicture(url);
-          })
-          .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
 
+   
     useEffect(()=>{
-        retriveImage()
         fetchData()
 
     },[]);
 
-    const openDial=(phone)=>{
-        if(Platform.OS==="android"){
-            Linking.openURL(`tel:${phone}`)
-        }else {
-            Linking.openURL(`telprompt:${phone}`)
-        }
-    }
-    // const updateSecureTextEntry=()=>{
-    //     setSecureTextEntry(!SecureTextEntry)
-    //   }
-
-    // list
     
     const [RequestList,setRequestList] = useState([])
     const[loading,setLoading]=useState(true)
@@ -153,9 +120,6 @@ const fetchData=()=>{
   })
 }
 
-const removeDriver=()=>{
-
-}
 
   
 
@@ -174,7 +138,6 @@ const removeDriver=()=>{
             var DATE=item.Date;
             var STATUS = item.Status;
             var UserId=item.UserId;
-            console.log(ID+'      >>>>>here in gome');
             navigation.navigate("AssignedRequestsToDriver",{ID,DATE,STATUS,UserId})}}
           style={{ backgroundColor :item.key === selectedId ? "#F3F3F3":'#FFFFFF' }}
         />
@@ -191,85 +154,25 @@ const removeDriver=()=>{
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
                         onPress={()=>{
-                            //need to edit
-                          navigation.navigate("DriverHome")
+                            navigation.goBack()
                         }}/>
                     <View>
                         <Text style={styles.headerText}>@ {UserName}</Text>
+                        <Image
+                            style={{width:'100%',marginTop:8}}
+                            source={require('../assets/line.png')}
+                            />
                     </View>
-                    <View>
-                    
-                    </View>
-                
-    
+            
                 </View>
             </SafeAreaView>
 
             <KeyboardAwareScrollView style={styles.root}>
             <View style={styles.footer}>
-
-
-                <View style={{alignItems:"center",margin:10}}>
-                    <Title>{Name}</Title>
-                </View>
-
-                <Card style={styles.mycard}
-                        onPress={()=>openDial(Phone)}>
-                    <View style={styles.cardContent}>
-                        <Feather
-                            name="phone"
-                            color="#929000"
-                            size={25}/> 
-                        <Text style={styles.mytext}>{Phone}</Text>
-                    </View>  
-                </Card>
-            
-                <Card style={styles.mycard}
-                    onPress={()=>Linking.openURL(`mailto:${Email}`)}>
-                    <View style={styles.cardContent}>
-                        <Feather
-                            name="mail"
-                            color="#929000"
-                            size={25}/> 
-                        <Text style={styles.mytext}>{Email}</Text>
-                    </View>  
-                </Card>  
-
-                <Card style={styles.mycard}>
-                    <View style={styles.cardContent}>
-                        <Feather
-                            name="map-pin"
-                            color="#929000"
-                            size={25}/> 
-                        <Text style={styles.mytext} >{Location}</Text>
-                    </View>  
-                </Card> 
-                {/*
-                    <View style={{alignItems:'center',padding:7,
-                shadowColor :'#F1F1EA',
-                shadowOffset :{width:5,height:5},
-                 shadowOpacity :20,    
-                }}
-                    >
-                <Card style={{width:'55%',alignItems:'center'}}
-                      //  onPress={()=>openDial(Phone)}
-                      >
-                    <View style={styles.cardContent}>
-                    <Feather name="user-x" size={24} color="#B71C1C"
-                        onPress={()=>{
-                          removeDriver();
-                        }}/>
-
-                        <Text style={styles.delText}>حذف السائق </Text>
-                    </View>  
-                </Card>
-                </View>
-                */}
-
-                <View style={{alignItems:"center"}}>
+              <View style={{alignItems:"center"}}>
                     
                       
-                            <View style={{alignItems:"center",margin:15}}>
+                            <View style={{alignItems:"center",marginTop:-15,marginBottom:15}}>
                            <Title style={{color: '#9E9D24',fontSize:20}}>الطلبات المسندة : {ArabicNumbers(RequestList.length)}</Title>
 
                            
@@ -285,7 +188,7 @@ const removeDriver=()=>{
       
     
             <FlatList
-              data={RequestList.slice(0,4)}
+              data={RequestList}
               renderItem={renderItem}
               keyExtractor={(item)=>item.key}
               extraData={selectedId}
@@ -294,27 +197,7 @@ const removeDriver=()=>{
             />
           
             {/* end request list*/ }
-            { RequestList.length >4 ?
-            <TouchableOpacity 
-            onPress={() => 
-                { var ID =item.key;
-                  var DATE=item.Date;
-                  var STATUS = item.Status;
-                  var UserId=item.UserId;
-                  console.log(ID+'      >>>>>here in gome');
-                  navigation.navigate("AssignedRequestsToDriver",{ID,DATE,STATUS,UserId})}}
-            >
-                  <Text style={{color: '#434343',
-                                 fontSize: 14,
-                                 marginRight:9,
-                                padding:4,
-                                 fontWeight:'bold'}}>
-                     المزيد
-                      </Text> 
-                      </TouchableOpacity>
-                      :
-                      <Text></Text> 
-}
+            
                 </View>
                 
             
