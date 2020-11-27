@@ -11,9 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
 //import DriverHome from './DriverHome';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import DeleteDriver from '../components/DeleteDriver';
+//import DeleteDriver from '../components/DeleteDriver';
 YellowBox.ignoreWarnings(['Setting a timer']);
 import AlertView from "../components/AlertView";
+import DeleteDriver from '../components/DeleteDriver';
 
 
 const Item = ({ item, onPress, style }) => (
@@ -54,7 +55,7 @@ const Item = ({ item, onPress, style }) => (
   );
 
 const AdminViewDriver = ({navigation,route})=>{
-    const [DeleteDriverModel,setDeleteDriver]= useState(false);
+    const [DeleteDriverModal,setDeleteDriver]= useState(false);
     
   
     const [alert,setAlert]=React.useState({
@@ -375,11 +376,11 @@ const removeDriver=()=>{
                             </View>
                         
                 
-                            {DeleteDriverModel?
-                <DeleteDriverModel 
+                            {DeleteDriverModal?
+                <DeleteDriver 
                 userId={userId} setDeleteDriver={setDeleteDriver}
                  navigation={navigation} title="حذف سائق" message="هل أنت متأكد من حذف السائق ؟"
-                  ></DeleteDriverModel>
+                  ></DeleteDriver>
               :
                 null
           }
