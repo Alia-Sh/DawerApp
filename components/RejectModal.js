@@ -15,7 +15,7 @@ const RejectModal=(props)=>{
         })
     }
 
-    const rejectDriver=(userId)=>{
+    const rejectJoinRequest=(userId)=>{
         firebase.database().ref('DeliveryDriver/' + userId).update({
             Status:"Rejected" 
         }).then(()=>{
@@ -51,7 +51,7 @@ return(
                         onPress={()=>{{props.type=="reject Request"?
                             rejectRequest(props.UserId,props.RequestId)
                         :
-                            rejectDriver(props.userId)
+                        rejectJoinRequest(props.userId)
                         }
                             
                     }}>

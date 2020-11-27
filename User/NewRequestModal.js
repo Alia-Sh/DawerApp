@@ -379,7 +379,6 @@ import * as Permissions from 'expo-permissions';
             ...data,
             isLoading:true 
         })
-        // for (var i in RequestList) {
             var RequestId = firebase.database().ref('Category/').push().getKey();
             firebase.database().ref('/PickupRequest/'+userId+'/'+RequestId).set({
                 DateAndTime:DateAndTime,
@@ -399,7 +398,6 @@ import * as Permissions from 'expo-permissions';
                 Alert.alert(error.message)
                 console.log('error ' , error)
             })
-        // }
     }
 
     const AddMaterialsToDatabase=(RequestId)=>{
@@ -574,6 +572,7 @@ import * as Permissions from 'expo-permissions';
             console.log(Material);
         }, 400)
     },[])
+    var currentDate = new Date();
  //******************************************************* header of the modal 
 return (
     
@@ -924,7 +923,7 @@ return (
         confirmTextIOS="تأكيد"
         datePickerModeAndroid={'spinner'}
         is24Hour={false}
-        minimumDate={new window.Date()}
+        minimumDate={currentDate.setDate(currentDate.getDate() + 1)}
         />
         {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
