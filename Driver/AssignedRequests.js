@@ -239,7 +239,11 @@ function OntheWay  ({ navigation }){
                 style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
                 source={require('../assets/line.png')}/>
           </View>
-
+{         RequestList.length == 0 ?
+<Text style={{textAlign:'center',padding:3,color :'#7B7B7B',}}>
+لا يوجد طلبات
+</Text>
+:
           <FlatList
             data={RequestList}
             renderItem={renderItem}
@@ -248,7 +252,7 @@ function OntheWay  ({ navigation }){
             onRefresh={()=>fetchData()}
             refreshing={loading}
           />
-          
+          }
             {/* end request list*/ }          
         </View>
     );
@@ -333,6 +337,11 @@ function Requests  ({ navigation }) {
                   source={require('../assets/line.png')}/>
             </View>
 
+            {         RequestList.length == 0 ?
+                <Text style={{textAlign:'center',padding:3,color :'#7B7B7B',}}>
+                لا يوجد طلبات
+                </Text>
+                :
             <FlatList
               data={RequestList}
               renderItem={renderItem}
@@ -341,6 +350,7 @@ function Requests  ({ navigation }) {
               onRefresh={()=>fetchData()}
               refreshing={loading}
             />
+}
         </View>
       );
 
@@ -428,6 +438,12 @@ function DliveredRequests  ({ navigation }) {
                 source={require('../assets/line.png')}/>
           </View>
 
+          {         RequestList.length == 0 ?
+          <Text style={{textAlign:'center',padding:3,color :'#7B7B7B',}}>
+          لا يوجد طلبات
+          </Text>
+          :
+
           <FlatList
             data={RequestList}
             renderItem={renderItem}
@@ -436,6 +452,7 @@ function DliveredRequests  ({ navigation }) {
             onRefresh={()=>fetchData()}
             refreshing={loading}
           />
+}
             {/* end request list*/ }
                 
         </View>

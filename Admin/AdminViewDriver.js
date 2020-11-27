@@ -11,7 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
 //import DriverHome from './DriverHome';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import DeleteDriver from '../components/DeleteDriver';
 YellowBox.ignoreWarnings(['Setting a timer']);
+import AlertView from "../components/AlertView";
 
 
 const Item = ({ item, onPress, style }) => (
@@ -52,6 +54,15 @@ const Item = ({ item, onPress, style }) => (
   );
 
 const AdminViewDriver = ({navigation,route})=>{
+    const [DeleteDriverModel,setDeleteDriver]= useState(false);
+    
+  
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',
+    })
 
    var  userId = route.params.ID;
     var query = firebase.database().ref('DeliveryDriver/' + userId);
@@ -201,7 +212,7 @@ const removeDriver=()=>{
                     </View>
                 
                     {//this front end to remove user user-times
-                    }{
+                    }{/*
 
                     
                     <View style={{flexDirection:'row-reverse',position:'absolute',right:16,top:25,
@@ -214,7 +225,7 @@ const removeDriver=()=>{
                           removeDriver();
                         }}/>
                     </View>
-                    }
+                   */ }
                     
                 </View>
             </SafeAreaView>
@@ -311,9 +322,18 @@ const removeDriver=()=>{
                 </View>
                 
                 <View>
+                    { RequestList == 0?
+                    <Text  style={{textAlign:'center',fontSize: 15,
+                    marginTop:5,
+                    color :'#7B7B7B',
+            }}>
+                        لا يوجد طلبات مسندة
+                    </Text>
+
+                    
                     
       
-    
+    :
             <FlatList
               data={RequestList.slice(0,4)}
               renderItem={renderItem}
@@ -322,6 +342,7 @@ const removeDriver=()=>{
               onRefresh={()=>fetchData()}
               refreshing={loading}
             />
+            }
           
             {/* end request list*/ }
             { RequestList.length >4 ?
@@ -340,12 +361,34 @@ const removeDriver=()=>{
                       </Text> 
                       </TouchableOpacity>
                       :
-                      <Text></Text> 
+                      null
 }
                 </View>
                 
-            
-               
+                            <View style={styles.button}>
+                                <Button icon="delete" mode="contained" theme={themeDelete } dark={true}
+                                                    onPress={()=>setDeleteDriver(true)}
+                                    >
+                                     حذف السائق
+                                </Button>
+
+                            </View>
+                        
+                
+                            {DeleteDriverModel?
+                <DeleteDriverModel 
+                userId={userId} setDeleteDriver={setDeleteDriver}
+                 navigation={navigation} title="حذف سائق" message="هل أنت متأكد من حذف السائق ؟"
+                  ></DeleteDriverModel>
+              :
+                null
+          }
+          {
+              alert.alertVisible?
+                  <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+              :
+                  null
+          }            
 
             </View>  
             </KeyboardAwareScrollView> 
@@ -358,6 +401,12 @@ const theme= {
     colors:{
         primary: "#C0CA33"
     }
+}
+const themeDelete= {
+    colors:{
+        primary: "#B71C1C",
+
+    },
 }
 
 const styles=StyleSheet.create({
