@@ -51,7 +51,7 @@ const Item = ({ item, onPress, style }) => (
    
   );
 
-const AdminViewDriver = ({navigation,route})=>{
+const DriverAllRequests = ({navigation,route})=>{
 
    var  userId = route.params.ID;
     var query = firebase.database().ref('DeliveryDriver/' + userId);
@@ -191,6 +191,7 @@ const removeDriver=()=>{
                 <View style={styles.header}>
                     <FontAwesome5 name="chevron-right" size={24} color="#161924" style={styles.icon}
                         onPress={()=>{
+                            //need to edit
                           navigation.navigate("DriverHome")
                         }}/>
                     <View>
@@ -200,44 +201,13 @@ const removeDriver=()=>{
                     
                     </View>
                 
-                    {//this front end to remove user user-times
-                    }{
-
-                    
-                    <View style={{flexDirection:'row-reverse',position:'absolute',right:16,top:25,
-                    shadowColor :'#F1F1EA',
-                    shadowOffset :{width:5,height:5},
-                     shadowOpacity :60,
-                     }}>
-                    <FontAwesome5 name="user-times" size={24} color="#B71C1C" style={styles.icon2}
-                        onPress={()=>{
-                          removeDriver();
-                        }}/>
-                    </View>
-                    }
-                    
+    
                 </View>
             </SafeAreaView>
 
             <KeyboardAwareScrollView style={styles.root}>
             <View style={styles.footer}>
-                <View style={{alignItems:"center"}}>
-                    {Picture==""?
-                        <Image
-                            style={styles.profile_image}
-                            source={require('../assets/DefaultImage.png')}
-                            />
-                        :
-                        <Image
-                            style={styles.profile_image}
-                            source={{uri:Picture}}
-                            />
-                    }
-                        <Image
-                            style={{width:'70%',marginTop:10}}
-                            source={require('../assets/line.png')}
-                            />
-                </View>
+
 
                 <View style={{alignItems:"center",margin:10}}>
                     <Title>{Name}</Title>
@@ -327,9 +297,12 @@ const removeDriver=()=>{
             { RequestList.length >4 ?
             <TouchableOpacity 
             onPress={() => 
-                { 
-                   var ID =userId
-                  navigation.navigate("DriverAllRequests",{ID})}}
+                { var ID =item.key;
+                  var DATE=item.Date;
+                  var STATUS = item.Status;
+                  var UserId=item.UserId;
+                  console.log(ID+'      >>>>>here in gome');
+                  navigation.navigate("AssignedRequestsToDriver",{ID,DATE,STATUS,UserId})}}
             >
                   <Text style={{color: '#434343',
                                  fontSize: 14,
@@ -518,4 +491,4 @@ const styles=StyleSheet.create({
     //end flat list
   
 })
-export default AdminViewDriver
+export default DriverAllRequests
