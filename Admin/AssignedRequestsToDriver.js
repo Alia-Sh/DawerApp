@@ -52,7 +52,7 @@ const AssignedRequestsToDriver = ({navigation,route})=>{
           if(Data){
             var li = []
             snapshot.forEach(function(snapshot){
-            var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity}
+            var temp={MaterialType:snapshot.val().MaterialType, Id:snapshot.key, Quantity:snapshot.val().Quantity, Type:snapshot.val().Type}
             li.push(temp)
             })
             setMaterials(li)
@@ -163,6 +163,7 @@ const AssignedRequestsToDriver = ({navigation,route})=>{
                   <View style={{flexDirection:"row-reverse",marginRight:8}}>
                     <Text style={styles.textStyle}>الكمية:</Text>
                     <Text style={{textAlign:"right",fontSize: 18,marginRight:5,marginTop:4}}>{item.Quantity}</Text>
+                    <Text style={{textAlign:"right",fontSize: 18,marginRight:5,marginTop:4}}>{item.Type}</Text>
                   </View>
               </View>
               )
