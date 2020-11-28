@@ -33,7 +33,7 @@ const Item = ({ item, onPress, style }) => (
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
             NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}> طلب بواسطة : {item.UserName}  </Text>
-          <Text style={styles.date}>وقت الإستلام : {item.Date}</Text>
+          <Text style={styles.date}>حالة الطلب : {item.S}</Text>
           
           
         </View>
@@ -55,6 +55,7 @@ const Item = ({ item, onPress, style }) => (
   );
 
 const AdminViewDriver = ({navigation,route})=>{
+  
     const [DeleteDriverModal,setDeleteDriver]= useState(false);
     
   
@@ -135,13 +136,36 @@ const fetchData=()=>{
             console.log(snapshot.key);
             console.log(snapshot.val().Status);
             if(snapshot.val().DeliveryDriverId == userId ){
+              var STATUS;
+              switch(snapshot.val().Status){
+                case "Pending":
+                    STATUS="معلق"
+                    break;
+                case "Accepted":
+                    STATUS="مقبول"
+                    break;
+                case "OutForPickup":
+                    STATUS="في الطريق للاستلام"
+                    break;
+                case "Delivered":
+                    STATUS="تم التوصيل"
+                    break;
+                case "Rejected":
+                    STATUS="مرفوض"
+                    break;
+                case "Canceled":
+                    STATUS="ملغي"
+                    break;
+                }
+          
                 
               var temp={
                 Date:snapshot.val().DateAndTime,
                 key:snapshot.key,
                 Status:snapshot.val().Status,
                 UserId:User,
-                UserName:snapshot.val().UserName
+                UserName:snapshot.val().UserName,
+                S:STATUS
             }
             //console.log(n+'check again ');
               li.push(temp)

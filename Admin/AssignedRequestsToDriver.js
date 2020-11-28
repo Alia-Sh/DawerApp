@@ -36,7 +36,7 @@ const AssignedRequestsToDriver = ({navigation,route})=>{
           STATUS="في الطريق للاستلام"
           break;
       case "Delivered":
-          STATUS="تم توصيل"
+          STATUS="تم التوصيل"
           break;
       case "Rejected":
           STATUS="مرفوض"

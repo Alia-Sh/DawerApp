@@ -92,7 +92,7 @@ const DeleteDriver=(props)=>{
             setAlert({
                 ...alert,
                 Title:' حدث خطأ ما',
-                Message:'لا نستطيع حذف السائق ، حاول مرة أخرى',
+                Message:'تعذر حذف السائق ، تأكد من عدم وجود طلبات مسندة لم يتم إيصالها',
                 jsonPath:"Error",
                 alertVisible:true,
             });
