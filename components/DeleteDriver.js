@@ -1,12 +1,20 @@
 import React,{useState,useEffect}from 'react';
-import { StyleSheet, Text,View,NativeModules,TouchableOpacity,Modal} from 'react-native';
+import { StyleSheet, Text,View,NativeModules,TouchableOpacity,Alert,Modal} from 'react-native';
 import firebase from '../Database/firebase';
 import LottieView from 'lottie-react-native';
+import AlertView from '../components/AlertView';
 
 const DeleteDriver=(props)=>{
 
 
     const [Req,setReq] = useState([])
+    const [alert,setAlert]=useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',   
+    })
+
 
     useEffect(()=>{
         fetchData(props.userId)
@@ -37,7 +45,7 @@ const DeleteDriver=(props)=>{
             }
           })
     }
-    const [alertVisible,setAlertVisible]= useState(true)
+    const [alertVisible1,setAlertVisible]= useState(true)
     
     const removeDriver=(userId)=>{
         
@@ -48,18 +56,56 @@ const DeleteDriver=(props)=>{
            firebase.database().ref('DeliveryDriver/' + userId).update({
                Status:"Suspend" 
            }).then(()=>{
-            console.log('!!!!!!!!!!!!!!!deleted yes!!!!!!!!!!!!!!!!!!!!!!!');
-               props.navigation.navigate("DriverHome");
-             
+            
+                setTimeout(()=>{
+                setAlert({
+                    ...alert,
+                    Title:'حذف السائق',
+                    Message:'تم حذف السائق بنجاح',
+                    jsonPath:"success",
+                    alertVisible:true,
+                });
+              
+                setTimeout(() => {
+                    setAlert({
+                        ...alert,
+                        alertVisible:false,
+                    });
+                    
+                                       props.navigation.navigate("DriverHome");
+                                       props.setDeleteDriver(false);
+
+
+                }, 4000)
+              },400)
+              console.log('!!!!!!!!!!!!!!!deleted yes!!!!!!!!!!!!!'+alert.alertVisible+'!!!!!!!!!!');
+                
+              
            })
        }//updates
        else {
      //  props.setDeleteDriver(false);
       // props.navigation.navigate("DriverHome");
-      console.log('!!!!!!!!!!!!!!!deleted no!!!!!!!!!!!!!!!!!!!!!!!');
-           console.log("rejectDriver");}
+         console.log('!!!!!!!!!!!!!!!deleted no!!!!!!!!!!!!!!!!!!!!!!!');
+           console.log("rejectDriver");
+           setTimeout(()=>{
+            setAlert({
+                ...alert,
+                Title:' حدث خطأ ما',
+                Message:'لا نستطيع حذف السائق ، حاول مرة أخرى',
+                jsonPath:"Error",
+                alertVisible:true,
+            });
+            setTimeout(() => {
+                setAlert({
+                    ...alert,
+                    alertVisible:false,
+                });
+            }, 4000)
+          },400) 
+        }
    
-           props.setDeleteDriver(false);
+           
 
     }
 
@@ -76,7 +122,7 @@ return(
 <Modal
     animationType="slide"
     transparent={true}
-    visible={alertVisible}>
+    visible={alertVisible1}>
         <View style={styles.centeredView}>
             <View style={styles.modalView}>
                 <Text style={styles.modalText}>{props.title}</Text>
@@ -111,10 +157,21 @@ return(
                         }}>
                             <Text style={styles.okStyle}>إلغاء</Text>
                     </TouchableOpacity>
+                      
+         
+        
                   </View>
             </View>
+            
         </View>
-</Modal>)
+        {alert.alertVisible?
+                <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+            :
+                null
+        }
+</Modal>
+
+);
 }
 const styles = StyleSheet.create({
     centeredView:{
