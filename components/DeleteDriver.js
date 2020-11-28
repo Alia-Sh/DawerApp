@@ -1,22 +1,77 @@
-import React,{useState}from 'react';
+import React,{useState,useEffect}from 'react';
 import { StyleSheet, Text,View,NativeModules,TouchableOpacity,Modal} from 'react-native';
 import firebase from '../Database/firebase';
 import LottieView from 'lottie-react-native';
 
 const DeleteDriver=(props)=>{
+
+
+    const [Req,setReq] = useState([])
+
+    useEffect(()=>{
+        fetchData(props.userId)
+      },[])
+
+    fetchData=(userId)=>{
+        firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
+            const Data = snapshot.val();
+            if(Data){
+              var li = []
+              snapshot.forEach(function(snapshot){
+                var User=snapshot.key
+                firebase.database().ref('/PickupRequest/'+User).on('value',snapshot=>{
+
+                  snapshot.forEach(function(snapshot){
+                    if(snapshot.val().DeliveryDriverId == userId && snapshot.val().Status != 'Delivered' ){
+                      var temp={
+                        Status:snapshot.val().Status,
+                      }
+                      li.push(temp)
+                     
+                    }
+                  })
+                })
+              })
+              
+              setReq(li)
+            }
+          })
+    }
     const [alertVisible,setAlertVisible]= useState(true)
-
-   
-
+    
     const removeDriver=(userId)=>{
-        firebase.database().ref('DeliveryDriver/' + userId).update({
+        
+         ////////////////////////////////////////////
+   
+          if(Req.length == 0){ //update
+               console.log('!!!!!!!!!!!!!in the if!!!!!!!!!!!!!!!!!!!');
+           firebase.database().ref('DeliveryDriver/' + userId).update({
+               Status:"Suspend" 
+           }).then(()=>{
+            console.log('!!!!!!!!!!!!!!!deleted yes!!!!!!!!!!!!!!!!!!!!!!!');
+               props.navigation.navigate("DriverHome");
+             
+           })
+       }//updates
+       else {
+     //  props.setDeleteDriver(false);
+      // props.navigation.navigate("DriverHome");
+      console.log('!!!!!!!!!!!!!!!deleted no!!!!!!!!!!!!!!!!!!!!!!!');
+           console.log("rejectDriver");}
+   
+           props.setDeleteDriver(false);
+
+    }
+
+        /////////////////////////////Here the old
+       { /*firebase.database().ref('DeliveryDriver/' + userId).update({
             Status:"Rejected" 
         }).then(()=>{
             props.setDeleteDriver(false);
             props.navigation.navigate("DriverHome");
         })
-        console.log("rejectDriver");
-    }
+    console.log("rejectDriver");*/}
+    
 return(            
 <Modal
     animationType="slide"
