@@ -224,7 +224,7 @@ const UserEditProfile  = ({navigation,route})=>{
                             setAlert({
                                 ...alert,
                                 Title:'',
-                                Message:'رمز التحقق SMS المستخدم منهي الصلاحية، الرجاء المحاولة مرة اخرى.',
+                                Message:'رمز التحقق SMS المستخدم منتهي الصلاحية، الرجاء المحاولة مرة اخرى.',
                                 jsonPath:"Error",
                                 alertVisible:true,
                             });
