@@ -52,7 +52,7 @@ const [Name,setName] = useState('')
 const [Phone,setPhone] = useState('')
 const [UserName,setUserName] = useState('')
 const [Location,setLocation] = useState({
-  address:"",
+  address:'',
   latitude:0,
   longitude:0
 })
@@ -77,60 +77,137 @@ const closeLocationModal=()=>{
   navigation.navigate("ChooseBetweenUsers")
 }
 
- const Send = () => {
-    var query = firebase.database().ref('User/' + userId);
-    query.once("value").then(function(result){
-    const userData = result.val();
-    if (Name === '' && UserName !== '' && Location !== '' ){
-        setdata({
-        ... data,
-        ValidName: false,
-        ValidUserName: true,
-        LocationExisting: true
-        });  
-    }
-    
-    else if (Location === '' && UserName == '' && Name !== ''){
-      setdata({
-        ... data,
-        LocationExisting: false,
-        ValidUserName: false,
-        ValidName: true,
-        });
-    }
-    else if (UserName !== ''  && Location === ''  && Name == ''){
-      setdata({
-        ... data,
-        ValidUserName: true,
-        LocationExisting: false,
-        ValidName: false,
-        });
-    }
-    else if (UserName !== ''  && Name !== ''&& Location === ''  ){
-      setdata({
-        ... data,
-        ValidUserName: true,
-        ValidName: true,
-        LocationExisting: false,
-        });
-    }
-    else if (UserName == ''  && Name == ''&& Location !== ''  ){
-      setdata({
-        ... data,
-        LocationExisting: true,
-        ValidUserName: false,
-        ValidName: false,
-        });
-    }
-    else if(UserName === '' && Name === '' && Location === ''){
-      setdata({
+const checkValidName=()=>{
+  if(Name==''){
+    setdata({
+      ... data,
+      ValidName: false,
+      });  
+      return false;
+  }else{
+    setdata({
+      ... data,
+      ValidName: true,
+      });  
+      return true;  
+  }
+}
+
+const checkValidUserName=()=>{
+  if(UserName==''){
+    setdata({
       ... data,
       ValidUserName: false,
-      ValidName: false,
+      });  
+      return false;
+  }else{
+    setdata({
+      ... data,
+      ValidUserName: true,
+      }); 
+      return true;  
+  }
+}
+
+const checkValidLocation=()=>{
+  if(Location.address==''){
+    setdata({
+      ... data,
       LocationExisting: false
-      });
-  } 
-    else if (Location !== '' && UserName !== '' && Name !== ''){
+      }); 
+      return false;
+  }else{
+    setdata({
+      ... data,
+      LocationExisting: true
+      }); 
+      return true;  
+  }
+}
+
+//  const Send = () => {
+//     var query = firebase.database().ref('User/' + userId);
+//     query.once("value").then(function(result){
+//     const userData = result.val();
+//     if (Name == '' && UserName != '' && Location.address != '' ){
+//         setdata({
+//         ... data,
+//         ValidName: false,
+//         ValidUserName: true,
+//         LocationExisting: true
+//         });  
+//     }
+    
+//     else if (Location.address == '' && UserName == '' && Name != ''){
+//       setdata({
+//         ... data,
+//         LocationExisting: false,
+//         ValidUserName: false,
+//         ValidName: true,
+//         });
+//     }
+//     else if (UserName != ''  && Location.address == ''  && Name == ''){
+//       setdata({
+//         ... data,
+//         ValidUserName: true,
+//         LocationExisting: false,
+//         ValidName: false,
+//         });
+//     }
+//     else if (UserName != ''  && Name != ''&& Location == ''  ){
+//       setdata({
+//         ... data,
+//         ValidUserName: true,
+//         ValidName: true,
+//         LocationExisting: false,
+//         });
+//     }
+//     else if (UserName == ''  && Name == ''&& Location.address != ''  ){
+//       setdata({
+//         ... data,
+//         LocationExisting: true,
+//         ValidUserName: false,
+//         ValidName: false,
+//         });
+//     }
+//     else if(UserName == '' && Name == '' && Location.address == ''){
+//       setdata({
+//       ... data,
+//       ValidUserName: false,
+//       ValidName: false,
+//       LocationExisting: false
+//       });
+//   } 
+//     else if (Location.address != '' && UserName != '' && Name != ''){
+//         firebase.database().ref('User/').orderByChild("UserName").equalTo(UserName.toLocaleLowerCase()).once("value", snapshot => {
+//           const userData = snapshot.val();
+//           if (userData){
+//           setdata({
+//             ...data,
+//           Valid: false
+//           });
+//         }
+//          else {
+//             firebase.database().ref('User/' + userId).set({
+//                 Name: Name,
+//                 UserName: UserName,
+//                 PhoneNumber: Phone,
+//                 Location:Location,
+//           });
+//          navigation.navigate("UserHomePage");
+//               }
+//             });
+//           }
+//             });
+          
+// } 
+
+const Send = () => {
+  if (checkValidName() && checkValidUserName() && checkValidLocation()){
+    var query = firebase.database().ref('User/' + userId);
+    query.once("value").then(function(result){
+    const userData = result.val(); 
+     
         firebase.database().ref('User/').orderByChild("UserName").equalTo(UserName.toLocaleLowerCase()).once("value", snapshot => {
           const userData = snapshot.val();
           if (userData){
@@ -145,15 +222,13 @@ const closeLocationModal=()=>{
                 UserName: UserName,
                 PhoneNumber: Phone,
                 Location:Location,
-                ProfileImage:"" 
           });
          navigation.navigate("UserHomePage");
               }
             });
-          }
-            });
-          
-} 
+        });
+  }        
+}
 
 
 
@@ -247,7 +322,7 @@ return(
               name="location"
               color="#9E9D24"
               size={20}/> 
-              <Text style={styles.Location}>{Location.address}</Text>
+              <Text style={{flex: 1,flexWrap: 'wrap',textAlign:"right",marginRight:10}}>{Location.address}</Text>
              <Feather style={styles.feather} 
                       onPress={()=>        
                       setLocationModal(
@@ -267,7 +342,7 @@ return(
 
 
    
-   <TouchableOpacity onPress={() => Send()}>
+   {/* <TouchableOpacity onPress={() => Send()}>
            <View style={styles.button2}>
            <LinearGradient 
               colors={['#AFB42B','#827717']}
@@ -285,7 +360,27 @@ return(
               <Text style={[styles.textSign,{color:'#fff'}]}>إلغاء</Text>
             </LinearGradient>
             </View>
-            </TouchableOpacity> 
+            </TouchableOpacity>  */}
+
+<View style={[styles.flexDirectionStyle,styles.button,{marginTop:15}]}>
+              <TouchableOpacity style={[styles.button,]}
+                onPress={() => Send()}>
+                <LinearGradient
+                    colors={['#AFB42B','#827717']}
+                    style={styles.signIn}>   
+                  <Text style={[styles.textSign,{color:'#fff'}]}>تسجيل</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={[styles.button]}
+                     onPress={() => remove()}>
+                <LinearGradient
+                  colors={["#B71C1C","#D32F2F"]}
+                  style={styles.signIn}>   
+                   <Text style={[styles.textSign,{color:'#fff'}]}>إلغاء</Text>
+                </LinearGradient>  
+                </TouchableOpacity> 
+            </View>
   
 </Animatable.View>
 {LocationModal?<GoogleMap pickLocation={pickLocation} closeLocationModal={closeLocationModal}></GoogleMap>:null}
@@ -443,7 +538,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 100,
     fontWeight: 'bold',
     color: 'black'
-  }
+  },
+  flexDirectionStyle:{
+    flexDirection: Platform.OS === 'android' && 
+    NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+    NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+    NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft:15,
+    paddingRight:15,
+    paddingBottom:10,
+  },
+  signIn: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginLeft:50,
+    marginRight:50
+  },
 });
 
 
