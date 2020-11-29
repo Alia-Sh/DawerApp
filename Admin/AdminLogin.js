@@ -56,6 +56,7 @@ const createUser =()=>{
     isLoading:false
   });
 
+  
   const textInputChange= (val)=>{
     if(val.length != 0){
       setData({
