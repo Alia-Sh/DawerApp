@@ -24,7 +24,7 @@
     "@tensorflow/tfjs": "^2.7.0",
     "@tensorflow/tfjs-react-native": "^0.3.0",
     "antd": "^4.7.0",
-    "expo": "^39.0.5",
+    "expo": "^38.0.8",
     "expo-camera": "^8.1.0",
     "expo-constants": "~9.1.1",
     "expo-firebase-recaptcha": "^1.1.3",

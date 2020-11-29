@@ -33,7 +33,7 @@ const ImageClassifier = ({navigation})=> {
     //const example = tf.image.cropAndResize(image.next().value.reshape([1, 224, 224, 3]));
     //const predict = model.predict(example);
     const modelJSON = require('../assets/tfjs_files/model.json');
-    const modelWeights = require('../assets/tfjs_files/group1-shard1of21.bin');
+    const modelWeights = require('../assets/tfjs_files/group1-shard.bin');
     const model = await tf.loadLayersModel(bundleResourceIO(modelJSON, modelWeights))
       .catch(e => console.log(e));
     console.log("Model loaded!");
