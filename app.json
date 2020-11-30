@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "notification": {
-      "icon": "./assets/DeleteIcon.png",
+      "icon": "./assets/DawerLogo.png",
       "color": "#002C56",
       "androidMode": "default",
       "androidCollapsedTitle": "Updates from Colab.notes",
