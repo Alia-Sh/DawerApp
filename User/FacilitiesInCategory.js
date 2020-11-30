@@ -2,8 +2,7 @@ import React , { useState ,useEffect } from 'react';
 import { StyleSheet, Text, View,Image, NativeModules,FlatList, Dimensions,Platform,TouchableOpacity,Animated,LayoutAnimation, UIManager} from 'react-native';
 import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput } from 'react-native-gesture-handler';
-import {FontAwesome5} from '@expo/vector-icons';
-import {Title} from 'react-native-paper';
+import {Title,Card,Button}from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
@@ -11,6 +10,8 @@ import Loading from '../components/Loading';
 import { useIsFocused } from "@react-navigation/native";
 import * as geolib from 'geolib';
 import FilterModal from './FilterModal';
+import {FontAwesome5} from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
 
 const FacilitiesInCategory = ({navigation, route,props}) => {
   const isFocused = useIsFocused();
@@ -130,38 +131,34 @@ const FacilitiesInCategory = ({navigation, route,props}) => {
 const [selectedId, setSelectedId] = useState(null);
 
 const Item = ({ item, onPress, style }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
-    <View  style={[styles.flexDirectionStyle,{height:45}]}>
-    {item.Logo==""?
-      <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
-        style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5}}
-      />
-    :
-    <Image
-        style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5}}
-        source={{uri:item.Logo}}
-        />
-    }
 
-      <View style={{marginTop:Platform.OS === 'android'? -8:3,paddingLeft:10}}>
-      <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 
-          NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-          NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-          NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.Name}</Text>
-      
-      <View style = {styles.flexDirectionStyle}>
-      {item.Materials.map((item2,index) => 
-                          <View style = {styles.flexDirectionStyle}>
+  <View>
+      <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
+        <View style={styles.cardContent}>
+            {item.Logo==""?
+                <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
+                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,}}
+                  />
+                :
+                <Image
+                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,}}
+                    source={{uri:item.Logo}}
+                    />
+            }
+            <View>
+                <Text style={[styles.title,{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:5}]} >{item.Name}</Text>
+                <View style = {styles.flexDirectionStyle}>
+                    {item.Materials.map((item2,index) => 
+                        <View style = {styles.flexDirectionStyle}>
                             <Text style={styles.mytext}>{item2.Name}</Text> 
-                            {(item.Materials).length-1!=index?<Text style={styles.mytext}>،</Text>:null}
-                          </View>                          
-                          )}    
+                                {(item.Materials).length-1!=index?<Text style={styles.mytext}>،</Text>:null}
+                        </View>                          
+                    )}    
               </View>
-
-      </View>
-    </View>
-
-  </TouchableOpacity>
+            </View>
+        </View>
+      </TouchableOpacity>  
+  </View> 
  
 );
 const renderList =  ({ item }) =>{
@@ -404,21 +401,13 @@ const styles = StyleSheet.create({
       marginVertical: 8,
       alignItems: 'center',
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold' ,
-        textAlign :'center',
-        color: '#9E9D24',
-        marginTop: 8,
-    },
     icon: {
       marginRight: 15
     },
     theItem:{
       backgroundColor: '#F3F3F3',
-      padding: 20,
-      marginVertical: 8,
-      marginHorizontal: 16,
+      marginVertical: 5,
+      marginHorizontal: 10,
       borderRadius :8,
       shadowColor :'#000',
       shadowOffset: {
@@ -428,7 +417,7 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.30,
       shadowRadius: 4.65,
       elevation: 5,
-      padding :15,
+      padding :10,
     },
     flexDirectionStyle:{
       flexDirection: Platform.OS === 'android' && 
@@ -449,5 +438,15 @@ const styles = StyleSheet.create({
       marginRight:2,
       color:'#808080'
     },
+    mycard:{
+      margin:3
+  },
+  cardContent:{
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
+      
+  },
   });
 export default FacilitiesInCategory;
