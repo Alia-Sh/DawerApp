@@ -41,10 +41,9 @@ const UserViewProfile = ({navigation,props})=>{
             longitude:userData.Location.longitude           
           })
           retriveImage()
-        });
-        
-        
+        });        
     } 
+    
     const retriveImage= async ()=>{
         var userId = firebase.auth().currentUser.uid;
         var imageRef = firebase.storage().ref('images/' + userId);

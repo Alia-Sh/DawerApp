@@ -11,7 +11,7 @@
       "androidCollapsedTitle": "Updates from Colab.notes",
       "iosDisplayInForeground": true
     },
-    "icon": "./assets/icon.png",
+    "icon": "./assets/DawerLogo.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
