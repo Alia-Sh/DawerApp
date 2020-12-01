@@ -19,14 +19,14 @@ import {FontAwesome5} from '@expo/vector-icons';
 const AdminHomePage = ({navigation})=>{
   //backend
 
-  const logout=()=>{
-    firebase.auth().signOut().then(function() {
-      console.log('loged out')
-        navigation.navigate("ChooseBetweenUsers")
-      }).catch(function(error) {
-          console.log(error)
-      });
-}
+  const SignOut = async () => {
+    try {
+     await firebase.auth().signOut()
+     navigation.navigate("ChooseBetweenUsers")
+    }catch (e){
+      console.log(e)
+    }
+  }
 
  const openRightPage=(page)=>{
 
@@ -75,7 +75,7 @@ const AdminHomePage = ({navigation})=>{
         <SafeAreaView>
           <View style={styles.header}>
           <FontAwesome5 name="power-off" size={26} color="#fff" style={{paddingLeft:10,marginBottom:10}}
-                        onPress={()=> logout()}/>
+                        onPress={() =>{SignOut()}}/>
          <Image
           source={require('../assets/AdminIcons/HomePageLogo.png')}
           style={[styles.logo]}

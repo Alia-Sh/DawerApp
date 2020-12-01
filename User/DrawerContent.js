@@ -10,6 +10,10 @@ export function DrawerContent(props){
 
 const SignOut = async () => {
   try {
+    var UserID=firebase.auth().currentUser.uid;
+    await firebase.database().ref("User").child(UserID).update({
+      expoToken:""
+    })
    await firebase.auth().signOut()
    props.navigation.navigate("ChooseBetweenUsers")
   }catch (e){
