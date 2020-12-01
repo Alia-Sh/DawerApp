@@ -5,13 +5,13 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "notification": {
-      "icon": "./assets/square_Dawer.png",
+      "icon": "./assets/s_Dawer.png",
       "color": "#002C56",
       "androidMode": "default",
       "androidCollapsedTitle": "Updates from Colab.notes",
       "iosDisplayInForeground": true
     },
-    "icon": "./assets/square_Dawer.png",
+    "icon": "./assets/s_Dawer.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
