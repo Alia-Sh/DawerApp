@@ -134,19 +134,19 @@ const Item = ({ item, onPress, style }) => (
 
   <View>
       <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
-        <View style={styles.cardContent}>
+        <View style={styles.flexDirectionStyle}>
             {item.Logo==""?
                 <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
-                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,}}
+                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,marginRight:0}}
                   />
                 :
                 <Image
-                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,}}
+                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,marginRight:0}}
                     source={{uri:item.Logo}}
                     />
             }
             <View>
-                <Text style={[styles.title,{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:5}]} >{item.Name}</Text>
+                <Text style={[styles.title,{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:5,marginLeft:5}]} >{item.Name}</Text>
                 <View style = {styles.flexDirectionStyle}>
                     {item.Materials.map((item2,index) => 
                         <View style = {styles.flexDirectionStyle}>
@@ -406,9 +406,9 @@ const styles = StyleSheet.create({
     },
     theItem:{
       backgroundColor: '#F3F3F3',
-      marginVertical: 5,
+      marginVertical: 7,
       marginHorizontal: 10,
-      borderRadius :8,
+      borderRadius :7,
       shadowColor :'#000',
       shadowOffset: {
         width: 0,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.30,
       shadowRadius: 4.65,
       elevation: 5,
-      padding :10,
+      padding :12,
     },
     flexDirectionStyle:{
       flexDirection: Platform.OS === 'android' && 
@@ -437,16 +437,6 @@ const styles = StyleSheet.create({
       //marginTop:13,
       marginRight:2,
       color:'#808080'
-    },
-    mycard:{
-      margin:3
-  },
-  cardContent:{
-      flexDirection: Platform.OS === 'android' && 
-      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',
-      
-  },
+    }, 
   });
 export default FacilitiesInCategory;

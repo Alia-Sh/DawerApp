@@ -58,38 +58,34 @@ const DriverFacilities = ({navigation})=>{
 
 
     const Item = ({ item, onPress, style }) => (
-      <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
-        <View  style={[styles.flexDirectionStyle,{height:45}]}>
-        {item.Logo==""?
-          <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
-            style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5}}
-          />
-        :
-        <Image
-            style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5}}
-            source={{uri:item.Logo}}
-            />
-        }
-    
-          <View style={{marginTop:Platform.OS === 'android'? -8:3,paddingLeft:10}}>
-          <Text style={[styles.title,{textAlign: Platform.OS === 'android' && 
-              NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-              NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-              NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'left':'right'}]}>{item.Name}</Text>
-          
-          <View style = {styles.flexDirectionStyle}>
-          {item.Materials.map((item2,index) => 
-                              <View style = {styles.flexDirectionStyle}>
+
+      <View>
+          <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
+            <View style={styles.flexDirectionStyle}>
+                {item.Logo==""?
+                    <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
+                        style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,marginRight:0}}
+                      />
+                    :
+                    <Image
+                        style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,marginRight:0}}
+                        source={{uri:item.Logo}}
+                        />
+                }
+                <View>
+                    <Text style={[styles.title,{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:5}]} >{item.Name}</Text>
+                    <View style = {styles.flexDirectionStyle}>
+                        {item.Materials.map((item2,index) => 
+                            <View style = {styles.flexDirectionStyle}>
                                 <Text style={styles.mytext}>{item2.Name}</Text> 
-                                {(item.Materials).length-1!=index?<Text style={styles.mytext}>،</Text>:null}
-                              </View>                          
-                              )}    
+                                    {(item.Materials).length-1!=index?<Text style={styles.mytext}>،</Text>:null}
+                            </View>                          
+                        )}    
                   </View>
-    
-          </View>
-        </View>
-    
-      </TouchableOpacity>
+                </View>
+            </View>
+          </TouchableOpacity>  
+      </View> 
      
     );
     
@@ -106,7 +102,7 @@ const DriverFacilities = ({navigation})=>{
       )
     };
 
-    SearchInList = (word) =>{
+    const SearchInList = (word) =>{
       setSearchList(FacList.filter(item => item.Name.toLowerCase().includes(word)))
       setSearchOccur(true)
     }
@@ -258,8 +254,8 @@ const styles = StyleSheet.create({
     theItem:{
       backgroundColor: '#F3F3F3',
       padding: 20,
-      marginVertical: 8,
-      marginHorizontal: 16,
+      marginVertical: 7,
+      marginHorizontal: 10,
       borderRadius :8,
       shadowColor :'#000',
       shadowOffset: {
@@ -269,7 +265,7 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.30,
       shadowRadius: 4.65,
       elevation: 5,
-      padding :15,
+      padding :12,
     },
     title: {
       fontSize: 18,
