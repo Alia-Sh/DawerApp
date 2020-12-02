@@ -13,7 +13,7 @@ import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
-
+import moment from 'moment';
 const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
     const[RequestList,setRequestList]= useState([]);
@@ -48,9 +48,59 @@ const  RequestsPage= ({navigation}) =>{
             if (RequestList.length==0)
             setLoading(false)
           }
-        })}
-        
+        })
+    }
+        var currentDate = new Date();
+     console.log(RequestList);
+     console.log("Date",currentDate);
+     console.log("Date2", moment(currentDate).format('Y/M/D HH:mm'));
+    
+    //  if(RequestList.some( RequestList => RequestList['DateAndTime'] == moment(currentDate).format('Y/M/D HH:mm') )){
+    //      console.log("hhere");
+    //  }
+    for(var i in RequestList){
+        var currentDate2 = moment(currentDate).format('Y/M/D HH:mm');
+        var date=RequestList[i].DateAndTime
+        var INDEX=date.indexOf(" ");
+        var INDEX2=currentDate2.indexOf(" ");
+        var reqDate=moment(date.substring(0,INDEX)).format('Y/M/D');
+        var curDate=moment(currentDate2.substring(0,INDEX2)).format('Y/M/D')
+        if(moment(reqDate).isSameOrBefore(curDate)){
+            if(RequestList[i].Status=="Pending"){
+                firebase.database().ref('PickupRequest/'+userId+"/"+RequestList[i].Id).update({
+                    Status:"Rejected" 
+                }).then(()=>{
+                    firebase.database().ref("User/"+userId).on('value',snapshot=>{
+                      if(snapshot.val().expoToken)
+                      sendNotifications(snapshot.val().expoToken,' تم رفض الطلب ','قبول الطلب','NotificationsPage')
+                     })
+                  })
+            }
+        }
+    }
      
+
+    const sendNotifications=async(token,msg,title,screen,param)=>{
+        if(token!=""){
+          const message = {
+            to: token,
+            sound: 'default',
+            title: title,
+            body: msg,
+            data: { screen: screen,param:param},
+          };
+        
+          await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Accept-encoding': 'gzip, deflate',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(message),
+          });
+        }
+      };
     
       useEffect(()=>{
         fetchData()
