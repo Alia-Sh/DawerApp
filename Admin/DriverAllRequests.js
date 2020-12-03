@@ -179,7 +179,7 @@ const fetchData=()=>{
                             navigation.goBack()
                         }}/>
                     <View>
-                        <Text style={styles.headerText}>@ {UserName}</Text>
+                        <Text style={styles.headerText}>@{UserName}</Text>
                         <Image
                             style={{width:'100%',marginTop:8}}
                             source={require('../assets/line.png')}

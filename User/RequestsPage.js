@@ -42,6 +42,17 @@ const  RequestsPage= ({navigation}) =>{
             
             
             })
+            if(li){
+                //console.log(li);
+               // console.log('((((((((((((((((((((((SORTED');
+           //  li.sort((a,b) => new Date(a) < new Date(b) ? 1 : -1);
+            // console.log(li);
+           //HERE to sort the list depending on the date
+              li.sort(function(a, b){
+                return new Date(a.DateAndTime) - new Date(b.DateAndTime);
+              });
+            
+            }
          
             setRequestList(li)
             console.log(li) 

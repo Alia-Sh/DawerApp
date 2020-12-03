@@ -25,7 +25,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/DeleteIcon.png"
+      "icon": "./assets/s_Dawer.png"
     },
     "web": {
       "favicon": "./assets/favicon.png"

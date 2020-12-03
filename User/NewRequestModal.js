@@ -497,12 +497,14 @@ import * as Permissions from 'expo-permissions';
     const hideDatePicker = () => {
       setDatePickerVisibility(false);
     };
-    var currentDate = new Date();
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
     const handleConfirm = (datetime) => {
         console.warn("A date has been picked: ", datetime);
-        // setDateAndTime(moment(datetime).format('MMM, Do YYY HH:mm'))
-        // setDateAndTime(moment(datetime).format('LLLL'))
-        setDateAndTime(moment(datetime).format('Y/M/D HH:mm'))
+        // setDateAndTime(moment(datetime).format('MMM, Do YYY hh:mm A'))
+        setDateAndTime(moment(datetime).format('LLLL'))
+        // setDateAndTime(moment(datetime).format('Y/M/D hh:mm A'))
         hideDatePicker();
     };
 
@@ -924,7 +926,8 @@ return (
         datePickerModeAndroid={'spinner'}
         is24Hour={false}
         // minimumDate={currentDate.setDate(currentDate.getDate() + 1)}
-        minimumDate={currentDate}
+        minimumDate={tomorrow}
+        headerTextIOS="اختر الموعد"
         />
         {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>

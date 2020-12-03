@@ -230,7 +230,7 @@ const removeDriver=()=>{
                           navigation.navigate("DriverHome")
                         }}/>
                     <View>
-                        <Text style={styles.headerText}>@ {UserName}</Text>
+                        <Text style={styles.headerText}>@{UserName}</Text>
                     </View>
                     <View>
                     
@@ -394,7 +394,7 @@ const removeDriver=()=>{
                                 <Button icon="delete" mode="contained" theme={themeDelete } dark={true}
                                                     onPress={()=>setDeleteDriver(true)}
                                     >
-                                     حذف السائق
+                                     إيقاف حساب السائق
                                 </Button>
 
                             </View>
@@ -403,7 +403,7 @@ const removeDriver=()=>{
                             {DeleteDriverModal?
                 <DeleteDriver 
                 userId={userId} setDeleteDriver={setDeleteDriver}
-                 navigation={navigation} title="حذف سائق" message="هل أنت متأكد من حذف السائق ؟"
+                 navigation={navigation} title="إيقاف حساب سائق" message="هل أنت متأكد من إيقاف حساب السائق ؟"
                   ></DeleteDriver>
               :
                 null
@@ -473,7 +473,7 @@ const styles=StyleSheet.create({
     footer: {
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-20,
+        marginTop:-10,
     },
     button:{
         flexDirection:"row",

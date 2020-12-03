@@ -60,8 +60,8 @@ const DeleteDriver=(props)=>{
                 setTimeout(()=>{
                 setAlert({
                     ...alert,
-                    Title:'حذف السائق',
-                    Message:'تم حذف السائق بنجاح',
+                    Title:'إيقاف حساب السائق',
+                    Message:'تم إيقاف حساب السائق بنجاح',
                     jsonPath:"success",
                     alertVisible:true,
                 });
@@ -92,7 +92,7 @@ const DeleteDriver=(props)=>{
             setAlert({
                 ...alert,
                 Title:' حدث خطأ ما',
-                Message:'تعذر حذف السائق ، تأكد من عدم وجود طلبات مسندة لم يتم إيصالها',
+                Message:'تعذر إيقاف حساب السائق ، تأكد من عدم وجود طلبات مسندة لم يتم إيصالها',
                 jsonPath:"Error",
                 alertVisible:true,
             });
