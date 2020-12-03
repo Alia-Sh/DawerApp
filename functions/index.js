@@ -3,20 +3,7 @@ const admin =require('firebase-admin');
 const moment = require('moment');
 var fetch = require('node-fetch');
 admin.initializeApp(functions.config().firebase);
-// import moment from 'moment';
-// import firebase from '../Database/firebase';
 var database = admin.database();
-
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-// exports.textToLength = functions.https.onRequest((request, response) => {
-//     var text =request.query.text
-//     var textLength=text.length
-//     response.send(textLength+"");
-//   });
 
 exports.newNodeDetected = functions.database.ref('User/{userId}/Name')
 .onWrite((change,context)=>{
