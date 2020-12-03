@@ -43,7 +43,7 @@ const HomeScreen = ({navigation})=>{
         // Get the token that uniquely identifies this device
         let token = await Notifications.getExpoPushTokenAsync();
         //post to firebase
-        
+        console.log("token",token);
         var updates = {}
         updates['/expoToken'] = token
         firebase.database().ref("User").child(UserID).update(updates)

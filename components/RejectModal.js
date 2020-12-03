@@ -10,7 +10,7 @@ const RejectModal=(props)=>{
         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
             Status:"Rejected"
         }).then(()=>{
-            sendNotifications(Token,' تم رفض الطلب ','قبول الطلب')
+            sendNotifications(Token,'نعتذر عن قبول طلبك','تم رفض طلبك')
             props.setRejectModal(false);
             props.navigation.navigate("RequestHome");
         })
