@@ -147,7 +147,7 @@ return(
                         }
                             
                     }}>
-                      <Text style={styles.okStyle}>حذف</Text>
+                      <Text style={styles.okStyle}>إيقاف</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity 
