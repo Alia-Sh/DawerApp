@@ -72,7 +72,7 @@ const AssignedRequests = ({ navigation })=> {
                 colors={["#809d65","#9cac74"]}
                 style={[styles.flexDirectionStyle,{height:"100%" ,width:"100%",justifyContent:'center'}]}> 
         
-              <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} onPress={()=>navigation.goBack()}/>
+              <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={styles.icon} onPress={()=>navigation.navigate("DriverHomePage")}/>
 
               <Text style={styles.text_header}>  الـطـلـبـات </Text>
 

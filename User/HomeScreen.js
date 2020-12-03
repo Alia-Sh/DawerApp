@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
-import * as Notifications from 'expo-notifications';
+import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
 const HomeScreen = ({navigation})=>{
@@ -22,7 +22,7 @@ const HomeScreen = ({navigation})=>{
 //to store the token expo in  our firebase 
  
 
-   registerForPushNotificationsAsync = async (UserID) => {
+   const registerForPushNotificationsAsync = async (UserID) => {
         const { existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
         let finalStatus = existingStatus;
 
@@ -87,10 +87,10 @@ const HomeScreen = ({navigation})=>{
     })
   
   }
-  
   useEffect(()=>{
     fetchData()
     registerForPushNotificationsAsync(UserID)
+    Notifications.addListener(notification => navigation.navigate(notification.data.screen))
   },[])
 
   const [selectedId, setSelectedId] = useState(null);
@@ -113,7 +113,7 @@ const HomeScreen = ({navigation})=>{
     );
   };
 
-  SearchInList = (word) =>{
+  const SearchInList = (word) =>{
     setSearchList(CategoriesList.filter(item => item.name.toLowerCase().includes(word)))
     setSearchOccur(true)
   }

@@ -56,27 +56,27 @@ const ResetPassword=({navigation})=>{
     const checkValidEmail=()=>{
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if(data.Email==""){
-            setData({
-                ...data,
-                isValidEmail:false,
-                EmailErrorMessage:'يجب إدخال البريد الإلكتروني'
-            });
+          setData({
+             ...data,
+            isValidEmail:false,
+            EmailErrorMessage:'يجب إدخال البريد الإلكتروني'
+           }); 
             return false; 
         }else if(reg.test(data.Email) === false){
-            setData({
-                ...data,
-                isValidEmail:false,
-                EmailErrorMessage:'يحب إدخال البريد الإلكتروني بالشكل الصحيح'
-            });
+           setData({
+            ...data,
+            isValidEmail:false,
+            EmailErrorMessage:'يحب إدخال البريد الإلكتروني بالشكل الصحيح'
+           }); 
             return false; 
-        }else{
+        } else{
             if(!data.isValidEmail){   
-                setData({
-                    ...data,
-                    isValidEmail:true,
-                    EmailErrorMessage:''
-                });                 
-            }
+             setData({
+             ...data,
+             isValidEmail:true,
+             EmailErrorMessage:''
+               });                 
+            }  
             return true;         
         }
     }

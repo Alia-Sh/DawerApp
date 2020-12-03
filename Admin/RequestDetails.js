@@ -15,6 +15,7 @@ const RequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
     var UserId=route.params.UserId
+    var STATUS=route.params.STATUS
     const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
@@ -33,6 +34,8 @@ const RequestDetails = ({navigation,route})=>{
       Message:'',
       jsonPath:'',   
     })
+
+    const [Token,setToken]=useState("")
 
     const fetchMaterials=(ID)=>{
       firebase.database().ref("Material/"+ID).on('value',snapshot=>{
@@ -61,6 +64,9 @@ const RequestDetails = ({navigation,route})=>{
         latitude:userData.Location.latitude,
         longitude:userData.Location.longitude           
       })
+      if(userData.expoToken){
+        setToken(userData.expoToken)
+      }
     })
   }
 
@@ -90,7 +96,7 @@ const RequestDetails = ({navigation,route})=>{
              snapshot.forEach(function(snapshot){
              var DriverId=snapshot.key
              if(snapshot.val().Status=="Accepted"){
-              var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName,DeliveryArea:snapshot.val().DeliveryArea}
+              var temp={DriverId:DriverId,DriverName:snapshot.val().Name,DriverUserName:snapshot.val().UserName,DeliveryArea:snapshot.val().DeliveryArea,Token:snapshot.val().expoToken}
               li.push(temp)
              }
            })
@@ -218,13 +224,13 @@ const RequestDetails = ({navigation,route})=>{
           </View>
 
           {RejectModal?
-                <RejectRequestModal UserId={UserId} RequestId={RequestId} setRejectModal={setRejectModal} navigation={navigation} title="رفض الطلب" message="هل انت متاكد من رفض الطلب" type="reject Request"></RejectRequestModal>
+                <RejectRequestModal UserId={UserId} RequestId={RequestId} setRejectModal={setRejectModal} navigation={navigation} title="رفض الطلب" message="هل انت متاكد من رفض الطلب" type="reject Request" Token={Token}></RejectRequestModal>
               :
                 null
           }
 
           {VisibleAssignModal?
-                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal} UserId={UserId} navigation={navigation} ShowModal={ShowModal}></AssignModal>
+                <AssignModal ID={RequestId} DATE={DATE} AssignList={DriverList} setVisibleAssignModal={setVisibleAssignModal} UserId={UserId} navigation={navigation} ShowModal={ShowModal} Token={Token} Status={STATUS}></AssignModal>
               :
                 null
           }

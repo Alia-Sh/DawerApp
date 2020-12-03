@@ -1,20 +1,25 @@
 import React , { useState ,useEffect } from 'react';
-import { StyleSheet, Text, View,Image, NativeModules,FlatList, Dimensions,Platform,TouchableOpacity,Animated} from 'react-native';
+import { StyleSheet, Text, View,Image, NativeModules,FlatList, Dimensions,Platform,TouchableOpacity,Animated,LayoutAnimation, UIManager} from 'react-native';
 import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput } from 'react-native-gesture-handler';
-import {FontAwesome5} from '@expo/vector-icons';
-import {Title} from 'react-native-paper';
+import {Title,Card,Button}from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
 import Loading from '../components/Loading';
 import { useIsFocused } from "@react-navigation/native";
+import * as geolib from 'geolib';
+import FilterModal from './FilterModal';
+import {FontAwesome5} from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
+
 const FacilitiesInCategory = ({navigation, route,props}) => {
   const isFocused = useIsFocused();
   const CategoryID = route.params.ID;
   const CategoryName = route.params.Name;
 
     const [FacList,setFacList] = useState([])
+    const [FacDistance,setFacDistance] = useState([])
     const [loading,setLoading] = useState(true)
     const [Picture,setPicture] = useState("")
     const [term, setTerm] = useState('')
@@ -24,9 +29,54 @@ const FacilitiesInCategory = ({navigation, route,props}) => {
     const [data,setData]=React.useState({
         isLoading:false,
         isEmptyList:false         
-      })
+    })
+    const [Location,setLocation] = useState({
+      address:"",
+      latitude:0,
+      longitude:0
+  })
+    const [FilterModalVisible,setFilterModalVisible]= useState(false)
+    const [expanded,setExpanded]=useState(false)
+    if (Platform.OS === 'android') {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+      }
+    const changeLayout = () => {
+      if(FacList.length>0){
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setFilterModalVisible(!FilterModalVisible)
+        setExpanded(!expanded);
+      }
+    }
 
-    //var query = firebase.database().ref("Category/" +CategoryID);
+
+    const fetchUserLocation=()=>{
+        var userId = firebase.auth().currentUser.uid;
+        var query = firebase.database().ref('User/' + userId);
+        query.on("value",function(result) {
+          const userData = result.val();
+          setLocation({
+            ...Location,
+            address:userData.Location.address,
+            latitude:userData.Location.latitude,
+            longitude:userData.Location.longitude           
+          })
+        });        
+    } 
+
+
+
+    const filterFacilities=(type)=>{
+      var Filter=geolib.orderByDistance({ latitude: Location.latitude, longitude: Location.longitude},FacList)
+        if(type=="من الأقرب إلى الأبعد"){
+          setFacList(Filter)
+        }
+        if(type=="من الأبعد إلى الأقرب"){
+          setFacList(Filter.reverse())
+        }
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setFilterModalVisible(!FilterModalVisible)
+        setExpanded(!expanded);
+    }
 
     // fetch all facilities Names
   const fetchData=()=>{
@@ -34,18 +84,23 @@ const FacilitiesInCategory = ({navigation, route,props}) => {
       const Data = snapshot.val();
       if(Data){
         var li = []
+        var Distance=[]
         snapshot.forEach(function(snapshot){
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
           // fetch the logo here..
           //retriveImage(snapshot.key);
           console.log(Picture);
-          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: snapshot.val().Logo}
+          var temp = {Name:snapshot.val().Name, FacilityId:snapshot.key, Logo: snapshot.val().Logo,latitude:snapshot.val().Location.latitude,longitude:snapshot.val().Location.longitude, Materials:snapshot.val().AcceptedMaterials}
+          var Dis={latitude:snapshot.val().Location.latitude,longitude:snapshot.val().Location.longitude}
           li.push(temp)
+          Distance.push(Dis)
           setLoading(false)
         })
         setFacList(li)
+        setFacDistance(Distance)
         console.log(li) 
+        console.log(Distance);
       }else{
         setData({
           isLoading:true,
@@ -57,6 +112,7 @@ const FacilitiesInCategory = ({navigation, route,props}) => {
 
   useEffect(()=>{
     fetchData()
+    fetchUserLocation()
 },[props, isFocused])
 
   //retrive facility logo
@@ -74,35 +130,51 @@ const FacilitiesInCategory = ({navigation, route,props}) => {
 
 const [selectedId, setSelectedId] = useState(null);
 
+const Item = ({ item, onPress, style }) => (
+
+  <View>
+      <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
+        <View style={styles.flexDirectionStyle}>
+            {item.Logo==""?
+                <Image source={require('../assets/AdminIcons/FacilityIcon.jpg')} 
+                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,marginRight:0}}
+                  />
+                :
+                <Image
+                    style={{height:50 ,width:50,marginRight:-8,marginTop:0,marginLeft:8,borderRadius:5,marginRight:0}}
+                    source={{uri:item.Logo}}
+                    />
+            }
+            <View>
+                <Text style={[styles.title,{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:5,marginLeft:5}]} >{item.Name}</Text>
+                <View style = {styles.flexDirectionStyle}>
+                    {item.Materials.map((item2,index) => 
+                        <View style = {styles.flexDirectionStyle}>
+                            <Text style={styles.mytext}>{item2.Name}</Text> 
+                                {(item.Materials).length-1!=index?<Text style={styles.mytext}>،</Text>:null}
+                        </View>                          
+                    )}    
+              </View>
+            </View>
+        </View>
+      </TouchableOpacity>  
+  </View> 
+ 
+);
 const renderList =  ({ item }) =>{
   console.log("in renderList");
   console.log(item);
   return(
-    <TouchableOpacity
-      key={item.key}
-      onPress={() => navigation.navigate("ViewFacilityInfo",{item})}
+    <Item
+      item={item}
       // onPress={() => setSelectedId(item.key)}
-      style={styles.mycard}>
-        <View style = {{flexDirection: 'column'}}>
-            {item.Logo==""?
-            <Image 
-                style = {styles.profile_image}
-                source = {require('../assets/AdminIcons/FacilityIcon.jpg')}/> 
-            :
-            <Image
-                // retrieve the logo here
-                style = {styles.profile_image}
-                //source = {item.Logo}/>
-                source = {{uri:item.Logo}}/>
-
-            }
-            <Text style={styles.title}>{item.Name}</Text>
-        </View>
-    </TouchableOpacity>
+      onPress={() => navigation.navigate("ViewFacilityInfo",{item})}
+      style={{ backgroundColor :item.key === selectedId ? "#EDEEEC" : "#F3F3F3"}}
+    />
   )
 };
 
-SearchInList = (word) =>{
+const SearchInList = (word) =>{
   setSearchList(FacList.filter(item => item.Name.toLowerCase().includes(word)))
   setSearchOccur(true)
 }
@@ -120,6 +192,11 @@ const resetData=()=>{
       isLoading:false,
       isEmptyList:false         
     })
+
+    setFilterModalVisible(false)
+    setExpanded(false);
+
+    navigation.navigate("HomeScreen")
 }
 
     return (
@@ -140,12 +217,13 @@ const resetData=()=>{
                     colors={["transparent","#transparent"]}
                     style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between',marginTop:40}}>
 
-                      <FontAwesome5 name="filter" size={24} color="gray" style={{marginLeft:15}}/>
+                      <FontAwesome5 name="filter" size={24} color="gray" style={{marginLeft:15}}
+                      onPress={()=> changeLayout()}/>
                       {/* style={{marginTop: 25,marginLeft:15}} */}
                       <Text style={styles.text_header}>{CategoryName}</Text>
 
                       <FontAwesome5 name="chevron-right" size={24} color="#212121" style={styles.icon} 
-                                onPress={()=>{navigation.navigate("HomeScreen")}}/>
+                                onPress={()=>{resetData()}}/>
 
                 </LinearGradient>             
 
@@ -185,11 +263,20 @@ const resetData=()=>{
             />
             {/*{data.isEmptyList? <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575'}}>لا توجد منشـآت مدخلة حتى الآن</Title>:
             */}
+            {FacList.length==0?
+                                <Text  style={{textAlign:'center',fontSize: 15,
+                                marginTop:5,
+                                color :'#7B7B7B',
+                        }}>
+                                    لا يوجد منشآت لهذه الفئة
+                                </Text>
+            :
+            <View>
             {SearchOccur ? 
             
             <FlatList
-            contentContainerStyle = {styles.grid}
-            numColumns = {2}
+            // contentContainerStyle = {styles.grid}
+            // numColumns = {2}
             data = {SearchList}
             keyExtractor = {(item)=>item.key}
             onRefresh = {()=>fetchData()}
@@ -198,8 +285,8 @@ const resetData=()=>{
             />
             :
             <FlatList
-            contentContainerStyle = {styles.grid}
-            numColumns = {2}
+            // contentContainerStyle = {styles.grid}
+            // numColumns = {2}
             data = {FacList}
             keyExtractor = {(item)=>item.key}
             onRefresh = {()=>fetchData()}
@@ -208,7 +295,16 @@ const resetData=()=>{
             />
             
             }
-        </View>   
+            </View> 
+          }
+        </View> 
+
+          { FilterModalVisible?
+                 <FilterModal changeLayout={changeLayout} filterFacilities={filterFacilities}></FilterModal>
+                            :
+                                null
+          }
+                       
         </View>
     );
 
@@ -305,15 +401,42 @@ const styles = StyleSheet.create({
       marginVertical: 8,
       alignItems: 'center',
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold' ,
-        textAlign :'center',
-        color: '#9E9D24',
-        marginTop: 8,
-    },
     icon: {
       marginRight: 15
-    }
+    },
+    theItem:{
+      backgroundColor: '#F3F3F3',
+      marginVertical: 7,
+      marginHorizontal: 10,
+      borderRadius :7,
+      shadowColor :'#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.30,
+      shadowRadius: 4.65,
+      elevation: 5,
+      padding :12,
+    },
+    flexDirectionStyle:{
+      flexDirection: Platform.OS === 'android' && 
+      NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+      NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+      NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold' ,
+      textAlign :'center',
+      color: '#9E9D24',
+      marginTop: 5,
+    },
+    mytext:{
+      fontSize:12,
+      //marginTop:13,
+      marginRight:2,
+      color:'#808080'
+    }, 
   });
 export default FacilitiesInCategory;

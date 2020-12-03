@@ -15,8 +15,7 @@ const DriverRequestDetails = ({navigation,route})=>{
     var DATE=route.params.DATE
     var STATUS=route.params.STATUS
     var UserId=route.params.UserId
-    console.log(RequestId);
-    console.log(RequestId);
+    console.log(STATUS);
     const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
@@ -36,6 +35,8 @@ const DriverRequestDetails = ({navigation,route})=>{
       jsonPath:'',   
     })
     const [Status,setStatus]=useState(STATUS)
+    console.log(Status);
+    const [Token,setToken]=useState("")
     const openDial=(phone)=>{
         if(Platform.OS==="android"){
             Linking.openURL(`tel:${phone}`)
@@ -67,7 +68,9 @@ const changeReq=()=>{
         }).then(()=>{
           STATUS="OutForPickup";
           setStatus("OutForPickup")
-        }).catch((error)=>{
+        }).then(()=>[
+          sendNotifications(Token,'السائق في الطريق لاستلام طلبك','استلام الطلب')
+        ]).catch((error)=>{
           Alert.alert(error.message)
         })
         console.log('im here in 1') 
@@ -80,6 +83,8 @@ const changeReq=()=>{
         }).then(()=>{
           STATUS="Delivered";
           setStatus("Delivered")
+        }).then(()=>{
+          sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة، تم توصيل طلبك للمنشأة','توصيل الطلب')
         }).catch((error)=>{
           Alert.alert(error.message)
         })
@@ -100,10 +105,33 @@ const changeReq=()=>{
         latitude:userData.Location.latitude,
         longitude:userData.Location.longitude           
       })
-      
-    })
+      if(userData.expoToken){
+        setToken(userData.expoToken)
+      }   
+    }) 
     
   }
+  const sendNotifications=async(token,msg,title)=>{
+    if(token!=""){
+      const message = {
+        to: token,
+        sound: 'default',
+        title: title,
+        body: msg,
+        data: { screen: 'NotificationsPage' },
+      };
+    
+      await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+    }
+  };
 
   const retriveImage= async (UserId)=>{
     var imageRef = firebase.storage().ref('images/' + UserId);
@@ -149,7 +177,7 @@ const changeReq=()=>{
     retriveImage(UserId)
     //fetchDrivers();
   },[])
-
+  console.log("Token",Token);
     return (
      
         <View style={styles.container}>

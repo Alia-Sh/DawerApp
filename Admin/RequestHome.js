@@ -15,7 +15,7 @@ import {Title} from 'react-native-paper';
 import {FontAwesome5} from '@expo/vector-icons'
 import {MaterialIcons} from '@expo/vector-icons';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
-
+import moment from 'moment';
 
 const Item = ({ item, onPress, style }) => (
   
@@ -103,8 +103,6 @@ const fetchData=()=>{
     }
   })
 }
-
-
 
   useEffect(()=>{
     fetchData()

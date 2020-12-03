@@ -6,10 +6,11 @@ import LottieView from 'lottie-react-native';
 const RejectModal=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
 
-    const rejectRequest=(UserId,RequestId)=>{
+    const rejectRequest=(UserId,RequestId,Token)=>{
         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
             Status:"Rejected"
         }).then(()=>{
+            sendNotifications(Token,' تم رفض الطلب ','قبول الطلب')
             props.setRejectModal(false);
             props.navigation.navigate("RequestHome");
         })
@@ -24,6 +25,28 @@ const RejectModal=(props)=>{
         })
         console.log("rejectDriver");
     }
+
+    const sendNotifications=async(token,msg,title)=>{
+        if(token!=""){
+          const message = {
+            to: token,
+            sound: 'default',
+            title: title,
+            body: msg,
+            data: { screen: 'NotificationsPage' },
+          };
+        
+          await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Accept-encoding': 'gzip, deflate',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(message),
+          });
+        }
+      };
 return(            
 <Modal
     animationType="slide"
@@ -49,7 +72,7 @@ return(
                     <TouchableOpacity 
                         style={styles.okButton}
                         onPress={()=>{{props.type=="reject Request"?
-                            rejectRequest(props.UserId,props.RequestId)
+                            rejectRequest(props.UserId,props.RequestId,props.Token)
                         :
                         rejectJoinRequest(props.userId)
                         }

@@ -17,6 +17,7 @@ import moment from 'moment';
 import Loading from '../components/Loading';
 import {FontAwesome5} from '@expo/vector-icons';
 import FilterModal from './FilterModal';
+import * as Notifications from 'expo-notifications';
 
 const AssignModal=(props)=>{
     var DATEANDTIME=props.DATE
@@ -26,6 +27,9 @@ const AssignModal=(props)=>{
     var  RequestId = props.ID;
     var UserId=props.UserId;
     var AssignList=props.AssignList;
+    var Token=props.Token;
+    var STATUS="Accepted"
+    console.log(STATUS);
     const [alertVisible,setAlertVisible]= useState(true)
     const [FilterModalVisible,setFilterModalVisible]= useState(false)
     const [isLoading,setIsLoading]= useState(false)
@@ -35,7 +39,8 @@ const AssignModal=(props)=>{
             DriverId:AssignList.DriverId,
             DriverUserName:AssignList.DriverUserName,
             DriverName:AssignList.DriverName,
-            DeliveryArea:AssignList.DeliveryArea
+            DeliveryArea:AssignList.DeliveryArea,
+            Token:AssignList.Token
         })),
         );
     const [DriverList2,setDriverList2] = useState(
@@ -95,15 +100,55 @@ const AssignModal=(props)=>{
         }
       }
 
-    const AssignRow=(rowMap,rowKey,DriverId)=>{
+    const AssignRow=(rowMap,rowKey,DriverId,DriverToken)=>{
         closeRow(rowMap,rowKey);          
             firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
                 Status:"Accepted",
                 DeliveryDriverId:DriverId
             }).then(()=>{
-                    props.ShowModal()
+                sendNotifications(Token,'تم قبول طلبك ','قبول الطلب','NotificationsPage')
+                // scheduleNotification(Token)
+            }).then(()=>{
+                sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
+                props.ShowModal()
             })
     }
+
+    const sendNotifications=async(token,msg,title,screen,param)=>{
+    if(token!=""){
+      const message = {
+        to: token,
+        sound: 'default',
+        title: title,
+        body: msg,
+        data: { screen: screen,param:param},
+      };
+    
+      await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+    }
+  };
+
+//   const scheduleNotification =(token)=>{
+//     Notifications.scheduleNotificationAsync({
+//         content: {
+//             to: token,
+//           title: 'Remember to drink water!,'
+//         },
+//         trigger: {
+//           seconds: 60 * 2,
+//           repeats: true
+//         },
+//       });
+//       Notifications.cancelAllScheduledNotificationsAsync()
+//   }
 
     const FilterDrivers=(area)=>{
         if(area!=""){
@@ -206,7 +251,7 @@ const AssignModal=(props)=>{
             <VisibleItem 
                 data={data}    
                 rowHeightAnimatedValue={rowHeightAnimatedValue} 
-                onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId)}/>
+                onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId,data.item.Token)}/>
         );
 
     }
@@ -221,7 +266,7 @@ const AssignModal=(props)=>{
                 rowActionAnimatedValue={rowActionAnimatedValue}
                 rowHeightAnimatedValue={rowHeightAnimatedValue}
                 onClose={()=> closeRow(rowMap,data.item.key)}
-                onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId)}/>
+                onAssign={()=> AssignRow(rowMap,data.item.key,data.item.DriverId,data.item.Token)}/>
         );
     }
     useEffect(()=>{

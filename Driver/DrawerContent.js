@@ -8,13 +8,18 @@ import firebase from '../Database/firebase';
 
 export function DrawerContent(props){
 
-    const logout=()=>{
-        firebase.auth().signOut().then(function() {
-            props.navigation.navigate("ChooseBetweenUsers")
-          }).catch(function(error) {
-              console.log(error)
-          });
+  const SignOut = async () => {
+    try {
+      var UserID=firebase.auth().currentUser.uid;
+      await firebase.database().ref("DeliveryDriver").child(UserID).update({
+        expoToken:""
+      })
+     await firebase.auth().signOut()
+     props.navigation.navigate("ChooseBetweenUsers")
+    }catch (e){
+      console.log(e)
     }
+  }
     return(
        <View style={{flex:1}}>
            <DrawerContentScrollView {... props}>
@@ -57,7 +62,7 @@ export function DrawerContent(props){
                           size={size}/>
                         )}
                         label="تسجيل الخروج"
-                        onPress={logout}/> 
+                        onPress={() =>{SignOut()}}/> 
            </Drawer.Section>
            </DrawerContentScrollView>
        </View> 

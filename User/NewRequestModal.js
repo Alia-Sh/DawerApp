@@ -497,7 +497,7 @@ import * as Permissions from 'expo-permissions';
     const hideDatePicker = () => {
       setDatePickerVisibility(false);
     };
-  
+    var currentDate = new Date();
     const handleConfirm = (datetime) => {
         console.warn("A date has been picked: ", datetime);
         // setDateAndTime(moment(datetime).format('MMM, Do YYY HH:mm'))
@@ -572,7 +572,7 @@ import * as Permissions from 'expo-permissions';
             console.log(Material);
         }, 400)
     },[])
-    var currentDate = new Date();
+    
  //******************************************************* header of the modal 
 return (
     
@@ -923,7 +923,8 @@ return (
         confirmTextIOS="تأكيد"
         datePickerModeAndroid={'spinner'}
         is24Hour={false}
-        minimumDate={currentDate.setDate(currentDate.getDate() + 1)}
+        // minimumDate={currentDate.setDate(currentDate.getDate() + 1)}
+        minimumDate={currentDate}
         />
         {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
