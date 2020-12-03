@@ -69,7 +69,7 @@ const changeReq=()=>{
           STATUS="OutForPickup";
           setStatus("OutForPickup")
         }).then(()=>[
-          sendNotifications(Token,'السائق في الطريق لاستلام الطلب','استلام الطلب')
+          sendNotifications(Token,'السائق في الطريق لاستلام طلبك','استلام الطلب')
         ]).catch((error)=>{
           Alert.alert(error.message)
         })
@@ -84,7 +84,7 @@ const changeReq=()=>{
           STATUS="Delivered";
           setStatus("Delivered")
         }).then(()=>{
-          sendNotifications(Token,' تم توصيل الطلب للمنشأة','توصيل الطلب')
+          sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة، تم توصيل طلبك للمنشأة','توصيل الطلب')
         }).catch((error)=>{
           Alert.alert(error.message)
         })

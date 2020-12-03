@@ -106,10 +106,10 @@ const AssignModal=(props)=>{
                 Status:"Accepted",
                 DeliveryDriverId:DriverId
             }).then(()=>{
-                sendNotifications(Token,' تم قبول الطلب ','قبول الطلب','NotificationsPage')
+                sendNotifications(Token,'تم قبول طلبك ','قبول الطلب','NotificationsPage')
                 // scheduleNotification(Token)
             }).then(()=>{
-                sendNotifications(DriverToken,' تم اسناد طلب جديد اليك ',' الطلب',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
+                sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
                 props.ShowModal()
             })
     }
