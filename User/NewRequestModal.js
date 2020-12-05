@@ -503,7 +503,7 @@ import * as Permissions from 'expo-permissions';
     const handleConfirm = (datetime) => {
         console.warn("A date has been picked: ", datetime);
         // setDateAndTime(moment(datetime).format('MMM, Do YYY hh:mm A'))
-        setDateAndTime(moment(datetime).format('llll'))
+        setDateAndTime(moment(datetime).locale('en-au').format('llll'))
         // setDateAndTime(moment(datetime).format('Y/M/D hh:mm A'))
         hideDatePicker();
     };

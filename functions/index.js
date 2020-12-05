@@ -17,7 +17,7 @@ exports.newNodeDetected = functions.database.ref('User/{userId}/Name')
     return null;
 });
 //1 1 * * *
-exports.pushDataEveryMinute = functions.pubsub.schedule('1 1 * * *')
+exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
 .timeZone('Asia/Riyadh').onRun((context)=>{
     // var currentDate = new Date();
     // sendNotifications("ExponentPushToken[HLODp9Ac03jIiXoQoFPmKP]",' تم رفض الطلب ','قبول الطلب','NotificationsPage')
@@ -48,9 +48,9 @@ exports.pushDataEveryMinute = functions.pubsub.schedule('1 1 * * *')
                                     })
                                     database.ref("User/"+userId).on('value',snapshot=>{
                                         if(snapshot.val().expoToken){
-                                            firebase.database().ref('Notification/'+userId+"/").push({
+                                            database.ref('Notification/'+userId+"/").push({
                                                 RequestId: requestId,
-                                                DateAndTime:moment().locale('en-au').format('llll'),
+                                                DateAndTime:moment().tz('Asia/Riyadh').format('llll'),
                                                 Status:'Rejected'
                                             })
                                             return sendNotifications(snapshot.val().expoToken,'نعتذر عن قبول طلبك','تم رفض طلبك','NotificationsPage')
@@ -94,12 +94,12 @@ exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
                                         console.log("before token",snapshot.val().expoToken);
                                         if(snapshot.val().expoToken){
                                             console.log("token",snapshot.val().expoToken);
-                                            firebase.database().ref('Notification/'+userId+"/").push({
+                                            database.ref('Notification/'+userId+"/").push({
                                                 RequestId: requestId,
-                                                DateAndTime:moment().locale('en-au').format('llll'),
+                                                DateAndTime:moment().tz('Asia/Riyadh').format('llll'),
                                                 Status:'Remember'
                                             })
-                                            return sendNotifications(snapshot.val().expoToken,'نود تذكيرك بموعد استلام طلبك غداً الساعة'+moment(date).format('LT'),'تذكير','NotificationsPage')
+                                            return sendNotifications(snapshot.val().expoToken,'نود تذكيرك بموعد استلام طلبك غداً الساعة '+moment(date).format('LT'),'تذكير','NotificationsPage')
                                         }
                                     })
                                 }
