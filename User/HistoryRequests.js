@@ -8,6 +8,7 @@ import {FontAwesome5} from '@expo/vector-icons';
 import firebase from '../Database/firebase';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
 import {MaterialIcons} from '@expo/vector-icons';
+import moment from 'moment';
 const  HistoryRequests= ({navigation}) =>{
 const[HistoryReq,setHistoryReq]= useState([]);
  const[DetailsList,setDetailsList]= useState([]);
@@ -26,15 +27,17 @@ var userId = firebase.auth().currentUser.uid;
           if(Data){
             var li = []
             snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().DateAndTime);
+            // console.log(snapshot.key);
+            // console.log(snapshot.val().DateAndTime);
              if(snapshot.val().Status==="Canceled" ||snapshot.val().Status==="Delivered"||snapshot.val().Status==="Rejected"){
+                console.log(snapshot.val().DateAndTime);
+                console.log(moment.utc(snapshot.val().DateAndTime).local().startOf('seconds').fromNow());
             var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
             li.push(temp)
             setLoading(false)}
             })
             setHistoryReq(li)
-            console.log(li) 
+            // console.log(li) 
             if(HistoryRequests.length==0)
              setLoading(false)
           }

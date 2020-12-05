@@ -33,9 +33,11 @@ const  RequestsPage= ({navigation}) =>{
             var li = []
             
             snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().DateAndTime);
+            // console.log(snapshot.key);
+            
              if(snapshot.val().Status==="Pending" ||snapshot.val().Status==="Accepted"||snapshot.val().Status==="OutForPickup"){
+                console.log(snapshot.val().DateAndTime);
+                console.log(moment.utc(snapshot.val().DateAndTime).local().startOf('seconds').fromNow());
             var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
             li.push(temp)
             setLoading(false)}
@@ -55,16 +57,12 @@ const  RequestsPage= ({navigation}) =>{
             }
          
             setRequestList(li)
-            console.log(li) 
+            // console.log(li) 
             if (RequestList.length==0)
             setLoading(false)
           }
         })
     }
-        var currentDate = new Date();
-     console.log(RequestList);
-     console.log("Date",currentDate);
-     console.log("Date2", moment(currentDate).format('Y/M/D HH:mm'));
     
     //  if(RequestList.some( RequestList => RequestList['DateAndTime'] == moment(currentDate).format('Y/M/D HH:mm') )){
     //      console.log("hhere");

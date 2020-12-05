@@ -217,7 +217,6 @@ import Loading from '../components/Loading';
                                     setAlert({
                                         ...alert,
                                         Title:'',
-                                        //Message:'تم إضافة السائق بنجاح',
                                         Message:'تم إرسال طلبك بنجاح',
                                         jsonPath:"success",
                                         alertVisible:true,

@@ -503,7 +503,7 @@ import * as Permissions from 'expo-permissions';
     const handleConfirm = (datetime) => {
         console.warn("A date has been picked: ", datetime);
         // setDateAndTime(moment(datetime).format('MMM, Do YYY hh:mm A'))
-        setDateAndTime(moment(datetime).format('LLLL'))
+        setDateAndTime(moment(datetime).format('llll'))
         // setDateAndTime(moment(datetime).format('Y/M/D hh:mm A'))
         hideDatePicker();
     };
@@ -651,7 +651,7 @@ return (
                                         NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                         'row':'row-reverse'}]}>
                                     <Text style={styles.text}>تاريخ و وقت الاستلام:</Text>
-                                    <Text style={styles.Text}>{DateAndTime}</Text>
+                                    <Text  style={{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:10}} >{DateAndTime}</Text>
                                 </View>
                             </Card>
                             <FlatList
