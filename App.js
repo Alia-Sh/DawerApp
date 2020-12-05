@@ -45,7 +45,7 @@ import JoinDetails from './Admin/JoinDetails';
 import DriverRequestDetails from './Driver/DriverRequestDetails';
 import AssignedRequestsToDriver from './Admin/AssignedRequestsToDriver';
 import DriverAllRequests from './Admin/DriverAllRequests';
-
+import UserViewDriver from './User/UserViewDriver'
 
 
 const Stack = createStackNavigator();
@@ -84,6 +84,7 @@ function Root() {
           <Drawer.Screen name="GoogleMap" component={GoogleMap} options={myOptions}/>
           <Drawer.Screen name="ImageClassifier" component={ImageClassifier} options={myOptions}/>
           <Drawer.Screen name="FacilitiesInCategory" component={FacilitiesInCategory} options={myOptions}/>
+          <Drawer.Screen name="UserViewDriver" component={UserViewDriver} options={myOptions}/>
         </Drawer.Navigator>
   );
 }

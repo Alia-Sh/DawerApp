@@ -1,11 +1,11 @@
 import React ,{useState,useEffect}from 'react';
-import {View, Text, StyleSheet,NativeModules,Image,FlatList,Modal} from 'react-native';
+import {View, Text, StyleSheet,NativeModules,Image,FlatList,Modal,TouchableOpacity} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import moment from 'moment';
 import 'moment/locale/ar-sa'
 import firebase from '../Database/firebase';
 import {Card,Title} from 'react-native-paper';
-const  NotificationsPage= () =>{
+const  NotificationsPage= ({navigation}) =>{
     const [NotificationList,setNotificationList]=useState([])
     const[loading,setLoading]=useState(true);
     const[DetailsList,setDetailsList]= useState([]);
@@ -50,13 +50,16 @@ const  NotificationsPage= () =>{
           if(Data){
             var li = []
             await snapshot.forEach( function(snapshot){
-                var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status,requestId:snapshot.val().RequestId,DriverId:snapshot.val().DriverId}
-                li.push(temp)
+                if(snapshot.val().Status=='Remember'){
+                    if(moment(snapshot.val().DateAndTime).format('Y/M/D')==moment().format('Y/M/D') || moment(snapshot.val().DateAndTime).format('Y/M/D')==moment().subtract(1, 'day').format('Y/M/D')){
+                        var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status,requestId:snapshot.val().RequestId,DriverId:snapshot.val().DriverId}
+                        li.push(temp) 
+                    }  
+                }else{
+                    var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status,requestId:snapshot.val().RequestId,DriverId:snapshot.val().DriverId}
+                    li.push(temp)   
+                }
                 setLoading(false)
-
-                                    // var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status,requestId:snapshot.val().RequestId,DriverId:snapshot.val().DriverId}
-                                    // li.push(temp)
-                                    // setLoading(false)
 
             })
             for (var i in li) {
@@ -114,41 +117,46 @@ const  NotificationsPage= () =>{
     });
 
     const renderList = ((item)=>{
+        // var DriverId=item.DriverId
+        // console.log("item",item);
         return(
             <View style={styles.container}>
                 {item.Status=='Accepted'?
-                            <View style={styles.cardContent}>
+                    <View style={styles.cardContent}>
+                        <View style={{padding:5}}>
                             <Image
-                                source={require('../assets/AdminIcons/requestIcon.jpg')}
-                                style={{width:40,height:40,marginRight:-5,borderRadius:12}}
+                                source={require('../assets/AcceptIcon4.png')}
+                                style={{width:30,height:30,borderRadius:12,padding:5}}
                                 resizeMode="stretch"
                             />
-            
-                            <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم قبول طلبك واسناده الى 
-                                <Text style={{fontWeight: "bold"}}> {item.DriverName}</Text>
-                                .
-                            </Text>
-                            <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text>    
-                            <MaterialIcons 
-                                name="error" 
-                                size={30} 
-                                color="#7B7B7B"
-                                onPress={()=>{ setDetails(item)}}
-                            />
                         </View>
-                        :
-                        null
+    
+                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم <Text style={{fontWeight: "bold"}}>قبول</Text> طلبك واسناده الى 
+                            <Text onPress={()=> navigation.navigate('UserViewDriver',{DriverId:item.DriverId})} style={{fontWeight: "bold"}}> {item.DriverName}</Text>
+                            .
+                        </Text>
+                        <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text>    
+                        <MaterialIcons 
+                            name="error" 
+                            size={30} 
+                            color="#7B7B7B"
+                            onPress={()=>{ setDetails(item)}}
+                        />
+                    </View>
+                    :
+                    null
                 }
 
                 {item.Status=='OutForPickup'?
                     <View style={styles.cardContent}>
-                        <Image
-                            source={require('../assets/DriverProfile2.png')}
-                            style={{width:45,height:50,marginRight:-5,borderRadius:12}}
-                            resizeMode="stretch"
-                        />
-
-                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}><Text style={{fontWeight: "bold"}}>{item.DriverName}</Text> في الطريق لاستلام طلبك.
+                        <View style={{borderRadius:150/2,borderColor:'#E0E0E0',borderWidth:1,padding:5}}>
+                            <Image
+                                source={require('../assets/DeliveredIcon2.png')}
+                                style={{width:25,height:25,borderRadius:12}}
+                                resizeMode="stretch"
+                            />
+                        </View>
+                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}><Text onPress={()=> navigation.navigate('UserViewDriver',{DriverId:item.DriverId})} style={{fontWeight: "bold"}}>{item.DriverName}</Text> في الطريق لاستلام طلبك.
                         </Text>
                         <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text>        
                         <MaterialIcons 
@@ -164,11 +172,13 @@ const  NotificationsPage= () =>{
 
                 {item.Status=='Delivered'?
                     <View style={styles.cardContent}>
+                        <View style={{borderRadius:150/2,borderColor:'#E0E0E0',borderWidth:1,padding:5}}>
                         <Image
-                            source={require('../assets/DriverProfile2.png')}
-                            style={{width:45,height:50,marginRight:-5,borderRadius:12}}
+                            source={require('../assets/DeliveredIcon2.png')}
+                            style={{width:25,height:25,borderRadius:12}}
                             resizeMode="stretch"
                         />
+                        </View>
 
                         <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم توصيل طلبك إلى المنشأة
                         </Text>
@@ -187,13 +197,14 @@ const  NotificationsPage= () =>{
 
                 {item.Status=='Rejected'?
                     <View style={styles.cardContent}>
+                        <View style={{padding:5}}>
                         <Image
-                            source={require('../assets/rejectRequestIcon.png')}
-                            style={{width:40,height:40,marginRight:-5,borderRadius:12}}
+                            source={require('../assets/rejectIcon2.png')}
+                            style={{width:30,height:30,borderRadius:12}}
                             resizeMode="stretch"
                         />
-
-                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم رفض  طلبك
+                        </View>
+                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم <Text style={{fontWeight: "bold"}}>رفض</Text> طلبك
                         </Text>
                         <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text> 
                                     
@@ -210,15 +221,23 @@ const  NotificationsPage= () =>{
 
                 {item.Status=='Remember'?
                     <View style={styles.cardContent}>
+                        <View style={{borderRadius:150/2,borderColor:'#E0E0E0',borderWidth:1,padding:5}}>
                         <Image
-                            source={require('../assets/rememberIcon.png')}
-                            style={{width:40,height:40,marginRight:-5,borderRadius:12}}
+                            source={require('../assets/reminder3.png')}
+                            style={{width:25,height:25,borderRadius:12}}
                             resizeMode="stretch"
                         />
+                        </View>
 
-                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد غداً لتسليم طلب
-                        </Text>
-                        <Text style={styles.time}>{moment.utc("Sun, Dec 4, 2020 9:45 AM").local('ar-sa').startOf('seconds').fromNow()}</Text> 
+                        {
+                           moment(item.DateAndTime).format('Y/M/D')==moment().format('Y/M/D')?
+                           <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد استلام لطلبك غداً 
+                           </Text>
+                           :
+                           <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد استلام لطلبك <Text style={{fontWeight: "bold"}}>اليوم</Text>
+                           </Text>
+                        }
+                        <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text> 
                                     
                         <MaterialIcons 
                             name="error" 
@@ -321,10 +340,10 @@ const styles = StyleSheet.create({
         width:'100%'
     }, 
     time: {
-        fontSize: 14,
+        fontSize: 12,
         textAlign :'right',
         color :'#9E9E9E',
-        top:15,
+        top:18,
         margin:5
     },
     centeredView:{
