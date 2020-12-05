@@ -41,6 +41,7 @@
     "lottie-ios": "^2.5.3",
     "lottie-react-native": "^2.5.11",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.32",
     "multiselect-react-dropdown": "^1.6.1",
     "native-base": "^2.13.14",
     "node-fetch": "^2.6.1",

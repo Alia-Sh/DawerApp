@@ -62,6 +62,7 @@ const AssignModal=(props)=>{
         setExpanded(!expanded);
     }
 
+    
     const fetchData=()=>{
         for (var i in DriverList) {
             firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
@@ -109,6 +110,12 @@ const AssignModal=(props)=>{
                 sendNotifications(Token,'تم قبول طلبك ','قبول الطلب','NotificationsPage')
                 // scheduleNotification(Token)
             }).then(()=>{
+                firebase.database().ref('Notification/'+UserId+"/").push({
+                    RequestId: RequestId,
+                    DriverId:DriverId,
+                    DateAndTime:moment().locale('en-au').format('llll'),
+                    Status:'Accepted'
+                })
                 sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
                 props.ShowModal()
             })

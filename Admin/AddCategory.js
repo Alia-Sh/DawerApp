@@ -72,7 +72,6 @@ const AddCategory=(props)=>{
                 }else{
                     firebase.database().ref('Category/').push({
                         Name: Category,
-                        // CategoryId:firebase.database().ref('Category/').push().getKey()
                     }).then((data)=>{
                         //success callback
                         setData({
