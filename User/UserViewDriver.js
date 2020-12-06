@@ -38,7 +38,7 @@ const UserViewDriver = ({navigation,route})=>{
      
         });
 
-    const retriveImage= async ()=>{
+    // const retriveImage= async ()=>{
         var imageRef = firebase.storage().ref('images/' + userId);
         imageRef
           .getDownloadURL()
@@ -47,10 +47,10 @@ const UserViewDriver = ({navigation,route})=>{
             setPicture(url);
           })
           .catch((e) => console.log('getting downloadURL of image error => ', e));
-      }
+    //   }
 
     useEffect(()=>{
-        retriveImage()
+        // retriveImage()
     },[]);
 
     const openDial=(phone)=>{
