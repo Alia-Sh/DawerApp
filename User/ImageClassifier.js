@@ -1,80 +1,47 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, StatusBar, ActivityIndicator, TouchableOpacity, Image, Button, ActionSheetIOS, NativeModules} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as tf from '@tensorflow/tfjs';
-//import '@tensorflow/tfjs-react-native';
-import * as mobilenet from '@tensorflow-models/mobilenet';
+import '@tensorflow/tfjs-react-native';
+//import * as mobilenet from '@tensorflow-models/mobilenet';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import * as jpeg from 'jpeg-js';
 import * as ImagePicker from 'expo-image-picker';
-//import { fetch } from '@tensorflow/tfjs-react-native';
-import {bundleResourceIO} from "@tensorflow/tfjs-react-native";
+import { fetch, bundleResourceIO } from '@tensorflow/tfjs-react-native'
 import {FontAwesome5} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'; 
-import firebase from '../Database/firebase';
-import { TextInput } from 'react-native';
-
-// There is an ERROR here, so i commneted the functions below..
-
-const ImageClassifier = ({navigation})=> {
-
-  const [isTfReady,setIsTfReady] = useState(false)
-  const [isModelReady,setIsModelReady] = useState(false)
-  const [predictions,setPredictions] = useState(null)
-  const [image,setImage] = useState(null)
-  const [link,setLink] = useState(null)
+//import firebase from '../Database/firebase';
 
 
-  const getPred = async()=>{
+export default class ImageClassifier extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isTfReady: false,
+      isModelReady: false,
+      predictions: null,
+      image: null,
+      MyModel: null, 
+    };
+  }
+ 
+  async componentDidMount() {
+    await tf.setBackend('rn-webgl');
     await tf.ready(); // preparing TensorFlow
-
-    //const model = await tf.loadLayersModel(link);
-    //const example = tf.image.cropAndResize(image.next().value.reshape([1, 224, 224, 3]));
-    //const predict = model.predict(example);
+    this.setState({ isTfReady: true,});
+    console.log("BEFORE LOAD")
     const modelJSON = require('../assets/tfjs_files/model.json');
     const modelWeights = require('../assets/tfjs_files/group1-shard.bin');
+    console.log("AFTER LOAD")
     const model = await tf.loadLayersModel(bundleResourceIO(modelJSON, modelWeights))
       .catch(e => console.log(e));
     console.log("Model loaded!");
-    const predicted = await model.predict(image); 
-    console.log(predicted); 
-    setLink(predicted);
+    this.setState({ MyModel: model });
+    this.setState({ isModelReady: true });
   }
 
-  /*
-   const loadModel = async()=>{
-    const modelJSON = require('../assets/tfjs_files/model.json');
-    const modelWeights = require('../assets/tfjs_files/group1-shard1of21.bin');
-    const model = await tf
-      .loadLayersModel(bundleResourceIO(modelJSON, modelWeights))
-      .catch(e => console.log(e));
-    console.log("Model loaded!");
-    return model;
-  };
-
-
-  const getModel= async ()=>{
-    var modelRef = firebase.storage().ref('Model');
-    modelRef
-      .getDownloadURL()
-      .then((url) => {
-        //from url you can fetched the uploaded image easily
-        setLink(url);
-      })
-      .catch((e) => console.log('getting downloadURL of model error => ', e));
-  }
-  */
-/*
-  componentDidMount = async ()  =>  {
-    await tf.ready(); // preparing TensorFlow
-    setIsTfReady(true);
-    model = await mobilenet.load(); // preparing MobileNet model
-    setIsModelReady(true);
-    this.getPermissionAsync(); // get permission for accessing camera on mobile device
-  }
-*/
-  const getPermissionAsync = async () => {
+  getPermissionAsync = async () => {
     if (Constants.platform.ios) {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
         if (status !== 'granted') {
@@ -83,81 +50,11 @@ const ImageClassifier = ({navigation})=> {
     }
   }
 
-  // image classification options
-  const camOptions =  () => {
-    ActionSheetIOS.showActionSheetWithOptions(
-    {
-      options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
-      destructiveButtonIndex: 2,
-      cancelButtonIndex: 0
-    },
-    buttonIndex => {
-      if (buttonIndex === 0) {
-        // cancel action
-      } else if (buttonIndex === 1) {
-        pickFromCamera();
-      } else if (buttonIndex === 2) {
-        selectImage();
-      }
-    }
-    );
-  }
 
-  // take photo from camera
-  const pickFromCamera = async ()=>{
-    const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
-    if(granted){
-        let data =  await ImagePicker.launchCameraAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
-              allowsEditing: true,
-              aspect: [1,1]
-            // quality: 0.5
-          })
-        if(!data.cancelled){
-          const source = { uri: data.uri }
-          setImage(source);
-          getPred();
-          //this.classifyImage()
-        }
-    }else{
-      alert("you need to give the permission to work!")
-    }
-  }
-
-  // select image from gallery
-  const selectImage = async() => {
-    try {
-      let response = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3]
-      })
-      if (!response.cancelled) {
-          const source = { uri: response.uri }
-          setImage(source);
-          getPred();
-          //this.classifyImage()
-      }
-    } catch (error) {
-      console.log(error)
-      }
-  }
-
-  const classifyImage = async () => {
-    try {
-      const imageAssetPath = Image.resolveAssetSource(this.state.image)
-      const response = await fetch(imageAssetPath.uri, {}, { isBinary: true })
-      const rawImageData = await response.arrayBuffer()
-      const imageTensor = this.imageToTensor(rawImageData)
-      const predictions = await this.model.classify(imageTensor)
-      setPredictions(predictions);
-    } catch (error) {
-      console.log('Exception Error: ', error)
-    }
-  }
-
-  const imageToTensor = (rawImageData)=> {
+  imageToTensor(rawImageData) {
     const TO_UINT8ARRAY = true
+    //const scaling = tf.scalar(255.0);
+    //const normalized = rawImageData.div(scaling); // make th change..
     const { width, height, data } = jpeg.decode(rawImageData, TO_UINT8ARRAY)
     // Drop the alpha channel info for mobilenet
     const buffer = new Uint8Array(width * height * 3)
@@ -168,94 +65,64 @@ const ImageClassifier = ({navigation})=> {
       buffer[i + 2] = data[offset + 2]
       offset += 4
     }
-    return tf.tensor3d(buffer, [height, width, 3])
+    return tf.tensor3d(buffer, [ height, width, 3])
   }
 
-  // prediction
-  const renderPrediction = (prediction) => {
-    return (
-      <View style={styles.welcomeContainer}>
-        <Text key={prediction.className} style={styles.text}>
-          Prediction: {prediction.className} {', '} Probability: {prediction.probability}
-        </Text>
-      </View>
-    )
-  }
 
-/*
+  classifyImage = async () => {
+    try {
+      const imageAssetPath = Image.resolveAssetSource(this.state.image)
+      const response = await fetch(imageAssetPath.uri, {}, { isBinary: true })
+      const rawImageData = await response.arrayBuffer()
+      console.log("Before Image Tensor!");
+      const imageTensor = (this.imageToTensor(rawImageData)).resizeBilinear([384, 512]).reshape([1, 384, 512, 3])
+      console.log("After Image Tensor!");
+      //console.log((this.state.MyModel).summary())
+      const predictions = await (this.state.MyModel).predict(imageTensor.div(tf.scalar(255.0))).data();
+      console.log("After predictions!");
+      console.log(predictions);
 
-  return(
-    <Text>Hi, I am the classifier</Text>
-  );
-};
-
-//StyleSheets..
-
-export default ImageClassifier;
-
-///////////// OOOOOLLLLLLLDDDDDDDD
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isTfReady: false,
-      isModelReady: false,
-      predictions: null,
-      image: null,
-    };
-  }
-
-  async componentDidMount() {
-    await tf.ready(); // preparing TensorFlow
-    this.setState({ isTfReady: true,});
-    this.model = await mobilenet.load(); // preparing MobileNet model
-    this.setState({ isModelReady: true });
-    this.getPermissionAsync(); // get permission for accessing camera on mobile device
-  }
-
-getPermissionAsync = async () => {
-  if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-      if (status !== 'granted') {
-          alert('فضلًا، قم بإعطاء صلاحية الدخول لألبوم الصور !')
+      // get the highest prediction
+      const { max, maxIndex } = this.indexOfMax(predictions);
+      const maxFixed = parseFloat(max.toFixed(4));
+      if (maxIndex === 0) {
+        this.setState({ predictions: "زجاج"})//+" with probability = "+maxFixed })
+      } else if (maxIndex === 1) {
+        this.setState({ predictions: "ورق"})//+" with probability = "+maxFixed })
+      } else if (maxIndex === 2) {
+        this.setState({ predictions: "بلاستيك"})//+" with probability = "+maxFixed })
       }
+    } catch (error) {
+      console.log('Exception Error: ', error)
+    }
   }
-}
 
-imageToTensor(rawImageData) {
-  const TO_UINT8ARRAY = true
-  const { width, height, data } = jpeg.decode(rawImageData, TO_UINT8ARRAY)
-  // Drop the alpha channel info for mobilenet
-  const buffer = new Uint8Array(width * height * 3)
-  let offset = 0 // offset into original data
-  for (let i = 0; i < buffer.length; i += 3) {
-    buffer[i] = data[offset]
-    buffer[i + 1] = data[offset + 1]
-    buffer[i + 2] = data[offset + 2]
-    offset += 4
-  }
-  return tf.tensor3d(buffer, [height, width, 3])
-}
+  indexOfMax = (arr)=>{
+    if (arr.length === 0) {
+      return -1;
+    }
+    let max = arr[0];
+    let maxIndex = 0;
+  
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] > max) {
+        max = arr[i];
+        maxIndex = i;
+      }
+    }
+    return {
+      max,maxIndex
+    };
+  };
 
-classifyImage = async () => {
-  try {
-    const imageAssetPath = Image.resolveAssetSource(this.state.image)
-    const response = await fetch(imageAssetPath.uri, {}, { isBinary: true })
-    const rawImageData = await response.arrayBuffer()
-    const imageTensor = this.imageToTensor(rawImageData)
-    const predictions = await this.model.classify(imageTensor)
-    this.setState({ predictions: predictions })
-  } catch (error) {
-    console.log('Exception Error: ', error)
-  }
-}
 
-// image classification options
-camOptions = async () => {
+  // image classification options
+  camOptions = async () => {
     ActionSheetIOS.showActionSheetWithOptions(
     {
       options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
       destructiveButtonIndex: 2,
+      //tintColor: 'blue',
       cancelButtonIndex: 0
     },
     buttonIndex => {
@@ -270,11 +137,11 @@ camOptions = async () => {
     );
   }
 
-// take photo from camera
-pickFromCamera = async ()=>{
-    const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
+  // take photo
+  pickFromCamera = async ()=>{
+    const {granted} = await Permissions.askAsync(Permissions.CAMERA)
     if(granted){
-         let data =  await ImagePicker.launchCameraAsync({
+         let data = await ImagePicker.launchCameraAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               allowsEditing: true,
               aspect: [1,1]
@@ -290,38 +157,39 @@ pickFromCamera = async ()=>{
     }
   }
 
-// select image from gallery
-selectImage = async () => {
-  try {
-    let response = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3]
-    })
-    if (!response.cancelled) {
+  // upload photo
+  selectImage = async () => {
+    try {
+      let response = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1]
+      })
+      if (!response.cancelled) {
         const source = { uri: response.uri }
-        this.setState({ image: source })
-        this.classifyImage()
+          this.setState({ image: source })
+          this.classifyImage()
+      }
+    } catch (error) {
+      console.log(error)
     }
-  } catch (error) {
-    console.log(error)
   }
-}
 
-// prediction
-renderPrediction = (prediction) => {
-  return (
-    <View style={styles.welcomeContainer}>
-      <Text key={prediction.className} style={styles.text}>
-        Prediction: {prediction.className} {', '} Probability: {prediction.probability}
-      </Text>
-    </View>
-  )
-}
+  // printing results
+  renderPrediction = (prediction) => {
+    return (
+      <View style={styles.welcomeContainer}>
+          <Text style={styles.text}>
+          نوع المادة: {prediction}
+        </Text>
+      </View>
+    )
+  }
 
-render() {
-  const { isTfReady, isModelReady, predictions, image } = this.state
-*/
+  render() {
+    const { isTfReady, isModelReady, predictions, image,  MyModel } = this.state
+    const { navigation } = this.props;
+
   return (
     <View style={styles.container}>
        <LinearGradient
@@ -344,15 +212,18 @@ render() {
       <StatusBar barStyle='light-content' />
       <View style={styles.loadingContainer}>
         <Text style={styles.text}>
-          TensorFlow.js ready? {setIsTfReady ? <Text>✅</Text> : ''}
+          TensorFlow.js ready? {isTfReady ? <Text>✅</Text> : ''}
         </Text>
 
-        <View style={styles.loadingModelContainer}>
+        <View>
           <Text style={styles.text}>Custom model ready? </Text>
-          {setIsModelReady ? (
+          {isModelReady ? (
             <Text style={styles.text}>✅</Text>
           ) : (
+            <View style = {{flexDirection: 'row'}}>
             <ActivityIndicator size='small' />
+            <Text style={styles.text}>فضلًا انتظر، جاري تحميل المصنف..  </Text>
+            </View>
           )}
         </View>
       </View>
@@ -360,29 +231,17 @@ render() {
 
      <TouchableOpacity
         style={styles.ButtonSty}
-        onPress={camOptions}
-        >
+        onPress={this.camOptions}>
             
-        <Text>تصنيف الصورة</Text>
+        <Text>خيارات الصورة</Text>
       </TouchableOpacity>
       
-      <View>
+      {/*<View>
       <Text style = {{color: 'white', marginTop: 14}}> Prediction is HERE : {link}</Text>
 
-      </View>
-      
-        {/*
-        <Button 
-             style={styles.inputStyle}
-             icon={image==""?"upload":"check"}
-             mode="contained" 
-             theme={theme}
-             title="تصنيف الصورة"
-             onPress={this.camOptions}>
-        </Button>
-        */}
+      </View> */}
+    
 
-       {/*
        <TouchableOpacity
         style={styles.imageWrapper}
         onPress={isModelReady ? this.selectImage : undefined}>
@@ -395,17 +254,18 @@ render() {
       <View style={styles.predictionWrapper}>
         {isModelReady && image && (
           <Text style={styles.text}>
-            Predictions: {predictions ? '' : 'Predicting...'}
+             {predictions ? '' : 'جاري التصنيف...'}
           </Text>
         )}
         {isModelReady &&
           predictions &&
-          predictions.map(p => this.renderPrediction(p))}
-        </View> */}
+          this.renderPrediction(predictions)}
+        </View>
       </View>
       </ScrollView>
     </View>
   );
+}
 }
        
 
@@ -440,23 +300,25 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 0,
     marginBottom: 20,
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 0, // was 30
   },
   loadingContainer: {
     marginTop: 80,
     justifyContent: 'center'
+    
   },
   text: {
     color: '#ffffff',
-    fontSize: 16
+    fontSize: 16,
+    marginBottom: 10
   },
   loadingModelContainer: {
     flexDirection: 'row',
-    marginTop: 10
+    marginTop: 10,
   },
   imageWrapper: {
     width: 280,
@@ -502,4 +364,3 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
 })
-export default ImageClassifier;
