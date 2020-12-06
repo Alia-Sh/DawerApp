@@ -40,6 +40,8 @@ const FacilityInfo=({navigation,route,props})=>{
         IsVisible:false,
     })
 
+    const [AllCategory,setAllCategory] = useState([])
+
     const retriveData=()=>{
 
         firebase.database().ref('/RecyclingFacility/'+FacilityId).on('value',snapshot=>{
@@ -61,6 +63,21 @@ const FacilityInfo=({navigation,route,props})=>{
           })
     }
 
+    const retriveAllCategory=()=>{
+        firebase.database().ref('/Category/').on('value',snapshot=>{
+            const Data = snapshot.val();
+            if(Data){
+              var li = []
+              snapshot.forEach(function(snapshot){
+                var temp={Name:snapshot.val().Name,CategoryId:snapshot.key,checked:false}
+                li.push(temp)
+              })   
+              setAllCategory(li)
+            }
+          })
+          
+    }
+
     const openDial=(phone)=>{
         if(Platform.OS==="android"){
             Linking.openURL(`tel:${phone}`)
@@ -77,21 +94,15 @@ const FacilityInfo=({navigation,route,props})=>{
       }
 
       const NavigateToUpdateFacilityInfo=()=>{
-        firebase.database().ref('/Category/').on('value',snapshot=>{
-            const Data = snapshot.val();
-            if(Data){
-              var li = []
-              snapshot.forEach(function(snapshot){
-                var temp={Name:snapshot.val().Name,CategoryId:snapshot.key,checked:false}
-                li.push(temp)
-              })
-              navigation.navigate("EditFacilityInfo",{Name,AcceptedMaterials,ContactInfo,Location,WorkingDays,WorkingHours,Picture,FacilityId,li})
-            }
-          })
+
+        // var li = [{Name:"زجاج",CategoryId:"MJ2fNRRVySUnCjttoy2",checked:false},{Name:"ورق",CategoryId:"MJ2fRRrr5z7IlJIOWdX",checked:false}]
+        
+        navigation.navigate("EditFacilityInfo",{Name,AcceptedMaterials,ContactInfo,Location,WorkingDays,WorkingHours,Picture,FacilityId,AllCategory})
       }
 
       useEffect(()=>{
-        retriveData()   
+        retriveData() 
+        retriveAllCategory()  
         
     },[props, isFocused]);
 

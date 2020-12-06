@@ -63,7 +63,7 @@ const HomeScreen = ({navigation})=>{
         <Card style={styles.mycard} >
           <View style={[styles.cardContent,styles.flexDirectionStyle]}>
               <View style={styles.flexDirectionStyle}>
-              <Title style={styles.title}>{item.Name} {item.Status}</Title>
+              <Title style={styles.title}>{item.Name}</Title>
               </View>
 
               <TouchableOpacity style={styles.EditIconStyle}

@@ -31,7 +31,7 @@ export default class EditFacilityInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          AllCategory: this.props.route.params.li,
+          AllCategory: this.props.route.params.AllCategory,
           Category:this.props.route.params.AcceptedMaterials,
           Logo:this.props.route.params.Picture,
           Name:this.props.route.params.Name,
@@ -84,6 +84,7 @@ export default class EditFacilityInfo extends Component {
           FacilityId:this.props.route.params.FacilityId
       };
         this.selectCheckbox()
+        console.log(this.state.WorkingH);
     }
 
     selectImage = async () => {
@@ -580,7 +581,7 @@ export default class EditFacilityInfo extends Component {
       this.setState({LocationModal:false})
     }
 
-    closeLocatiomModal=()=>{
+    closeLocationModal=()=>{
       this.setState({LocationModal:false})
     }
 
@@ -1233,7 +1234,7 @@ export default class EditFacilityInfo extends Component {
 
             </View>
                 {this.state.LocationModal?
-                    <GoogleMap pickLocation={this.pickLocation} closeLocatiomModal={this.closeLocatiomModal}></GoogleMap>
+                    <GoogleMap pickLocation={this.pickLocation} closeLocationModal={this.closeLocationModal}></GoogleMap>
                     :
                     null
                 }
