@@ -109,7 +109,7 @@ const AssignModal=(props)=>{
                 Status:"Accepted",
                 DeliveryDriverId:DriverId
             }).then(()=>{
-                sendNotifications(Token,'تم قبول طلبك ','قبول الطلب','NotificationsPage')
+                sendNotifications(Token,'تم قبول طلبك ✅ ','قبول الطلب','NotificationsPage')
                 // scheduleNotification(Token)
             }).then(()=>{
                 firebase.database().ref('Notification/'+UserId+"/").push({
@@ -118,7 +118,7 @@ const AssignModal=(props)=>{
                     DateAndTime:moment().locale('en-au').format('llll'),
                     Status:'Accepted'
                 }).then(()=>{
-                    sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
+                    sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ✔️',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
                     props.ShowModal()
                 })
             })

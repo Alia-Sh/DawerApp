@@ -15,7 +15,7 @@ console.log("on rejrct ",props.Token);
             DateAndTime:moment().locale('en-au').format('llll'),
             Status:'Rejected'
         }).then(()=>{
-          sendNotifications(Token,'نعتذر عن قبول طلبك','تم رفض طلبك')
+          sendNotifications(Token,'نعتذر عن قبول طلبك 🚫','تم رفض طلبك')
           props.setRejectModal(false);
           props.navigation.navigate("RequestHome");
         })

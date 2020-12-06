@@ -76,7 +76,7 @@ const changeReq=(STATUS)=>{
             DateAndTime:moment().locale('en-au').format('llll'),
             Status:'OutForPickup'
         }).then(()=>{
-          sendNotifications(Token,'السائق في الطريق لاستلام طلبك','استلام الطلب')
+          sendNotifications(Token,'السائق في الطريق لاستلام طلبك 🚙','استلام الطلب')
         })
         }).catch((error)=>{
           Alert.alert(error.message)
@@ -98,7 +98,7 @@ const changeReq=(STATUS)=>{
             DateAndTime:moment().locale('en-au').format('llll'),
             Status:'Delivered'
         }).then(()=>{
-          sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة، تم توصيل طلبك للمنشأة','توصيل الطلب')
+          sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة ♻️ 🤍، تم توصيل طلبك للمنشأة','توصيل الطلب')
         })
         }).catch((error)=>{
           Alert.alert(error.message)

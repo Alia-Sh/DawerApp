@@ -53,7 +53,7 @@ exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
                                                 DateAndTime:moment().tz('Asia/Riyadh').format('llll'),
                                                 Status:'Rejected'
                                             })
-                                            return sendNotifications(snapshot.val().expoToken,'نعتذر عن قبول طلبك','تم رفض طلبك','NotificationsPage')
+                                            return sendNotifications(snapshot.val().expoToken,'نعتذر عن قبول طلبك 🚫','تم رفض طلبك','NotificationsPage')
                                         }
                                     })
                                 }
@@ -99,7 +99,7 @@ exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
                                                 DateAndTime:moment().tz('Asia/Riyadh').format('llll'),
                                                 Status:'Remember'
                                             })
-                                            return sendNotifications(snapshot.val().expoToken,'نود تذكيرك بموعد استلام طلبك غداً الساعة '+moment(date).format('LT'),'تذكير','NotificationsPage')
+                                            return sendNotifications(snapshot.val().expoToken,'نود تذكيرك بموعد استلام طلبك غداً الساعة '+moment(date).format('LT'),' 🔔 تذكير','NotificationsPage')
                                         }
                                     })
                                 }
