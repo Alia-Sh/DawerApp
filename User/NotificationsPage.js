@@ -45,7 +45,7 @@ const  NotificationsPage= ({navigation}) =>{
     }
 
     const fetchData=async()=>{
-        firebase.database().ref("Notification/"+userId).on('value',async snapshot=>{
+        firebase.database().ref("Notification/"+userId).orderByChild('DateAndTime').limitToLast(20).on('value',async snapshot=>{
           const Data = snapshot.val();
           if(Data){
             var li = []
@@ -131,7 +131,7 @@ const  NotificationsPage= ({navigation}) =>{
                             />
                         </View>
     
-                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم <Text style={{fontWeight: "bold"}}>قبول</Text> طلبك واسناده الى 
+        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>تم <Text style={{fontWeight: "bold"}}>قبول</Text> طلبك وإسناده إلى 
                             <Text onPress={()=> navigation.navigate('UserViewDriver',{DriverId:item.DriverId})} style={{fontWeight: "bold"}}> {item.DriverName}</Text>
                             .
                         </Text>
@@ -156,7 +156,7 @@ const  NotificationsPage= ({navigation}) =>{
                                 resizeMode="stretch"
                             />
                         </View>
-                        <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}><Text onPress={()=> navigation.navigate('UserViewDriver',{DriverId:item.DriverId})} style={{fontWeight: "bold"}}>{item.DriverName}</Text> في الطريق لاستلام طلبك.
+            <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}><Text onPress={()=> navigation.navigate('UserViewDriver',{DriverId:item.DriverId})} style={{fontWeight: "bold"}}>{item.DriverName}</Text> في الطريق لإستلام طلبك.
                         </Text>
                         <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text>        
                         <MaterialIcons 
@@ -231,10 +231,10 @@ const  NotificationsPage= ({navigation}) =>{
 
                         {
                            moment(item.DateAndTime).format('Y/M/D')==moment().format('Y/M/D')?
-                           <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد استلام لطلبك غداً 
+                           <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد لإستلام طلبك <Text style={{fontWeight: "bold"}}>غداً</Text> 
                            </Text>
                            :
-                           <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد استلام لطلبك <Text style={{fontWeight: "bold"}}>اليوم</Text>
+                           <Text style={styles.textInput,{flex: 1,flexWrap: 'wrap',marginTop:2,marginRight:10,fontSize:16,textAlign:"right"}}>لديك موعد لإستلام طلبك <Text style={{fontWeight: "bold"}}>اليوم</Text>
                            </Text>
                         }
                         <Text style={styles.time}>{moment.utc(item.DateAndTime).local('ar-sa').startOf('seconds').fromNow()}</Text> 
@@ -297,6 +297,7 @@ const  NotificationsPage= ({navigation}) =>{
                 style={{flex:8}}
                 onRefresh={()=>fetchData()}
                 refreshing={loading}
+                // initialNumToRender={5}
               /> 
             }
         </View>

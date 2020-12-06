@@ -33,6 +33,7 @@ const DriverRequestDetails = ({navigation,route})=>{
       Message:'',
       jsonPath:'',   
     })
+
     var DriverId = firebase.auth().currentUser.uid;
     const [Status,setStatus]=useState(STATUS)
     console.log(Status);
@@ -60,7 +61,7 @@ const DriverRequestDetails = ({navigation,route})=>{
         })
   }
 
-const changeReq=()=>{
+const changeReq=(STATUS)=>{
     
     if(STATUS == 'Accepted'){
         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
@@ -74,8 +75,9 @@ const changeReq=()=>{
             DriverId:DriverId,
             DateAndTime:moment().locale('en-au').format('llll'),
             Status:'OutForPickup'
-        })
+        }).then(()=>{
           sendNotifications(Token,'السائق في الطريق لاستلام طلبك','استلام الطلب')
+        })
         }).catch((error)=>{
           Alert.alert(error.message)
         })
@@ -95,8 +97,9 @@ const changeReq=()=>{
             DriverId:DriverId,
             DateAndTime:moment().locale('en-au').format('llll'),
             Status:'Delivered'
-        })
+        }).then(()=>{
           sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة، تم توصيل طلبك للمنشأة','توصيل الطلب')
+        })
         }).catch((error)=>{
           Alert.alert(error.message)
         })
@@ -269,7 +272,7 @@ const changeReq=()=>{
             null:
             <View style={[styles.flexDirectionStyle,styles.button,{marginTop:5}]}>
               <TouchableOpacity style={[styles.button,]}
-              onPress={()=>changeReq()}
+              onPress={()=>changeReq(Status)}
               >
                 
                 <LinearGradient

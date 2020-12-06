@@ -49,7 +49,8 @@ const AssignModal=(props)=>{
             DriverId:AssignList.DriverId,
             DriverUserName:AssignList.DriverUserName,
             DriverName:AssignList.DriverName,
-            DeliveryArea:AssignList.DeliveryArea
+            DeliveryArea:AssignList.DeliveryArea,
+            Token:AssignList.Token
         })),
         );
     const [expanded,setExpanded]=useState(false)
@@ -62,6 +63,7 @@ const AssignModal=(props)=>{
         setExpanded(!expanded);
     }
 
+    
     
     const fetchData=()=>{
         for (var i in DriverList) {
@@ -115,9 +117,10 @@ const AssignModal=(props)=>{
                     DriverId:DriverId,
                     DateAndTime:moment().locale('en-au').format('llll'),
                     Status:'Accepted'
+                }).then(()=>{
+                    sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
+                    props.ShowModal()
                 })
-                sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
-                props.ShowModal()
             })
     }
 
@@ -279,9 +282,7 @@ const AssignModal=(props)=>{
     useEffect(()=>{
         fetchData()
       },[])
-      const test=()=>{
-          console.log("on test");
-      }
+
     return(  
         
             <Modal
