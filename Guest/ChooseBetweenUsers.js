@@ -1,19 +1,85 @@
-import React, {useEffect} from 'react';
-import { StyleSheet, Text,View, TouchableOpacity, Alert ,Dimensions, Platform, ImageBackground} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { StyleSheet, Text,View, TouchableOpacity, Alert ,Dimensions, Platform, Image} from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { LinearGradient } from 'expo-linear-gradient'; 
+import {LinearGradient}  from 'expo-linear-gradient'; 
 import { NativeModules } from 'react-native';
 import { Ionicons, FontAwesome, Feather } from '@expo/vector-icons';
-import { color } from 'react-native-reanimated';
+import { color, set } from 'react-native-reanimated';
 
 
 
 const ChooseBetweenUsers =({navigation}) => {
+const [visable,setVisable]=useState(true);
+
+useEffect(() => {
+  setTimeout(() => {
+    setVisable(false);
+ }, 4000)
+});
+
 
     return (
-       
-      <ImageBackground source={require('../assets/Background.jpg')} 
-      style={{width: '100%', height: '100%'}}>
+      <View style={styles.container}> 
+      <View style={{flex:.85}}>
+           <Image 
+            source={require('../assets/DriverHomePageButtom2.png')}
+            style={styles.imageTop}
+            resizeMode="stretch"
+            />
+            </View>
+            <View style={{flex :1}} >
+             <Image 
+              source={require('../assets/DriverHomePageTop2.png')}
+              style={styles.imageButtom}
+              resizeMode="stretch"/>
+              </View>
+            
+            {visable === true ?
+              <View style={{position:'absolute',justifyContent:'center',top:'25%',flexDirection:'column',left:'5%'}} >
+           <Animatable.View
+            animation="bounceIn" 
+            duration={4000} 
+            //toValue ={650}
+            iterationCount={2}
+            colors={['#AFB42B','#827717']}
+            //velocity ={89}
+            >
+          
+        <Animatable.Image 
+         animation="bounceIn"
+         duraton="4000"
+         toValue ={650}
+         source={require('../assets/UserLogo.png')}
+         style={styles.logo1}
+         resizeMode="stretch"/>
+         
+      
+         </Animatable.View>
+  
+    
+  <Animatable.View
+   animation="bounceIn" 
+   duration={4000} 
+   //toValue ={650}
+   iterationCount={2}
+   colors={['#AFB42B','#827717']}
+   //velocity ={89}
+   >
+ 
+<Text></Text>
+  <Text style={styles.text_header}> مرحبًا بك في دوّر   </Text>
+             </Animatable.View>
+         
+         
+   
+             
+         
+    
+        
+             </View>
+              :
+    <View style={{alignItems:'center',flexDirection:'column',bottom:'100%'}}>
+            <View style={{position:'absolute'}}> 
         <View style={styles.header2}>
                  
                  <Animatable.Image 
@@ -31,12 +97,6 @@ const ChooseBetweenUsers =({navigation}) => {
               </View>
 
       <View style={styles.header}>
-    
-       
-        
-               
-               
-
               <Animatable.Image 
               animation="fadeInRight"
               duraton="80000"
@@ -88,6 +148,7 @@ const ChooseBetweenUsers =({navigation}) => {
          />
          </Animatable.View>
          <Text>    </Text>
+         <Text>    </Text>
          <Animatable.View animation="bounceIn" duration={7000} >
          <FontAwesome onPress={()=> navigation.navigate('UserLogin')}
          name="exclamation-circle"
@@ -96,12 +157,14 @@ const ChooseBetweenUsers =({navigation}) => {
          />
          </Animatable.View>
         <Text>    </Text>
+        <Text>    </Text>
         <Animatable.View animation="bounceIn" duration={7000} >
          <FontAwesome onPress={()=> navigation.navigate('UserLogin')}
          name="phone"
          color= '#9E9D24'
          size={30}
         />
+        
         </Animatable.View>
    
     
@@ -109,10 +172,13 @@ const ChooseBetweenUsers =({navigation}) => {
         
 
           </View>
-         
-          </ImageBackground>
+          </View>
+          
+          </View> 
+          }
+          
 
-       
+          </View>
 
     )
   }
@@ -127,20 +193,23 @@ const wight_logo = width * 0.280
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column"
+   flexDirection: "column",
+    backgroundColor:'white',
+    
+    
   },
   header: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 120,
+    marginTop: 90,
    // marginBottom: 10
 },header2: {
  flex: 0.25,
   justifyContent: 'center',
   alignItems: 'center',
-marginTop: 30,
- // marginBottom: 10
+marginTop: 60,
+  marginBottom: -70
 },
 footer: {
     flex: 1,
@@ -191,12 +260,14 @@ action: {
   NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
   NativeModules.I18nManager.localeIdentifier === 'ar_SA' ||
   NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'row' : 'row-reverse',
-  marginTop: 70, // was 130
+  marginTop: 50, // was 130
   marginBottom: 30, // NEW
   borderBottomWidth: 1,
   borderBottomColor: '#f2f2f2',
   paddingBottom: 80,
   fontWeight: 'bold',
+  
+
   
 
 },
@@ -214,7 +285,32 @@ textInput: {
   textAlign: 'center',
   //paddingRight: 50,
 
-}
+},
+imageButtom: {
+  width: "100%" ,
+  height:"40%" ,
+ position: 'absolute', 
+  bottom: 0,
+},    
+imageTop: {
+  width: "100%" ,
+  height:"50%" ,
+  //position: 'absolute'
+},
+text_header: {
+  color: '#9E9D24',
+  fontWeight: 'bold',
+  fontSize: 30,
+  textAlign: 'center'
+},
+logo1: {
+  width: width * 0.90 ,
+  height:  height * 0.18    ,
+  marginTop: 50 ,
+ // alignItems: 'center',
+  //justifyContent: 'center',
+},
+
 });
 
 export default ChooseBetweenUsers
