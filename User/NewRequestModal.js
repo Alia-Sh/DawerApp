@@ -330,7 +330,8 @@ import * as Permissions from 'expo-permissions';
         setData({
             ...data,
             isVisibleList:false,
-            isEdit:true
+            isEdit:true,
+            isDateAndTimeStep:false
         })
         setMaterial(item.material);
         setQantity(item.Quantity)
@@ -485,7 +486,8 @@ import * as Permissions from 'expo-permissions';
         if(RequestList.length!=0 && checkDateAndTime()){
           setData({
               ...data,
-              isDisplayRequests:true
+              isDisplayRequests:true,
+              isDateAndTimeStep:false
           })  
         }
     }
@@ -681,7 +683,7 @@ return (
                                     />
                                 </TouchableOpacity>  
 
-                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false})}>
+                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false,isDateAndTimeStep:true})}>
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/send.png')}
@@ -820,14 +822,16 @@ return (
                                         </Animatable.View>
                                     }
                                     
-                              
+                                    {data.isEdit? 
+                                    null
+                                    :
                                    
                                      <View style={styles.button}>
                                     <Button  icon="plus" mode="contained" theme={theme } onPress={() =>addRequest ()}>
                                          إضافة المادة
                                        </Button>
                                        </View>
-                                       
+ }  
                                 </View>
 
                                 }
@@ -839,14 +843,14 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                                    'row-reverse':'row',justifyContent:'space-between',margin:15}}>
-                               {/** <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
+                                    'row':'row-reverse',justifyContent:'space-between',margin:15,}}>
+                               <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
                                     <Image
                                         style={styles.ImageStyle}
-                                        source={require('../assets/back.png')}
+                                        source={require('../assets/send.png')}
                                         resizeMethod='scale'
                                     />
-                                </TouchableOpacity>*/}
+                                </TouchableOpacity>
                                 <TouchableOpacity 
                                     onPress={() => UpdateRequest(id,Material,Quantity)}
                                 >

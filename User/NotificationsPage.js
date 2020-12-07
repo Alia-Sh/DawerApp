@@ -62,13 +62,14 @@ const  NotificationsPage= ({navigation}) =>{
                 setLoading(false)
 
             })
+            console.log("li",li);
             for (var i in li) {
                 if(li[i].DriverId){
                     firebase.database().ref("DeliveryDriver/"+li[i].DriverId).on('value',Result=>{
             
                         console.log("Result",Result.val());
         
-                                            li[i].DriverName=Result.val().Name
+                                           return li[i].DriverName=Result.val().Name
                                             // li.push(temp)
                                             // setLoading(false)
                                             })
