@@ -1,4 +1,3 @@
-
 import React,{useState,useEffect} from 'react';
 import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform,Picker,ActionSheetIOS} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -13,6 +12,9 @@ import AlertView from "../components/AlertView";
 import {CheckBox} from "native-base";
 import Loading from '../components/Loading';
 import * as Permissions from 'expo-permissions';
+import {FontAwesome5} from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import ClassifierModal from './ClassifierModal';
 
  const NewRequestModal=(props)=>{
     const[CategoryList,setCategoryList]= useState([{Name:'زجاج'}])
@@ -30,6 +32,9 @@ import * as Permissions from 'expo-permissions';
     const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
     const [UserName,setUserName]= useState('');
+    const [image, setImage] = useState('')       
+    const [VisClassifierModal,setVisClassifierModal] = useState(false)
+
     
 
     const [data,setData]=React.useState({
@@ -79,15 +84,16 @@ import * as Permissions from 'expo-permissions';
      setChecked('كرتون')
      setContainer(false)
     }
-
+    /*
      const containerP=()=>{
      setContainer(true)
      setPiece(false)
      setCartons(false)
      setChecked('حاوية')
     }
+    */
 
-  // image classification options
+  // image classification options ***
   const camOptions =  () => {
     ActionSheetIOS.showActionSheetWithOptions(
     {
@@ -120,27 +126,25 @@ import * as Permissions from 'expo-permissions';
         if(!data.cancelled){
           const source = { uri: data.uri }
           setImage(source);
-          getPred();
-          //this.classifyImage()
+          setVisClassifierModal(true)
         }
     }else{
       alert("you need to give the permission to work!")
     }
   }
 
-  // select image from gallery
+  // upload photo from gallery
   const selectImage = async() => {
     try {
       let response = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3]
+        aspect: [1,1]
       })
       if (!response.cancelled) {
           const source = { uri: response.uri }
           setImage(source);
-          getPred();
-          //this.classifyImage()
+          setVisClassifierModal(true)
       }
     } catch (error) {
       console.log(error)
@@ -576,6 +580,17 @@ import * as Permissions from 'expo-permissions';
             console.log(Material);
         }, 400)
     },[])
+
+
+  const getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+        if (status !== 'granted') {
+            alert('فضلًا، قم بإعطاء صلاحية الدخول لألبوم الصور !')
+        }
+    }
+  }
+
     
  //******************************************************* header of the modal 
 return (
@@ -594,7 +609,7 @@ return (
                         <MaterialIcons style={Platform.OS === 'android' && 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff" 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="clear" size={32} color="#fff" 
                          onPress={resetData} 
                          />
                         <Text style={styles.text_header_modal}>إنشاء طلب جديد</Text>
@@ -645,7 +660,13 @@ return (
                     <View style={{flex:1}}>
                         {data.isDisplayRequests?                      
                         <View style={{flex:1}}>
-                            
+                            <Text style = {{ textAlign: 'center',fontSize: 18, marginTop:-10}}>تفاصيل الطلب:</Text>
+                                <View style={{alignItems:"center",marginBottom:5}}>
+                                    <Image
+                                    style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
+                                    source={require('../assets/line.png')}
+                                    />
+                                </View>
                             <Card>
                                 <View style={[styles.cardView,{backgroundColor:'#fff',flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -757,12 +778,14 @@ return (
                                     </Picker>  
 
                                         <View style={{alignItems:'center',justifyContent:'center'}}>
-                                            <TouchableOpacity onPress={() =>camOptions ()}>
+                                            {/*<TouchableOpacity onPress={() =>camOptions ()}>
                                                 <Image
                                                     style={{width:40,height:40}}
                                                     source={require('../assets/Camera.png')}
                                                 /> 
-                                            </TouchableOpacity>
+                                        </TouchableOpacity> */}
+                                            <FontAwesome5 name="camera" size={34} color="#b2860e" style={{right: 20}}
+                                                        onPress={()=> camOptions() }/>
                                         </View>
                                     </View>
                                     {data.isvalidMaterial ?
@@ -806,8 +829,8 @@ return (
                                         <CheckBox style={styles.item} checked={Cartons} color="#C0CA33" onPress={()=>{ CartonP()}}/>                       
                                         <Text style={{marginTop:10,margin:4}}>كرتون</Text>
 
-                                        <CheckBox style={styles.item} checked={container} color="#C0CA33" onPress={()=>{ containerP()}}/>
-                                        <Text style={{marginTop:10,margin:4}}>حاوية</Text>
+                                        {/*<CheckBox style={styles.item} checked={container} color="#C0CA33" onPress={()=>{ containerP()}}/>
+                                        <Text style={{marginTop:10,margin:4}}>حاوية</Text> */}
                                         
                                        </View> 
  
@@ -945,6 +968,14 @@ return (
             :  
             null
         }
+
+        {VisClassifierModal?
+            <ClassifierModal img={image} setVisClassifierModal={setVisClassifierModal}></ClassifierModal>
+            :
+            null
+        }
+
+
     </Modal>            
 </View>
 
@@ -1037,7 +1068,7 @@ const styles=StyleSheet.create({
         borderBottomColor: '#f2f2f2',
         paddingTop:-2,
         paddingBottom:10,
-        width:'28%',
+        width:'35%',
      
     },
     errorMsg: {
