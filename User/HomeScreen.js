@@ -131,8 +131,9 @@ const HomeScreen = ({navigation})=>{
     ActionSheetIOS.showActionSheetWithOptions(
     {
       options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
-      destructiveButtonIndex: 2,
+      //destructiveButtonIndex: 2,
       //tintColor: 'blue',
+      title : 'تصنيف نوع المادة',
       cancelButtonIndex: 0
     },
     buttonIndex => {
