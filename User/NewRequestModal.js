@@ -173,6 +173,9 @@ import ClassifierModal from './ClassifierModal';
     }
 
     const checkQuantity=()=>{
+        var Num= Quantity;  
+
+        Num = Num.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
         if(Quantity==''){
             setData({
                 ...data,
@@ -180,6 +183,13 @@ import ClassifierModal from './ClassifierModal';
                 QuantityErrorMsg:'يجب إدخال كمية المادة' 
             })
             return false
+        }else if(parseInt(Num)<=0){
+            setData({
+                ...data,
+                isvalidQuantity:false,
+                QuantityErrorMsg:'يجب إدخال كمية المادة بشكل صحيح' 
+            })
+            return false 
         }else{
             setData({
                 ...data,
@@ -188,14 +198,28 @@ import ClassifierModal from './ClassifierModal';
             })
             return true
         }
+
     }
 
     const checkDateAndTime=()=>{
+        var beginningTime = moment('8:00 AM', 'hh:mma');
+        var endTime = moment('12:00 AM', 'hh:mma');
+        var Time=moment(DateAndTime).locale('en-au').format('hh:mma');
+        var Time2=moment(Time, 'hh:mma')
+        console.log("isBefore ",Time2.isBefore(beginningTime));
+        console.log("isAfter ",Time2.isAfter(endTime));
         if(DateAndTime==''){
             setData({
                 ...data,
                 isValidDateAndTime:false,
                 DateAndTimeErrorMsg:'يجب إدخال تاريخ و وقت الاستلام' 
+            })
+            return false         
+        }else if(Time2.isBefore(beginningTime) || Time2.isAfter(endTime)){
+            setData({
+                ...data,
+                isValidDateAndTime:false,
+                DateAndTimeErrorMsg:'يجب أن يكون وقت الاستلام بين 8:00 AM و 12:00 AM.' 
             })
             return false         
         }else{
