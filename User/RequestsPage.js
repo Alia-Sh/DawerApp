@@ -13,6 +13,7 @@ import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
+import AlertView from "../components/AlertView";
 import moment from 'moment';
 const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
@@ -142,16 +143,40 @@ const  RequestsPage= ({navigation}) =>{
         setDetailsModal(true)
     }
 
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',  
+    })
+
     
 
       const setCanceled=(ID)=>{
             
            firebase.database().ref('/PickupRequest/'+userId+'/'+ID).update({
                 Status:'Canceled' 
+            }).then(()=>{
+                
+                  setTimeout(()=>{
+                    setAlert({
+                        ...alert,
+                        Title:'تم إلغاء الطلب بنجاح',
+                        Message:' يسعدنا خدمتك بوقت آخر',
+                        jsonPath:"success",
+                        alertVisible:true,
+                    });
+                    setTimeout(() => {
+                        setAlert({
+                            ...alert,
+                            alertVisible:false,
+                        });
+                    }, 6000)
+                  },200) 
             })
-        setOpenCancel(false)
-        setDetailsModal(false)
         
+             setOpenCancel(false)
+        setDetailsModal(false)  
     }
 
     const displayDetails=((item)=>{
@@ -316,12 +341,13 @@ const  RequestsPage= ({navigation}) =>{
            
         </View>
 </Modal>
+          
+           
                          
                     </Modal>
 
                     
-      
-      
+     
 
                   
             </View>
@@ -357,6 +383,12 @@ const  RequestsPage= ({navigation}) =>{
                 :  
                 null
             }
+
+            {alert.alertVisible?
+            <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+            :
+            null
+      }
                 <FlatList
                 data={RequestList}
                 renderItem={({item})=>{
