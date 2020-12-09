@@ -52,6 +52,7 @@ import Loading from '../components/Loading';
     })
 
     const checkValidName=()=>{
+        var specialCharacters = /[+=!@#$%^~&*()/;,.?"““”'’:{}|<>€£¥•‘؛[[،؟'١٢٣٤٥٦٧٨٩٠-٪ـ_-]/;
         if(Name==""){
             setData({
                 ...data,
@@ -59,7 +60,7 @@ import Loading from '../components/Loading';
                 NameErrorMessage:"يجب ادخال الاسم."
             });
             return false; 
-        }else if(/[+=!@#$%^~&*()/;,.?"“‘:{}|<>€£¥•]/g.test(Name)|| /\d+/g.test(Name)) {
+        }else if(specialCharacters.test(Name)|| /\d+/g.test(Name)) {
                 setData({
                     ...data,
                     isValidName:false,
@@ -79,6 +80,8 @@ import Loading from '../components/Loading';
     }
 
     const checkValidUserName=()=>{
+        var specialCharacters = /[+=!@#$%^~&*()/;,?"““”'’:{}|<>€£¥•‘؛[ [،؟'٪ـ]/;
+        var arabic = /[\u0600-\u06FF]/
         if(UserName==""){
             setData({
                 ...data,
@@ -86,11 +89,11 @@ import Loading from '../components/Loading';
                 UserNameErrorMessage:'يجب ادخال اسم المستخدم.'
             });
             return false; 
-        }else if(/[+=!@#$%^~&*()/;,?"“‘:{}|<>€£¥• []/g.test(UserName)){
+        }else if(specialCharacters.test(UserName) || arabic.test(UserName)){
             setData({
                 ...data,
                 isValidUserName:false,
-                UserNameErrorMessage:"يمكن لاسم المستخدم أن يتضمن أحرف، أرقام، -، _ و . فقط." ,               
+                UserNameErrorMessage:"يمكن لاسم المستخدم أن يتضمن أحرف الانجليزية، أرقام، -، _ و . فقط." ,               
             });                               
             return false;         
         }else if(UserName.length>20){
@@ -155,6 +158,13 @@ import Loading from '../components/Loading';
                 PhoneErrorMessage:'يجب أن يتكون رقم الجوال من ١٠ ارقام.'
             });
             return false;       
+        }else if(Phone.substring(0,2)!='05'){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب أن يبدأ رقم الجوال ب 05.'
+            });
+            return false;       
         }else{
             if(!data.isValidPhone){   
                 setData({
@@ -168,6 +178,7 @@ import Loading from '../components/Loading';
     }
 
     const checkValidPassword=()=>{
+        const expression = /^\S+$/g;
         if(Password==""){
             setData({
                 ...data,
@@ -187,6 +198,13 @@ import Loading from '../components/Loading';
                 ...data,
                 isValidPassword:false,
                 ErrorMessage:'يجب أن لا تتجاوز كلمة المرور أكثر من  ٢٠ حرف.'                
+            });                               
+            return false;         
+        }else if (Password.indexOf(' ') !== -1) {
+            setData({
+                ...data,
+                isValidPassword:false,
+                ErrorMessage:'يجب أن لا تحتوي كلمة المرور على فراغات.'                
             });                               
             return false;         
         }else{
