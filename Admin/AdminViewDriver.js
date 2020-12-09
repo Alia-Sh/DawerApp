@@ -394,7 +394,7 @@ const removeDriver=()=>{
                                 <Button icon="delete" mode="contained" theme={themeDelete } dark={true}
                                                     onPress={()=>setDeleteDriver(true)}
                                     >
-                                     إيقاف حساب السائق
+                                     حذف السائق
                                 </Button>
 
                             </View>
@@ -403,7 +403,7 @@ const removeDriver=()=>{
                             {DeleteDriverModal?
                 <DeleteDriver 
                 userId={userId} setDeleteDriver={setDeleteDriver}
-                 navigation={navigation} title="إيقاف حساب سائق" message="هل أنت متأكد من إيقاف حساب السائق ؟"
+                 navigation={navigation} title="حذف سائق" message="هل أنت متأكد من حذف السائق ؟"
                   ></DeleteDriver>
               :
                 null
