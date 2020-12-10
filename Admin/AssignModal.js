@@ -74,14 +74,20 @@ const AssignModal=(props)=>{
                             if(snapshot.val().Status==="Pending" || snapshot.val().Status==="Accepted" ){
                                 if(DriverList[i].DriverId==snapshot.val().DeliveryDriverId){
                                     var dateAndTime=snapshot.val().DateAndTime;
-                                    var time =moment(dateAndTime).locale('en-au').format('hh:mm A');
-                                    var TIME =moment(DATEANDTIME).locale('en-au').format('hh:mm A');
-                                    var beforeTime=moment(time, 'HH:mm').locale('en-au').subtract('30', 'minutes').format('hh:mm A')
-                                    var afterTime =moment(time, 'HH:mm').locale('en-au').add('30', 'minutes').format('hh:mm A')
+                                    var time =moment(dateAndTime).locale('en-au').format('HH:mm');
+                                    var TIME =moment(DATEANDTIME).locale('en-au').format('HH:mm');
+                                    var beforeTime=moment(time, 'HH:mm').locale('en-au').subtract('30', 'minutes').format('HH:mm')
+                                    var afterTime =moment(time, 'HH:mm').locale('en-au').add('30', 'minutes').format('HH:mm')
+                                    console.log("dateAndTime ",dateAndTime);
+                                    console.log("DATEANDTIME ",DATEANDTIME);
+                                    console.log("TIME ",TIME);
+                                    console.log("beforeTime ",beforeTime);
+                                    console.log("afterTime ",afterTime);
+                                    console.log((moment(TIME,'HH:mm').isBetween(moment(beforeTime,'HH:mm'), moment(afterTime,'HH:mm'))));
                                     if(moment(moment(dateAndTime).locale('en-au').format('Y/M/D')).isSame(moment(DATEANDTIME).locale('en-au').format('Y/M/D'))){
-                                        if(moment(TIME,'hh:mm A').isBetween(moment(beforeTime,'hh:mm A'), moment(afterTime,'hh:mm A')) || 
-                                            moment(TIME,'hh:mm A').isSame(moment(beforeTime,'hh:mm A')) || 
-                                            moment(TIME,'hh:mm A').isSame(moment(afterTime,'hh:mm A'))
+                                        if(moment(TIME,'hh:mm').isBetween(moment(beforeTime,'hh:mm'), moment(afterTime,'hh:mm')) || 
+                                            moment(TIME,'hh:mm').isSame(moment(beforeTime,'hh:mm')) || 
+                                            moment(TIME,'hh:mm').isSame(moment(afterTime,'hh:mm'))
                                             ){
                                             setDriverList(DriverList.filter(item => item.DriverId != snapshot.val().DeliveryDriverId))
                                          }

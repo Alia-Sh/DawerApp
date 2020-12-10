@@ -202,12 +202,9 @@ import ClassifierModal from './ClassifierModal';
     }
 
     const checkDateAndTime=()=>{
-        var beginningTime = moment('8:00 AM', 'hh:mma');
-        var endTime = moment('12:00 AM', 'hh:mma');
-        var Time=moment(DateAndTime).locale('en-au').format('hh:mma');
-        var Time2=moment(Time, 'hh:mma')
-        console.log("isBefore ",Time2.isBefore(beginningTime));
-        console.log("isAfter ",Time2.isAfter(endTime));
+        var TIME =moment(DateAndTime).locale('en-au').format('HH:mm');
+        var beforeTime=moment('07:59', 'HH:mm').locale('en-au').format('HH:mm');
+        var afterTime =moment('22:00', 'HH:mm').locale('en-au').format('HH:mm');
         if(DateAndTime==''){
             setData({
                 ...data,
@@ -215,11 +212,11 @@ import ClassifierModal from './ClassifierModal';
                 DateAndTimeErrorMsg:'يجب إدخال تاريخ و وقت الاستلام' 
             })
             return false         
-        }else if(Time2.isBefore(beginningTime) || Time2.isAfter(endTime)){
+        }else if(! moment(TIME,'HH:mm').isBetween(moment(beforeTime,'HH:mm'), moment(afterTime,'HH:mm'))){
             setData({
                 ...data,
                 isValidDateAndTime:false,
-                DateAndTimeErrorMsg:'يجب أن يكون وقت الاستلام بين 8:00 AM و 12:00 AM.' 
+                DateAndTimeErrorMsg:'يجب أن يكون وقت الاستلام بين 8:00 AM و 10:00 PM.' 
             })
             return false         
         }else{
@@ -532,6 +529,22 @@ import ClassifierModal from './ClassifierModal';
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
     const handleConfirm = (datetime) => {
+        var TIME =moment(datetime).locale('en-au').format('HH:mm');
+        var beforeTime=moment('07:59', 'HH:mm').locale('en-au').format('HH:mm');
+        var afterTime =moment('22:00', 'HH:mm').locale('en-au').format('HH:mm');
+        if(! moment(TIME,'HH:mm').isBetween(moment(beforeTime,'HH:mm'), moment(afterTime,'HH:mm'))){
+            setData({
+                ...data,
+                isValidDateAndTime:false,
+                DateAndTimeErrorMsg:'يجب أن يكون وقت الاستلام بين 8:00 AM و 10:00 PM.' 
+            })    
+        }else{
+            setData({
+                ...data,
+                isValidDateAndTime:true,
+                DateAndTimeErrorMsg:'' 
+            })  
+        }
         console.warn("A date has been picked: ", datetime);
         // setDateAndTime(moment(datetime).format('MMM, Do YYY hh:mm A'))
         setDateAndTime(moment(datetime).locale('en-au').format('llll'))
@@ -759,7 +772,13 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse'}}>
-                                    <View style={[styles.action,{width:'80%'}]}>
+                                        <TouchableOpacity onPress={showDatePicker} 
+                                        style={{lex:1,flexDirection:Platform.OS === 'android' && 
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse',padding:5}}>
+                                    <View style={[styles.action]}>
+                                        
                                         <TextInput style={styles.textInput} 
                                             value={DateAndTime}
                                             label="Date"
@@ -770,9 +789,12 @@ return (
                                             textAlign= 'right'
                                             onEndEditing={() => checkDateAndTime()}
                                             ref={data.DateAndTimeInput}
+                                            editable={false}
                                             >
                                         </TextInput> 
+                                        
                                     </View>
+                                    </TouchableOpacity>
                                 </View>
 
                                 {data.isValidDateAndTime ?
@@ -979,7 +1001,7 @@ return (
         is24Hour={false}
         // minimumDate={currentDate.setDate(currentDate.getDate() + 1)}
         minimumDate={tomorrow}
-        headerTextIOS="اختر الموعد"
+        headerTextIOS="اختيار الموعد"
         />
         {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
@@ -1015,6 +1037,7 @@ const theme= {
     colors:{
         primary: "#C0CA33"
     }
+    // colors:{"#827717","#AFB42B"}
 }
 const styles=StyleSheet.create({
     container: {
@@ -1149,7 +1172,7 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse' ,
         marginBottom:30,
-        padding:8,
+        paddingLeft:8,
     },
     errorMsg2: {
         color: '#FF0000',
