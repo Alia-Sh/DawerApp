@@ -29,6 +29,7 @@ const JoinDetails = ({navigation,route})=>{
         Message:'',
         jsonPath:'',
     })
+    /*
     var query = firebase.database().ref('DeliveryDriver/' + userId);
     query.once("value").then(function(result) {
         const userData = result.val();
@@ -38,6 +39,22 @@ const JoinDetails = ({navigation,route})=>{
         setLocation(userData.DeliveryArea)
         setEmail(userData.Email)
       });
+      */
+      const getData=()=>{
+        console.log("IAM HERE")
+        firebase.database().ref('DeliveryDriver/' + userId).once("value").then(function(result) {
+          const userData = result.val();
+          setName(userData.Name);
+          setPhone(userData.PhoneNumber);
+          setUserName(userData.UserName);
+          setLocation(userData.DeliveryArea)
+          setEmail(userData.Email)
+        });
+      }
+
+      useEffect(()=>{
+        getData()
+    },[])
 
     const openDial=(phone)=>{
         if(Platform.OS==="android"){
