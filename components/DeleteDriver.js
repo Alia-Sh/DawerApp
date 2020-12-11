@@ -52,10 +52,7 @@ const DeleteDriver=(props)=>{
          ////////////////////////////////////////////
    
           if(Req.length == 0){ //update
-               console.log('!!!!!!!!!!!!!in the if!!!!!!!!!!!!!!!!!!!');
-           firebase.database().ref('DeliveryDriver/' + userId).update({
-               Status:"Suspend" 
-           }).then(()=>{
+            firebase.database().ref('DeliveryDriver/' + userId).remove().then(()=>{
             
                 setTimeout(()=>{
                 setAlert({
@@ -92,7 +89,7 @@ const DeleteDriver=(props)=>{
             setAlert({
                 ...alert,
                 Title:' حدث خطأ ما',
-                Message:'تعذر حذف السائق ، تأكد من عدم وجود طلبات مسندة لم يتم إيصالها',
+                Message:'تعذر عن حذف السائق ، تأكد من عدم وجود طلبات مسندة لم يتم إيصالها',
                 jsonPath:"Error",
                 alertVisible:true,
             });

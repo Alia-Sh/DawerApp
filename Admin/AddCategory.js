@@ -50,7 +50,7 @@ const AddCategory=(props)=>{
       }
       
 
-    const Add=()=>{
+    const AddNewCategory=()=>{
         if(checkValidCategory()){
             setData({
                 ...data,
@@ -72,7 +72,6 @@ const AddCategory=(props)=>{
                 }else{
                     firebase.database().ref('Category/').push({
                         Name: Category,
-                        // CategoryId:firebase.database().ref('Category/').push().getKey()
                     }).then((data)=>{
                         //success callback
                         setData({
@@ -184,7 +183,7 @@ const AddCategory=(props)=>{
                             <View style={{alignItems:'center',justifyContent:'center',margin:10}}>
                                 <TouchableOpacity 
                                     style={styles.AddButton}
-                                    onPress={Add}>
+                                    onPress={AddNewCategory}>
                                     <LinearGradient
                                         colors={["#809d65","#9cac74"]}
                                         style={styles.Add}>

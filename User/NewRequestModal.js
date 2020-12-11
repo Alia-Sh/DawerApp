@@ -1,4 +1,3 @@
-
 import React,{useState,useEffect} from 'react';
 import {Modal,StyleSheet,Text,TouchableOpacity,View,Image,Dimensions,NativeModules,TextInput, Alert,FlatList,Platform,Picker,ActionSheetIOS} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -13,6 +12,9 @@ import AlertView from "../components/AlertView";
 import {CheckBox} from "native-base";
 import Loading from '../components/Loading';
 import * as Permissions from 'expo-permissions';
+import {FontAwesome5} from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import ClassifierModal from './ClassifierModal';
 
  const NewRequestModal=(props)=>{
     const[CategoryList,setCategoryList]= useState([{Name:'زجاج'}])
@@ -30,6 +32,9 @@ import * as Permissions from 'expo-permissions';
     const [Location,setLocation] = useState('')
     const [DateAndTime,setDateAndTime]= useState('');
     const [UserName,setUserName]= useState('');
+    const [image, setImage] = useState('')       
+    const [VisClassifierModal,setVisClassifierModal] = useState(false)
+
     
 
     const [data,setData]=React.useState({
@@ -79,20 +84,22 @@ import * as Permissions from 'expo-permissions';
      setChecked('كرتون')
      setContainer(false)
     }
-
+    /*
      const containerP=()=>{
      setContainer(true)
      setPiece(false)
      setCartons(false)
      setChecked('حاوية')
     }
+    */
 
-  // image classification options
+  // image classification options ***
   const camOptions =  () => {
     ActionSheetIOS.showActionSheetWithOptions(
     {
       options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
-      destructiveButtonIndex: 2,
+      //destructiveButtonIndex: 2,
+      title : 'تصنيف نوع المادة',
       cancelButtonIndex: 0
     },
     buttonIndex => {
@@ -120,27 +127,25 @@ import * as Permissions from 'expo-permissions';
         if(!data.cancelled){
           const source = { uri: data.uri }
           setImage(source);
-          getPred();
-          //this.classifyImage()
+          setVisClassifierModal(true)
         }
     }else{
       alert("you need to give the permission to work!")
     }
   }
 
-  // select image from gallery
+  // upload photo from gallery
   const selectImage = async() => {
     try {
       let response = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3]
+        aspect: [1,1]
       })
       if (!response.cancelled) {
           const source = { uri: response.uri }
           setImage(source);
-          getPred();
-          //this.classifyImage()
+          setVisClassifierModal(true)
       }
     } catch (error) {
       console.log(error)
@@ -168,6 +173,9 @@ import * as Permissions from 'expo-permissions';
     }
 
     const checkQuantity=()=>{
+        var Num= Quantity;  
+
+        Num = Num.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
         if(Quantity==''){
             setData({
                 ...data,
@@ -175,6 +183,13 @@ import * as Permissions from 'expo-permissions';
                 QuantityErrorMsg:'يجب إدخال كمية المادة' 
             })
             return false
+        }else if(parseInt(Num)<=0){
+            setData({
+                ...data,
+                isvalidQuantity:false,
+                QuantityErrorMsg:'يجب إدخال كمية المادة بشكل صحيح' 
+            })
+            return false 
         }else{
             setData({
                 ...data,
@@ -183,14 +198,25 @@ import * as Permissions from 'expo-permissions';
             })
             return true
         }
+
     }
 
     const checkDateAndTime=()=>{
+        var TIME =moment(DateAndTime).locale('en-au').format('HH:mm');
+        var beforeTime=moment('07:59', 'HH:mm').locale('en-au').format('HH:mm');
+        var afterTime =moment('22:00', 'HH:mm').locale('en-au').format('HH:mm');
         if(DateAndTime==''){
             setData({
                 ...data,
                 isValidDateAndTime:false,
                 DateAndTimeErrorMsg:'يجب إدخال تاريخ و وقت الاستلام' 
+            })
+            return false         
+        }else if(! moment(TIME,'HH:mm').isBetween(moment(beforeTime,'HH:mm'), moment(afterTime,'HH:mm'))){
+            setData({
+                ...data,
+                isValidDateAndTime:false,
+                DateAndTimeErrorMsg:'يجب أن يكون وقت الاستلام بين 8:00 AM و 10:00 PM.' 
             })
             return false         
         }else{
@@ -330,7 +356,8 @@ import * as Permissions from 'expo-permissions';
         setData({
             ...data,
             isVisibleList:false,
-            isEdit:true
+            isEdit:true,
+            isDateAndTimeStep:false
         })
         setMaterial(item.material);
         setQantity(item.Quantity)
@@ -485,7 +512,8 @@ import * as Permissions from 'expo-permissions';
         if(RequestList.length!=0 && checkDateAndTime()){
           setData({
               ...data,
-              isDisplayRequests:true
+              isDisplayRequests:true,
+              isDateAndTimeStep:false
           })  
         }
     }
@@ -497,12 +525,30 @@ import * as Permissions from 'expo-permissions';
     const hideDatePicker = () => {
       setDatePickerVisibility(false);
     };
-    var currentDate = new Date();
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
     const handleConfirm = (datetime) => {
+        var TIME =moment(datetime).locale('en-au').format('HH:mm');
+        var beforeTime=moment('07:59', 'HH:mm').locale('en-au').format('HH:mm');
+        var afterTime =moment('22:00', 'HH:mm').locale('en-au').format('HH:mm');
+        if(! moment(TIME,'HH:mm').isBetween(moment(beforeTime,'HH:mm'), moment(afterTime,'HH:mm'))){
+            setData({
+                ...data,
+                isValidDateAndTime:false,
+                DateAndTimeErrorMsg:'يجب أن يكون وقت الاستلام بين 8:00 AM و 10:00 PM.' 
+            })    
+        }else{
+            setData({
+                ...data,
+                isValidDateAndTime:true,
+                DateAndTimeErrorMsg:'' 
+            })  
+        }
         console.warn("A date has been picked: ", datetime);
-        // setDateAndTime(moment(datetime).format('MMM, Do YYY HH:mm'))
-        // setDateAndTime(moment(datetime).format('LLLL'))
-        setDateAndTime(moment(datetime).format('Y/M/D HH:mm'))
+        // setDateAndTime(moment(datetime).format('MMM, Do YYY hh:mm A'))
+        setDateAndTime(moment(datetime).locale('en-au').format('llll'))
+        // setDateAndTime(moment(datetime).format('Y/M/D hh:mm A'))
         hideDatePicker();
     };
 
@@ -572,6 +618,17 @@ import * as Permissions from 'expo-permissions';
             console.log(Material);
         }, 400)
     },[])
+
+
+  const getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+        if (status !== 'granted') {
+            alert('فضلًا، قم بإعطاء صلاحية الدخول لألبوم الصور !')
+        }
+    }
+  }
+
     
  //******************************************************* header of the modal 
 return (
@@ -590,7 +647,7 @@ return (
                         <MaterialIcons style={Platform.OS === 'android' && 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="cancel" size={32} color="#fff" 
+                                    NativeModules.I18nManager.localeIdentifier === 'ar_SA' ? styles.iconAndroid:styles.iconIOS} name="clear" size={32} color="#fff" 
                          onPress={resetData} 
                          />
                         <Text style={styles.text_header_modal}>إنشاء طلب جديد</Text>
@@ -641,7 +698,13 @@ return (
                     <View style={{flex:1}}>
                         {data.isDisplayRequests?                      
                         <View style={{flex:1}}>
-                            
+                            <Text style = {{ textAlign: 'center',fontSize: 18, marginTop:-10}}>تفاصيل الطلب:</Text>
+                                <View style={{alignItems:"center",marginBottom:5}}>
+                                    <Image
+                                    style={{width:'70%',marginBottom:3,height:3,alignItems:'center'}}
+                                    source={require('../assets/line.png')}
+                                    />
+                                </View>
                             <Card>
                                 <View style={[styles.cardView,{backgroundColor:'#fff',flexDirection:Platform.OS === 'android' &&
                                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
@@ -649,7 +712,7 @@ return (
                                         NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                         'row':'row-reverse'}]}>
                                     <Text style={styles.text}>تاريخ و وقت الاستلام:</Text>
-                                    <Text style={styles.Text}>{DateAndTime}</Text>
+                                    <Text  style={{flex: 1,flexWrap: 'wrap',fontSize:18,textAlign:"right",marginRight:10}} >{DateAndTime}</Text>
                                 </View>
                             </Card>
                             <FlatList
@@ -679,7 +742,7 @@ return (
                                     />
                                 </TouchableOpacity>  
 
-                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false})}>
+                                <TouchableOpacity onPress={() =>setData({...data,isDisplayRequests:false,isDateAndTimeStep:true})}>
                                     <Image
                                         style={styles.ImageStyle}
                                         source={require('../assets/send.png')}
@@ -709,7 +772,13 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse'}}>
-                                    <View style={[styles.action,{width:'80%'}]}>
+                                        <TouchableOpacity onPress={showDatePicker} 
+                                        style={{lex:1,flexDirection:Platform.OS === 'android' && 
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
+                                            NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse',padding:5}}>
+                                    <View style={[styles.action]}>
+                                        
                                         <TextInput style={styles.textInput} 
                                             value={DateAndTime}
                                             label="Date"
@@ -720,9 +789,12 @@ return (
                                             textAlign= 'right'
                                             onEndEditing={() => checkDateAndTime()}
                                             ref={data.DateAndTimeInput}
+                                            editable={false}
                                             >
                                         </TextInput> 
+                                        
                                     </View>
+                                    </TouchableOpacity>
                                 </View>
 
                                 {data.isValidDateAndTime ?
@@ -753,12 +825,14 @@ return (
                                     </Picker>  
 
                                         <View style={{alignItems:'center',justifyContent:'center'}}>
-                                            <TouchableOpacity onPress={() =>camOptions ()}>
+                                            {/*<TouchableOpacity onPress={() =>camOptions ()}>
                                                 <Image
                                                     style={{width:40,height:40}}
                                                     source={require('../assets/Camera.png')}
                                                 /> 
-                                            </TouchableOpacity>
+                                        </TouchableOpacity> */}
+                                            <FontAwesome5 name="camera" size={34} color="#b2860e" style={{right: 20}}
+                                                        onPress={()=> camOptions() }/>
                                         </View>
                                     </View>
                                     {data.isvalidMaterial ?
@@ -802,8 +876,8 @@ return (
                                         <CheckBox style={styles.item} checked={Cartons} color="#C0CA33" onPress={()=>{ CartonP()}}/>                       
                                         <Text style={{marginTop:10,margin:4}}>كرتون</Text>
 
-                                        <CheckBox style={styles.item} checked={container} color="#C0CA33" onPress={()=>{ containerP()}}/>
-                                        <Text style={{marginTop:10,margin:4}}>حاوية</Text>
+                                        {/*<CheckBox style={styles.item} checked={container} color="#C0CA33" onPress={()=>{ containerP()}}/>
+                                        <Text style={{marginTop:10,margin:4}}>حاوية</Text> */}
                                         
                                        </View> 
  
@@ -818,14 +892,16 @@ return (
                                         </Animatable.View>
                                     }
                                     
-                              
+                                    {data.isEdit? 
+                                    null
+                                    :
                                    
                                      <View style={styles.button}>
                                     <Button  icon="plus" mode="contained" theme={theme } onPress={() =>addRequest ()}>
                                          إضافة المادة
                                        </Button>
                                        </View>
-                                       
+ }  
                                 </View>
 
                                 }
@@ -837,14 +913,14 @@ return (
                                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                     NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
-                                    'row-reverse':'row',justifyContent:'space-between',margin:15}}>
-                               {/** <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
+                                    'row':'row-reverse',justifyContent:'space-between',margin:15,}}>
+                               <TouchableOpacity onPress={() =>setData({...data,isVisibleList:true})}>
                                     <Image
                                         style={styles.ImageStyle}
-                                        source={require('../assets/back.png')}
+                                        source={require('../assets/send.png')}
                                         resizeMethod='scale'
                                     />
-                                </TouchableOpacity>*/}
+                                </TouchableOpacity>
                                 <TouchableOpacity 
                                     onPress={() => UpdateRequest(id,Material,Quantity)}
                                 >
@@ -924,7 +1000,8 @@ return (
         datePickerModeAndroid={'spinner'}
         is24Hour={false}
         // minimumDate={currentDate.setDate(currentDate.getDate() + 1)}
-        minimumDate={currentDate}
+        minimumDate={tomorrow}
+        headerTextIOS="اختيار الموعد"
         />
         {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
@@ -938,6 +1015,14 @@ return (
             :  
             null
         }
+
+        {VisClassifierModal?
+            <ClassifierModal img={image} setVisClassifierModal={setVisClassifierModal}></ClassifierModal>
+            :
+            null
+        }
+
+
     </Modal>            
 </View>
 
@@ -952,6 +1037,7 @@ const theme= {
     colors:{
         primary: "#C0CA33"
     }
+    // colors:{"#827717","#AFB42B"}
 }
 const styles=StyleSheet.create({
     container: {
@@ -1030,7 +1116,7 @@ const styles=StyleSheet.create({
         borderBottomColor: '#f2f2f2',
         paddingTop:-2,
         paddingBottom:10,
-        width:'28%',
+        width:'35%',
      
     },
     errorMsg: {
@@ -1086,7 +1172,7 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse' ,
         marginBottom:30,
-        padding:8,
+        paddingLeft:8,
     },
     errorMsg2: {
         color: '#FF0000',

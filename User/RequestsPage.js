@@ -13,6 +13,7 @@ import NewRequestModal from '../User/NewRequestModal';
 import firebase from '../Database/firebase';
 import {MaterialIcons} from '@expo/vector-icons';
 import { ArabicNumbers } from 'react-native-arabic-numbers';
+import AlertView from "../components/AlertView";
 import moment from 'moment';
 const  RequestsPage= ({navigation}) =>{
     const [alertVisible,setAlertVisible]= useState(false);
@@ -33,27 +34,36 @@ const  RequestsPage= ({navigation}) =>{
             var li = []
             
             snapshot.forEach(function(snapshot){
-            console.log(snapshot.key);
-            console.log(snapshot.val().DateAndTime);
+            // console.log(snapshot.key);
+            
              if(snapshot.val().Status==="Pending" ||snapshot.val().Status==="Accepted"||snapshot.val().Status==="OutForPickup"){
+                console.log(snapshot.val().DateAndTime);
+                console.log(moment.utc(snapshot.val().DateAndTime).local().startOf('seconds').fromNow());
             var temp={DateAndTime:snapshot.val().DateAndTime, Id:snapshot.key, Status:snapshot.val().Status}
             li.push(temp)
             setLoading(false)}
             
             
             })
+            if(li){
+                //console.log(li);
+               // console.log('((((((((((((((((((((((SORTED');
+           //  li.sort((a,b) => new Date(a) < new Date(b) ? 1 : -1);
+            // console.log(li);
+           //HERE to sort the list depending on the date
+              li.sort(function(a, b){
+                return new Date(a.DateAndTime) - new Date(b.DateAndTime);
+              });
+            
+            }
          
             setRequestList(li)
-            console.log(li) 
+            // console.log(li) 
             if (RequestList.length==0)
             setLoading(false)
           }
         })
     }
-        var currentDate = new Date();
-     console.log(RequestList);
-     console.log("Date",currentDate);
-     console.log("Date2", moment(currentDate).format('Y/M/D HH:mm'));
     
     //  if(RequestList.some( RequestList => RequestList['DateAndTime'] == moment(currentDate).format('Y/M/D HH:mm') )){
     //      console.log("hhere");
@@ -133,16 +143,40 @@ const  RequestsPage= ({navigation}) =>{
         setDetailsModal(true)
     }
 
+    const [alert,setAlert]=React.useState({
+        alertVisible:false,
+        Title:'',
+        Message:'',
+        jsonPath:'',  
+    })
+
     
 
       const setCanceled=(ID)=>{
             
            firebase.database().ref('/PickupRequest/'+userId+'/'+ID).update({
                 Status:'Canceled' 
+            }).then(()=>{
+                
+                  setTimeout(()=>{
+                    setAlert({
+                        ...alert,
+                        Title:'تم إلغاء الطلب بنجاح',
+                        Message:' يسعدنا خدمتك بوقت آخر',
+                        jsonPath:"success",
+                        alertVisible:true,
+                    });
+                    setTimeout(() => {
+                        setAlert({
+                            ...alert,
+                            alertVisible:false,
+                        });
+                    }, 6000)
+                  },200) 
             })
-        setOpenCancel(false)
-        setDetailsModal(false)
         
+             setOpenCancel(false)
+        setDetailsModal(false)  
     }
 
     const displayDetails=((item)=>{
@@ -307,12 +341,13 @@ const  RequestsPage= ({navigation}) =>{
            
         </View>
 </Modal>
+          
+           
                          
                     </Modal>
 
                     
-      
-      
+     
 
                   
             </View>
@@ -348,6 +383,12 @@ const  RequestsPage= ({navigation}) =>{
                 :  
                 null
             }
+
+            {alert.alertVisible?
+            <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
+            :
+            null
+      }
                 <FlatList
                 data={RequestList}
                 renderItem={({item})=>{

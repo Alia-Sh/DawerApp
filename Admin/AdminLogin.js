@@ -26,11 +26,11 @@ const createUser =()=>{
 
   firebase.auth().createUserWithEmailAndPassword(data.UserName.concat("@gmail.com"), data.password).then((user)=>{
     if (firebase.auth().currentUser) {
-      userId = firebase.auth().currentUser.uid;
+     var userId = firebase.auth().currentUser.uid;
       
           firebase.database().ref('Admin/' + userId).set({
-            Name:"Hussa",
-            Password:data.password,
+            Name:"Haneen",
+          
             UserName:data.UserName,
           });
         

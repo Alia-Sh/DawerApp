@@ -21,9 +21,6 @@ import * as Notifications from 'expo-notifications';
 
 const AssignModal=(props)=>{
     var DATEANDTIME=props.DATE
-    var INDEX=DATEANDTIME.indexOf(" ");
-    var DATE=moment(DATEANDTIME.substring(0,INDEX)).format('Y/M/D');
-    var TIME=DATEANDTIME.substring(INDEX+1);
     var  RequestId = props.ID;
     var UserId=props.UserId;
     var AssignList=props.AssignList;
@@ -49,7 +46,8 @@ const AssignModal=(props)=>{
             DriverId:AssignList.DriverId,
             DriverUserName:AssignList.DriverUserName,
             DriverName:AssignList.DriverName,
-            DeliveryArea:AssignList.DeliveryArea
+            DeliveryArea:AssignList.DeliveryArea,
+            Token:AssignList.Token
         })),
         );
     const [expanded,setExpanded]=useState(false)
@@ -62,6 +60,8 @@ const AssignModal=(props)=>{
         setExpanded(!expanded);
     }
 
+    
+    
     const fetchData=()=>{
         for (var i in DriverList) {
             firebase.database().ref('/PickupRequest/').on('value',snapshot=>{
@@ -74,13 +74,21 @@ const AssignModal=(props)=>{
                             if(snapshot.val().Status==="Pending" || snapshot.val().Status==="Accepted" ){
                                 if(DriverList[i].DriverId==snapshot.val().DeliveryDriverId){
                                     var dateAndTime=snapshot.val().DateAndTime;
-                                    var index=dateAndTime.indexOf(" ");
-                                    var date=moment(dateAndTime.substring(0, index)).format('Y/M/D');
-                                    var time=moment(dateAndTime.substring(index+1), 'HH:mma');
-                                    if(date==DATE){
-                                        if(moment(TIME,'HH:mm').isBetween(moment(moment(time, 'HH:mm').subtract('30', 'minutes').format('HH:mm'),'HH:mm'), moment(moment(time, 'HH:mm').add('30', 'minutes').format('HH:mm'),'HH:mm')) || 
-                                            moment(TIME,'HH:mm').isSame(moment(moment(time, 'HH:mm').subtract('30', 'minutes').format('HH:mm'),'HH:mm')) || 
-                                            moment(TIME,'HH:mm').isSame(moment(moment(time, 'HH:mm').add('30', 'minutes').format('HH:mm'),'HH:mm'))){
+                                    var time =moment(dateAndTime).locale('en-au').format('HH:mm');
+                                    var TIME =moment(DATEANDTIME).locale('en-au').format('HH:mm');
+                                    var beforeTime=moment(time, 'HH:mm').locale('en-au').subtract('30', 'minutes').format('HH:mm')
+                                    var afterTime =moment(time, 'HH:mm').locale('en-au').add('30', 'minutes').format('HH:mm')
+                                    console.log("dateAndTime ",dateAndTime);
+                                    console.log("DATEANDTIME ",DATEANDTIME);
+                                    console.log("TIME ",TIME);
+                                    console.log("beforeTime ",beforeTime);
+                                    console.log("afterTime ",afterTime);
+                                    console.log((moment(TIME,'HH:mm').isBetween(moment(beforeTime,'HH:mm'), moment(afterTime,'HH:mm'))));
+                                    if(moment(moment(dateAndTime).locale('en-au').format('Y/M/D')).isSame(moment(DATEANDTIME).locale('en-au').format('Y/M/D'))){
+                                        if(moment(TIME,'hh:mm').isBetween(moment(beforeTime,'hh:mm'), moment(afterTime,'hh:mm')) || 
+                                            moment(TIME,'hh:mm').isSame(moment(beforeTime,'hh:mm')) || 
+                                            moment(TIME,'hh:mm').isSame(moment(afterTime,'hh:mm'))
+                                            ){
                                             setDriverList(DriverList.filter(item => item.DriverId != snapshot.val().DeliveryDriverId))
                                          }
                                     }
@@ -106,11 +114,18 @@ const AssignModal=(props)=>{
                 Status:"Accepted",
                 DeliveryDriverId:DriverId
             }).then(()=>{
-                sendNotifications(Token,'تم قبول طلبك ','قبول الطلب','NotificationsPage')
+                sendNotifications(Token,'تم قبول طلبك ✅ ','قبول الطلب','NotificationsPage')
                 // scheduleNotification(Token)
             }).then(()=>{
-                sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
-                props.ShowModal()
+                firebase.database().ref('Notification/'+UserId+"/").push({
+                    RequestId: RequestId,
+                    DriverId:DriverId,
+                    DateAndTime:moment().locale('en-au').format('llll'),
+                    Status:'Accepted'
+                }).then(()=>{
+                    sendNotifications(DriverToken,' تم اسناد طلب جديد إليك ✔️',' طلب جديد',"DriverRequestDetails",{ID:RequestId,DATE:DATEANDTIME,STATUS,UserId})
+                    props.ShowModal()
+                })
             })
     }
 
@@ -272,9 +287,7 @@ const AssignModal=(props)=>{
     useEffect(()=>{
         fetchData()
       },[])
-      const test=()=>{
-          console.log("on test");
-      }
+
     return(  
         
             <Modal

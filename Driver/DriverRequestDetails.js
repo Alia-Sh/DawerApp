@@ -9,13 +9,12 @@ import firebase from '../Database/firebase';
 import RejectRequestModal from '../components/RejectModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AlertView from "../components/AlertView";
-
+import moment from 'moment';
 const DriverRequestDetails = ({navigation,route})=>{
     var  RequestId = route.params.ID;
     var DATE=route.params.DATE
     var STATUS=route.params.STATUS
     var UserId=route.params.UserId
-    console.log(STATUS);
     const [DriverList,setDriverList] = useState([])
     const[Materials,setMaterials]= useState([]);
     const[RejectModal,setRejectModal]= useState(false);
@@ -34,6 +33,8 @@ const DriverRequestDetails = ({navigation,route})=>{
       Message:'',
       jsonPath:'',   
     })
+
+    var DriverId = firebase.auth().currentUser.uid;
     const [Status,setStatus]=useState(STATUS)
     console.log(Status);
     const [Token,setToken]=useState("")
@@ -60,7 +61,7 @@ const DriverRequestDetails = ({navigation,route})=>{
         })
   }
 
-const changeReq=()=>{
+const changeReq=(STATUS)=>{
     
     if(STATUS == 'Accepted'){
         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
@@ -68,9 +69,16 @@ const changeReq=()=>{
         }).then(()=>{
           STATUS="OutForPickup";
           setStatus("OutForPickup")
-        }).then(()=>[
-          sendNotifications(Token,'السائق في الطريق لاستلام طلبك','استلام الطلب')
-        ]).catch((error)=>{
+        }).then(()=>{
+          firebase.database().ref('Notification/'+UserId+"/").push({
+            RequestId: RequestId,
+            DriverId:DriverId,
+            DateAndTime:moment().locale('en-au').format('llll'),
+            Status:'OutForPickup'
+        }).then(()=>{
+          sendNotifications(Token,'السائق في الطريق لاستلام طلبك 🚙','استلام الطلب')
+        })
+        }).catch((error)=>{
           Alert.alert(error.message)
         })
         console.log('im here in 1') 
@@ -84,7 +92,14 @@ const changeReq=()=>{
           STATUS="Delivered";
           setStatus("Delivered")
         }).then(()=>{
-          sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة، تم توصيل طلبك للمنشأة','توصيل الطلب')
+          firebase.database().ref('Notification/'+UserId+"/").push({
+            RequestId: RequestId,
+            DriverId:DriverId,
+            DateAndTime:moment().locale('en-au').format('llll'),
+            Status:'Delivered'
+        }).then(()=>{
+          sendNotifications(Token,' شكراً لمساهمتك في الحفاظ على البيئة ♻️ 🤍، تم توصيل طلبك للمنشأة','توصيل الطلب')
+        })
         }).catch((error)=>{
           Alert.alert(error.message)
         })
@@ -257,7 +272,7 @@ const changeReq=()=>{
             null:
             <View style={[styles.flexDirectionStyle,styles.button,{marginTop:5}]}>
               <TouchableOpacity style={[styles.button,]}
-              onPress={()=>changeReq()}
+              onPress={()=>changeReq(Status)}
               >
                 
                 <LinearGradient

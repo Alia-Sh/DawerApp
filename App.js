@@ -93,6 +93,7 @@ function Root() {
           <Drawer.Screen name="GoogleMap" component={GoogleMap} options={myOptions}/>
           <Drawer.Screen name="ImageClassifier" component={ImageClassifier} options={myOptions}/>
           <Drawer.Screen name="FacilitiesInCategory" component={FacilitiesInCategory} options={myOptions}/>
+          <Drawer.Screen name="UserViewDriver" component={UserViewDriver} options={myOptions}/>
         </Drawer.Navigator>
   );
 }

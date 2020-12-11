@@ -1,5 +1,5 @@
 import React , { useState ,useEffect } from 'react';
-import { StyleSheet, Text, View, NativeModules,FlatList} from 'react-native';
+import { StyleSheet, Text, View, NativeModules, Image, FlatList, ActionSheetIOS} from 'react-native';
 import { SafeAreaContext, SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {FontAwesome5} from '@expo/vector-icons';
@@ -7,6 +7,10 @@ import firebase from '../Database/firebase';
 import SearchBar from '../components/SearchBar';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import ClassifierModal from './ClassifierModal';
+
 
 const HomeScreen = ({navigation})=>{
 
@@ -14,8 +18,10 @@ const HomeScreen = ({navigation})=>{
   const [loading, setLoading] = useState(true)
   const [term, setTerm] = useState('')
   const [SearchList, setSearchList] = useState([])
-  const [SearchOccur, setSearchOccur] = useState(false)       
-  
+  const [SearchOccur, setSearchOccur] = useState(false)
+  const [image, setImage] = useState('')       
+  const [VisClassifierModal,setVisClassifierModal] = useState(false)
+
 
   
   var UserID=firebase.auth().currentUser.uid;
@@ -43,7 +49,7 @@ const HomeScreen = ({navigation})=>{
         // Get the token that uniquely identifies this device
         let token = await Notifications.getExpoPushTokenAsync();
         //post to firebase
-        
+        console.log("token",token);
         var updates = {}
         updates['/expoToken'] = token
         firebase.database().ref("User").child(UserID).update(updates)
@@ -119,13 +125,86 @@ const HomeScreen = ({navigation})=>{
   }
 
 
+
+   // image classification options
+   const camOptions =  () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+    {
+      options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
+      //destructiveButtonIndex: 2,
+      //tintColor: 'blue',
+      title : 'تصنيف نوع المادة',
+      cancelButtonIndex: 0
+    },
+    buttonIndex => {
+      if (buttonIndex === 0) {
+        // cancel action
+      } else if (buttonIndex === 1) {
+        pickFromCamera();
+      } else if (buttonIndex === 2) {
+        selectImage();
+      }
+    }
+    );
+  }
+
+  // take photo
+  const pickFromCamera = async ()=>{
+    const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
+    if(granted){
+        let data =  await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1,1]
+            // quality: 0.5
+          })
+        if(!data.cancelled){
+          const source = { uri: data.uri }
+          setImage(source);
+          //this.classifyImage()
+          setVisClassifierModal(true)
+        }
+    }else{
+      alert("you need to give the permission to work!")
+    }
+  }
+
+  // upload photo
+  const selectImage = async() => {
+    try {
+      let response = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1,1]
+      })
+      if (!response.cancelled) {
+          const source = { uri: response.uri }
+          setImage(source);
+          //this.classifyImage()
+          setVisClassifierModal(true)
+      }
+    } catch (error) {
+      console.log(error)
+      }
+  }
+
+  const getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+        if (status !== 'granted') {
+            alert('فضلًا، قم بإعطاء صلاحية الدخول لألبوم الصور !')
+        }
+    }
+  }
+
+
     return (
       <View>
         <View style = {{flexDirection: 'row'}}>
         <FontAwesome5 name="camera" size={34} color="#AFB42B" style={styles.icon}
-            onPress={()=>{
-                navigation.navigate("ImageClassifier")
-            }}/>
+            onPress={()=>camOptions()
+                //{navigation.navigate("ImageClassifier")}
+            }/>
             <SearchBar
             term = {term}
             OnTermChange = {newTerm => setTerm(newTerm)}
@@ -169,6 +248,13 @@ const HomeScreen = ({navigation})=>{
             }*/
           />}
           </View>
+
+          {VisClassifierModal?
+                <ClassifierModal img={image} setVisClassifierModal={setVisClassifierModal}></ClassifierModal>
+              :
+                null
+          }
+
       </View>
 
       );
@@ -189,8 +275,8 @@ const styles = StyleSheet.create({
       height: 130,
       paddingTop: 50,
       marginVertical: 8, //25 -- مربع 3
-      marginHorizontal: 8, //16 -- 3 مربع
-      borderRadius: 30, //100 - 50 -30 -- 0 مربع 
+      marginHorizontal: 5, //16 -- 3 مربع
+      borderRadius: 0, //100 - 50 -30 -- 0 مربع 
       shadowColor: '#9E9D24',
       shadowOffset: {
         width: 0,

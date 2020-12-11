@@ -68,7 +68,7 @@ const styles=StyleSheet.create({
     modalText:{
         textAlign:'center',
         fontWeight:'bold',
-        fontSize:25,
+        fontSize:22,
         shadowColor:'#161924',
         shadowOffset:{
             width:0,

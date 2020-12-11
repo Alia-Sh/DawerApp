@@ -2,17 +2,23 @@ import React,{useState}from 'react';
 import { StyleSheet, Text,View,NativeModules,TouchableOpacity,Modal} from 'react-native';
 import firebase from '../Database/firebase';
 import LottieView from 'lottie-react-native';
-
+import moment from 'moment';
 const RejectModal=(props)=>{
     const [alertVisible,setAlertVisible]= useState(true)
-
+console.log("on rejrct ",props.Token);
     const rejectRequest=(UserId,RequestId,Token)=>{
         firebase.database().ref('PickupRequest/'+UserId+"/"+RequestId).update({
             Status:"Rejected"
         }).then(()=>{
-            sendNotifications(Token,' تم رفض الطلب ','قبول الطلب')
-            props.setRejectModal(false);
-            props.navigation.navigate("RequestHome");
+          firebase.database().ref('Notification/'+UserId+"/").push({
+            RequestId: RequestId,
+            DateAndTime:moment().locale('en-au').format('llll'),
+            Status:'Rejected'
+        }).then(()=>{
+          sendNotifications(Token,'نعتذر عن قبول طلبك 🚫','تم رفض طلبك')
+          props.setRejectModal(false);
+          props.navigation.navigate("RequestHome");
+        })
         })
     }
 

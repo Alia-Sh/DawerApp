@@ -230,7 +230,7 @@ const removeDriver=()=>{
                           navigation.navigate("DriverHome")
                         }}/>
                     <View>
-                        <Text style={styles.headerText}>@ {UserName}</Text>
+                        <Text style={styles.headerText}>@{UserName}</Text>
                     </View>
                     <View>
                     
@@ -473,7 +473,7 @@ const styles=StyleSheet.create({
     footer: {
         paddingHorizontal: 20,
         paddingVertical: 30,
-        marginTop:-20,
+        marginTop:-10,
     },
     button:{
         flexDirection:"row",

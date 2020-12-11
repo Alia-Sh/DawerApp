@@ -13,6 +13,7 @@ import { StyleSheet,
 import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {FontAwesome5} from '@expo/vector-icons';
 
@@ -74,10 +75,13 @@ const AdminHomePage = ({navigation})=>{
         }}> 
         <SafeAreaView>
           <View style={styles.header}>
-          <FontAwesome5 name="power-off" size={26} color="#fff" style={{paddingLeft:10,marginBottom:10}}
-                        onPress={() =>{SignOut()}}/>
+          {/*<FontAwesome5 name="power-off" size={26} color="#fff" style={{paddingLeft:10,marginBottom:10}}
+                        onPress={() =>{SignOut()}}/> */}
+              <MaterialIcons name="exit-to-app" size={32} color="#fff" style={{paddingLeft:10,marginBottom:10}}
+                            onPress={() =>{SignOut()}}/>
          <Image
-          source={require('../assets/AdminIcons/HomePageLogo.png')}
+          source={require('../assets/UserLogo2.png')}
+          //source={require('../assets/AdminIcons/HomePageLogo.png')} // was
           style={[styles.logo]}
           resizeMode="stretch"
           />
@@ -134,12 +138,14 @@ const AdminHomePage = ({navigation})=>{
             </View>
         </View>
         <View style={styles.communityStuff}>
-         <TouchableOpacity  onPress={()=> openRightPage("community")}>
-        <Image
+         <TouchableOpacity style={styles.icon_back} onPress={()=> openRightPage("community")}>
+           <MaterialCommunityIcons name="account-group" color="#fff" size={46} style={{marginLeft:20, marginTop:2}}/>
+
+        {/*<Image
           source={require('../assets/AdminIcons/communityForm.png')}
           style={styles.communityB}
           resizeMode="stretch"
-          />
+        /> */}
           </TouchableOpacity>
           {/* <TouchableOpacity  onPress={()=> openRightPage("community")}>
         <Image
@@ -160,12 +166,12 @@ const AdminHomePage = ({navigation})=>{
 }
 // here styles
 const {height} = Dimensions.get("screen");
-const height_logo = height* 0.17;
+const height_logo = height* 0.06; //was 0.17
 const height_logout = height* 0.04;
 const height_mid = height* 0.60;
 
 const {width} = Dimensions.get("screen");
-const width_logo = width* 0.22;
+const width_logo = width* 0.3; //was 0.22
 const width_logout = width* 0.055;
 const width_mid = width* 0.85;
 
@@ -292,6 +298,15 @@ const styles = StyleSheet.create({
      // position: 'absolute',
       //top:width*.90,
       left :width *.81,
+      
+    },
+
+    icon_back:{ // new
+      backgroundColor:'#9cac74',
+      borderTopLeftRadius: 5,
+      borderBottomLeftRadius: 5,
+      width: 80,
+      height: 50
       
     },
     header:{

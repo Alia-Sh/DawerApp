@@ -37,7 +37,9 @@ import Loading from '../components/Loading';
         isValidEmail:true,
         isValidPhone:true,
         isValidPassword:true,
-        EroorMessage:'',
+        ErrorMessage:'',
+        NameErrorMessage:'',
+        UserNameErrorMessage:'',
         EmailErrorMessage:'',
         PhoneErrorMessage:'',
     });
@@ -50,17 +52,27 @@ import Loading from '../components/Loading';
     })
 
     const checkValidName=()=>{
+        var specialCharacters = /[+=!@#$%^~&*()/;,.?"““”'’:{}|<>€£¥•‘؛[[،؟'١٢٣٤٥٦٧٨٩٠-٪ـ_-]/;
         if(Name==""){
             setData({
                 ...data,
                 isValidName:false,
+                NameErrorMessage:"يجب ادخال الاسم."
             });
             return false; 
+        }else if(specialCharacters.test(Name)|| /\d+/g.test(Name)) {
+                setData({
+                    ...data,
+                    isValidName:false,
+                    NameErrorMessage:"يحب أن لا يحتوي الاسم على رموز أو أرقام."
+                });
+                return false; 
         }else{
             if(!data.isValidName){   
                 setData({
                     ...data,
                     isValidName:true,
+                    NameErrorMessage:""
                 });                 
             }
             return true;         
@@ -68,17 +80,35 @@ import Loading from '../components/Loading';
     }
 
     const checkValidUserName=()=>{
+        var specialCharacters = /[+=!@#$%^~&*()/;,?"““”'’:{}|<>€£¥•‘؛[ [،؟'٪ـ]/;
+        var arabic = /[\u0600-\u06FF]/
         if(UserName==""){
             setData({
                 ...data,
                 isValidUserName:false,
+                UserNameErrorMessage:'يجب ادخال اسم المستخدم.'
             });
             return false; 
+        }else if(specialCharacters.test(UserName) || arabic.test(UserName)){
+            setData({
+                ...data,
+                isValidUserName:false,
+                UserNameErrorMessage:"يمكن لاسم المستخدم أن يتضمن أحرف الانجليزية، أرقام، -، _ و . فقط." ,               
+            });                               
+            return false;         
+        }else if(UserName.length>20){
+            setData({
+                ...data,
+                isValidUserName:false,
+                UserNameErrorMessage:'يجب أن لا يتجاوز اسم المستخدم أكثر من  ٢٠ حرف.' ,               
+            });                               
+            return false;         
         }else{
             if(!data.isValidUserName){   
                 setData({
                     ...data,
                     isValidUserName:true,
+                    UserNameErrorMessage:''
                 });                 
             }
             return true;         
@@ -91,14 +121,14 @@ import Loading from '../components/Loading';
             setData({
                 ...data,
                 isValidEmail:false,
-                EmailErrorMessage:'يجب ادخال البريد الإلكتروني'
+                EmailErrorMessage:'يجب ادخال البريد الإلكتروني.'
             });
             return false; 
         }else if(reg.test(Email) === false){
             setData({
                 ...data,
                 isValidEmail:false,
-                EmailErrorMessage:'يحب ادخال الايميل بالشكل الصحيح'
+                EmailErrorMessage:'يحب ادخال الايميل بالشكل الصحيح.'
             });
             return false; 
         }else{
@@ -118,14 +148,21 @@ import Loading from '../components/Loading';
             setData({
                 ...data,
                 isValidPhone:false,
-                PhoneErrorMessage:'يجب ادخال رقم الجوال'
+                PhoneErrorMessage:'يجب ادخال رقم الجوال.'
             });
             return false; 
         }else if(Phone.length<10){
             setData({
                 ...data,
                 isValidPhone:false,
-                PhoneErrorMessage:'يجب ان يتكون رقم الجوال من ١٠ ارقام'
+                PhoneErrorMessage:'يجب أن يتكون رقم الجوال من ١٠ ارقام.'
+            });
+            return false;       
+        }else if(Phone.substring(0,2)!='05'){
+            setData({
+                ...data,
+                isValidPhone:false,
+                PhoneErrorMessage:'يجب أن يبدأ رقم الجوال ب 05.'
             });
             return false;       
         }else{
@@ -141,26 +178,41 @@ import Loading from '../components/Loading';
     }
 
     const checkValidPassword=()=>{
+        const expression = /^\S+$/g;
         if(Password==""){
             setData({
                 ...data,
                 isValidPassword:false,
-                EroorMessage:'يجب ادخال كلمة المرور'
+                ErrorMessage:'يجب ادخال كلمة المرور.'
             });
             return false; 
         }else if(Password.length<8){
                 setData({
                     ...data,
                     isValidPassword:false,
-                    EroorMessage:'يجب أن تكون كلمة المرور ٨ أحرف على الاقل'                 
+                    ErrorMessage:'يجب أن تتكون كلمة المرور من ٨ أحرف على الاقل.'                 
                 });                               
+            return false;         
+        }else if(Password.length>20){
+            setData({
+                ...data,
+                isValidPassword:false,
+                ErrorMessage:'يجب أن لا تتجاوز كلمة المرور أكثر من  ٢٠ حرف.'                
+            });                               
+            return false;         
+        }else if (Password.indexOf(' ') !== -1) {
+            setData({
+                ...data,
+                isValidPassword:false,
+                ErrorMessage:'يجب أن لا تحتوي كلمة المرور على فراغات.'                
+            });                               
             return false;         
         }else{
             if(!data.isValidPassword){
                 setData({
                     ...data,
                     isValidPassword:true,
-                    EroorMessage:''                 
+                    ErrorMessage:''                 
                 });                             
             }
             return true  
@@ -217,7 +269,6 @@ import Loading from '../components/Loading';
                                     setAlert({
                                         ...alert,
                                         Title:'',
-                                        //Message:'تم إضافة السائق بنجاح',
                                         Message:'تم إرسال طلبك بنجاح',
                                         jsonPath:"success",
                                         alertVisible:true,
@@ -299,7 +350,7 @@ import Loading from '../components/Loading';
             isValidEmail:true,
             isValidPhone:true,
             isValidPassword:true,
-            EroorMessage:'',
+            ErrorMessage:'',
             EmailErrorMessage:'',
             PhoneErrorMessage:'',
         });
@@ -326,7 +377,7 @@ import Loading from '../components/Loading';
                     </View>
 
                     <View>
-                        <Text style={styles.text_footer}>اسم السائق:</Text>
+                        <Text style={styles.text_footer}>الاسم :</Text>
                         <View style={styles.action}>
                             <TextInput style={styles.textInput} 
                                 label="Name"
@@ -342,7 +393,7 @@ import Loading from '../components/Loading';
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب ادخال اسم السائق</Text>
+                            <Text style={styles.errorMsg}>{data.NameErrorMessage}</Text>
                             </Animatable.View>
                         }
 
@@ -362,7 +413,7 @@ import Loading from '../components/Loading';
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>يجب ادخال اسم المستخدم</Text>
+                            <Text style={styles.errorMsg}>{data.UserNameErrorMessage}</Text>
                             </Animatable.View>
                         }
 
@@ -424,7 +475,7 @@ import Loading from '../components/Loading';
                             null 
                             : 
                             <Animatable.View animation="fadeInRight" duration={500}>
-                            <Text style={styles.errorMsg}>{data.EroorMessage}</Text>
+                            <Text style={styles.errorMsg}>{data.ErrorMessage}</Text>
                             </Animatable.View>
                         }
 
