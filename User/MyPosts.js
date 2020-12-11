@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import {Title,Image, Modal} from 'react-native-paper';
+import {Title, Image} from 'react-native-paper';
 import {View,NativeModules,
     FlatList, StyleSheet,
     TouchableOpacity, Text,
@@ -8,13 +8,13 @@ import firebase from '../Database/firebase';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import SearchBar from '../components/SearchBar';
 import {FontAwesome5} from '@expo/vector-icons';
-import LottieView from 'lottie-react-native';
 
 
 
 
 
-const  CommunityHome= ({navigation}) =>{
+
+const  MyPosts= ({navigation}) =>{
 
     const [term, setTerm] = useState('')
     const [SearchList, setSearchList] = useState([])
@@ -24,49 +24,56 @@ const  CommunityHome= ({navigation}) =>{
     const[loading,setLoading]=useState(true)
     const [data,setData]=React.useState({
         isLoading:false ,
-        isEmptyList:false,
-        visible:false,
-        Id: ''  
+        isEmptyList:false  
     });
     
-    
+    var userId = firebase.auth().currentUser.uid;
 
     const fetchData=()=>{
         firebase.database().ref('Posts/').on('value',snapshot=>{
           const Data1 = snapshot.val();
           if(Data1){
-            var li = []
+            var My=[]
             snapshot.forEach(function(snapshot){
               console.log(snapshot.key);
               console.log(snapshot.val());
-              var temp={AuthorUserName:snapshot.val().AuthorUserName,PostId:snapshot.key,Date:snapshot.val().Date, Description:snapshot.val().Description, Subject:snapshot.val().Subject}
-              li.push(temp)
-              setLoading(false)
+              var temp={AuthorUserName:snapshot.val().AuthorUserName,PostId:snapshot.key,Date:snapshot.val().Date, Description:snapshot.val().Description, Subject:snapshot.val().Subject, Id:snapshot.val().Id}
+              if(temp.Id == userId){
+                My.push(temp)
+                setLoading(false)
+                }
+            
             })
-            setPostList(li)
-            setSearchisempty(false)
-            setSearchOccur(false)
-            setSearchList([])
-            setData({
-              ...data,
-              isEmptyList:false
-            })
-            console.log(li)
-          }else{
-            setData({
-              ...data,
-              isEmptyList:true
-            })
-          }
+            if((My)==''){
+                setData({
+                  ...data,
+                  isEmptyList:true
+                })
+            }     else{
+                    setData({
+                      ...data,
+                      isEmptyList:false
+                    })
+                  }
+                  setPostList(My)
+                  setSearchisempty(false)
+                  setSearchOccur(false)
+                  setSearchList([])
+                  console.log(My)
+             }else{
+                setData({
+                    ...data,
+                    isEmptyList:true
+                  })
+                
+             }
         })
       }
 
       useEffect(()=>{
         fetchData()
     },[])
-    
-  
-    
+
     const [selectedId, setSelectedId] = useState(null);
 
     const Item = ({ item, onPress, style }) => (
@@ -74,18 +81,9 @@ const  CommunityHome= ({navigation}) =>{
       <TouchableOpacity onPress={onPress} style={[styles.theItem, style]}>
           
       <View style={styles.flexDirectionStyle}>
-      <View style = {{flexDirection: 'row'}}>
              <Title style={styles.title}>{item.Subject}</Title>
+  
               </View>
-              
-             <FontAwesome5 name="trash" size={20} style={styles.remove}
-              onPress={()=> setData({
-              ...data,
-              Id: item.PostId,
-              visible:true
-              })}/>
-             </View>
-
               <Text style={styles.Postinfo}>
               {item.AuthorUserName}
               </Text>
@@ -107,7 +105,7 @@ const  CommunityHome= ({navigation}) =>{
         return(
             <Item
             item={item}
-            onPress={() => navigation.navigate("AdminPostDetails",{item})}
+            onPress={() => navigation.navigate("PostDetails",{item})}
             style={{ backgroundColor :item.PostId === selectedId ? "#EDEEEC" : "#F3F3F3"}}
           />
         )
@@ -125,31 +123,26 @@ const  CommunityHome= ({navigation}) =>{
 
     }
 
-    const delet = ()=>{
-      fetchData()
-      firebase.database().ref('Posts/'+data.Id).remove()
-    }
+
       
     return(
-            <View style={{flex:8}}>
-            <View  style={styles.fixedHeader}>
+
+           
+            <View style={{flex:1}}>
+             <View  style={styles.fixedHeader}>
          <LinearGradient
-                    colors={["#809d65","#9cac74"]}
+                    colors={["#827717","#AFB42B"]}
                     style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between'}}>
-            <Title style={styles.text_header}>مجتمع دوّر</Title>
+         <Title style={styles.text_header}>منشوراتي</Title>
             <FontAwesome5 name="chevron-left" size={30} color="#ffffff" style={Platform.OS === 'android' && 
                                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                       NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                                       styles.iconAndroid:styles.iconIOS} 
                                       onPress={()=>navigation.goBack()} />
-                     
-                     
-
             </LinearGradient>
-         
-            </View>
-            <View style={{marginBottom:9}}>
+        </View>
+
               <SearchBar
             term = {term}
             OnTermChange = {newTerm => setTerm(newTerm)}
@@ -157,7 +150,7 @@ const  CommunityHome= ({navigation}) =>{
             BarWidth = {'80%'}
             BarMargin = {'30'}
             />
-            </View>
+
             {Searchisempty? 
                 <View style={styles.grid}>
           <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', fontSize: 13}}>لا يوجد نتائج</Title>
@@ -167,16 +160,16 @@ const  CommunityHome= ({navigation}) =>{
          }
               {data.isEmptyList? 
 
-              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', marginTop: 250, fontSize: 13}}>لا يوجد منشورات منشورة </Title>
+              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', marginTop: 250, fontSize: 13}}>لا يوجد لديك منشورات</Title>
               :
               <FlatList
         data={PostList.reverse()}
-        renderItem={({item})=>{
-        return renderList(item)}}
         keyExtractor={item=>`${item.PostId}`}
-        style={{flex:8}}
+        refreshing={loading}
         onRefresh={()=>fetchData()}
-        refreshing={loading}/>
+        renderItem={({item})=>{
+            return renderList(item)}}
+        />
               
               }
       
@@ -193,53 +186,15 @@ const  CommunityHome= ({navigation}) =>{
         :
          null
          }
-         <Modal animationType="slide" transparent={true} visible={data.visible}>
-        <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-                <Text style={styles.modalText}>حذف المنشور</Text>
-                <View style={{width:'100%',height:0.5,backgroundColor:"#757575",marginVertical:15}}></View>
-
-                <View style={{justifyContent:'center',alignItems:'center'}}>
-                  <View style={{width:'50%',height:100,justifyContent:'center',alignItems:'center'}}>  
-                    <LottieView source={require('../assets/Warning.json')}autoPlay loop/>                           
-                  </View>
-                </View>
-
-                <Text style={styles.textStyle}>هل انت متاكد من حذف المنشور؟</Text>
-                <View style={{flexDirection:Platform.OS === 'android' &&
-                        NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
-                        NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
-                        NativeModules.I18nManager.localeIdentifier === 'ar_SA'?'row':'row-reverse',
-                        alignItems:'center',justifyContent:'center'}}>
-                    <TouchableOpacity 
-                        style={styles.okButton}
-                        onPress={()=>{delet()
-                          setData({
-                            ...data,
-                            visible: false
-                          })     
-                    }}>
-                      <Text style={styles.okStyle}>حذف</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.cancelButton}
-                        onPress={()=>{
-                            setData({
-                              visible:false
-                            })
-                        }}>
-                            <Text style={styles.okStyle}>إلغاء</Text>
-                    </TouchableOpacity>
-                  </View>
-            </View>
-        </View>
-</Modal>
+                
          
         
         
+ 
+        
+
+              
             </View>
-            
                 
     );
 };
@@ -247,6 +202,7 @@ const  CommunityHome= ({navigation}) =>{
 const styles = StyleSheet.create({
      container: {
         flex: 1,
+        //marginTop: 40, //20 -- 55
       },
       fixedHeader: {
         backgroundColor: '#9E9D24',
@@ -256,13 +212,12 @@ const styles = StyleSheet.create({
         height: '10%'
     },
     text_header: {
-        color: '#ffff',
-        fontWeight: 'bold',
-        fontSize: 22,
-        textAlign: 'center',
-        marginLeft: 145 , 
-        marginTop: 37, 
+        position:'absolute',
+        marginTop: 39, 
+        marginLeft: 150,
         alignItems: 'center',
+        color: '#fff',
+        fontSize: 25
     },
     logo: {
         width: 90,
@@ -374,7 +329,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
       
-    },
+    }
+    ,okStyle:{
+    color:"#ffff",
+    textAlign:'center',
+    fontSize:20,
+
+},
 errorMsg: {
     color: '#FF0000',
     fontSize: 14,
@@ -404,17 +365,11 @@ flexDirectionStyle:{
     fontSize: 25,
     fontWeight: 'bold' ,
     textAlign: 'right',
-    marginRight: 2 , 
-    marginLeft:25.1,
-    color: '#809d65',
-    marginTop: 2
-},
-remove: {
-  position: 'absolute',
-        margin: 8,
-        right:0,
-        color: 'darkred'
-        
+    marginRight: 8 , 
+     alignItems: 'center',
+     color: '#9E9D24',
+     marginBottom: 0,
+     marginTop: 12
 },
   mycard:{
     backgroundColor: '#F3F3F3',
@@ -446,76 +401,15 @@ remove: {
     color: 'gray'
   },
   grid: {
-    marginBottom: 680,
+    marginBottom: 580,
       },
-    
-  icon: {
+      icon: {
         left: 12,
         marginTop: 10,
         marginEnd: 25
-      },
-  centeredView:{
-        justifyContent:'center',
-        alignItems:'center',
-         alignContent:'center',
-    },
-  modalView:{
-        width:'80%',
-        margin:10,
-        backgroundColor:"#ffff",
-        borderRadius:10,
-        shadowColor:'#161924',
-        shadowOffset:{
-            width:0,
-            height:2
-        },
-        shadowOpacity:0.25,
-        shadowRadius:3.85,
-        elevation:5,                
-    },
-  okStyle:{
-        color:"#ffff",
-        textAlign:'center',
-        fontSize:20
-    },
-  okButton:{
-        backgroundColor:'#B71C1C',
-        borderRadius:5,
-        padding:10,
-        elevation:2,
-        width:'30%',
-        margin:15,
-    },
-  cancelButton:{
-      backgroundColor:'#9E9E9E',
-      borderRadius:5,
-      padding:10,
-      elevation:2,
-      width:'30%',
-      margin:15,
-    },
-  modalText:{
-      textAlign:'center',
-      fontWeight:'bold',
-      fontSize:25,
-      shadowColor:'#161924',
-      shadowOffset:{
-          width:0,
-          height:2
-      },
-      shadowOpacity:0.3,
-      shadowRadius:3.84,
-      elevation:5,
-      marginTop:5      
-    },
-  textStyle:{
-      color:"#161924",
-      textAlign:'center',
-      fontSize:15,
-      marginTop:20
-    },   
+      }
 
   
 });
 
-export default CommunityHome;
+export default MyPosts;

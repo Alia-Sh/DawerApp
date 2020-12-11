@@ -11,7 +11,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {Card,Title,FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
 import AddCategory from './AddCategory';
-import {FontAwesome5} from '@expo/vector-icons';
 import DeleteModal from '../components/DeleteModal';
 
 const HomeScreen = ({navigation})=>{
@@ -39,7 +38,7 @@ const HomeScreen = ({navigation})=>{
         snapshot.forEach(function(snapshot){
           console.log(snapshot.key);
           console.log(snapshot.val().Name);
-          var temp={Name:snapshot.val().Name,CategoryId:snapshot.key}
+          var temp={ Name:snapshot.val().Name,CategoryId:snapshot.key}
           li.push(temp)
           setLoading(false)
         })
@@ -221,6 +220,9 @@ const styles = StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
-    }  
+    },
+    cardContent:{
+      justifyContent:'space-between'
+  },
 });
 export default HomeScreen;

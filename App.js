@@ -45,6 +45,15 @@ import JoinDetails from './Admin/JoinDetails';
 import DriverRequestDetails from './Driver/DriverRequestDetails';
 import AssignedRequestsToDriver from './Admin/AssignedRequestsToDriver';
 import DriverAllRequests from './Admin/DriverAllRequests';
+import CommunityPage from './User/CommunityPage';
+import NewPost from './User/NewPost';
+import PostDetails from './User/PostDetails';
+import MyPosts from './User/MyPosts';
+import AdminPostDetails from './Admin/AdminPostDetails';
+
+
+
+
 
 
 
@@ -121,6 +130,17 @@ function App() {
           <Stack.Screen name="DriverRequestDetails" component={DriverRequestDetails} options={myOptions}/>
           <Stack.Screen name="AssignedRequestsToDriver" component={AssignedRequestsToDriver} options={myOptions}/>
           <Stack.Screen name="DriverAllRequests" component={DriverAllRequests} options={myOptions}/>
+          <Stack.Screen name="CommunityPage" component={CommunityPage} options={myOptions}/>
+          <Stack.Screen name="NewPost" component={NewPost} options={myOptions}/>
+          <Stack.Screen name="PostDetails" component={PostDetails} options={myOptions}/>
+          <Stack.Screen name="MyPosts" component={MyPosts} options={myOptions}/>
+          <Stack.Screen name="AdminPostDetails" component={AdminPostDetails} options={myOptions}/>
+
+
+
+
+
+
         </Stack.Navigator>
     </View>
   );

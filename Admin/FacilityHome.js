@@ -239,7 +239,7 @@ SearchInList = (word) =>{
 
             <FAB  
               onPress={()=>{
-              navigation.navigate("AddFacility") }}
+              navigation.navigate("AddFacility")}}
               style={Platform.OS === 'android' &&
               NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
               NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -249,6 +249,7 @@ SearchInList = (word) =>{
               icon="plus"
               theme={{colors:{accent:"#9cac74"}}} 
             />
+            
               
           </View>   
 

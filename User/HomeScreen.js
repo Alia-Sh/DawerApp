@@ -97,7 +97,7 @@ const HomeScreen = ({navigation})=>{
 
 
   const renderItem = ({ item }) => {
-    const backgroundColor = item.key === selectedId ? "#F3F3F3" : "#F3F3F3";
+  const backgroundColor = item.key === selectedId ? "#F3F3F3" : "#F3F3F3";
 
     return (
       <Item

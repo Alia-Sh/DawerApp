@@ -19,7 +19,6 @@ const [data, setdata]= React.useState({
     ValidUserName: true,
     LocationExisting: true,
     Valid: true,
-    // visible: true
     })
 
    var userId = firebase.auth().currentUser.uid;
@@ -40,13 +39,6 @@ const [data, setdata]= React.useState({
       })
      });
  
-//if (Location){
-//  setdata({
- //   ...data,
-  //  visible: true
- // })
-//}
-
 
 const [Name,setName] = useState('')
 const [Phone,setPhone] = useState('')
