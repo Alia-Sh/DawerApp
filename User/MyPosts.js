@@ -128,7 +128,7 @@ const  MyPosts= ({navigation}) =>{
     return(
 
            
-            <View style={{flex:1}}>
+            <View style={{flex:8}}>
              <View  style={styles.fixedHeader}>
          <LinearGradient
                     colors={["#827717","#AFB42B"]}
@@ -142,7 +142,8 @@ const  MyPosts= ({navigation}) =>{
                                       onPress={()=>navigation.goBack()} />
             </LinearGradient>
         </View>
-
+            
+            <View style={{marginBottom:9}}>
               <SearchBar
             term = {term}
             OnTermChange = {newTerm => setTerm(newTerm)}
@@ -150,6 +151,7 @@ const  MyPosts= ({navigation}) =>{
             BarWidth = {'80%'}
             BarMargin = {'30'}
             />
+            </View>
 
             {Searchisempty? 
                 <View style={styles.grid}>
