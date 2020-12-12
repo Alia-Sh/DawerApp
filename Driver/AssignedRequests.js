@@ -34,7 +34,7 @@ const Item = ({ item, onPress, style }) => (
             resizeMode="stretch"
             />
        
-        <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10}} >
+        <View style={{marginTop:Platform.OS === 'android'? -8:0,paddingLeft:10,flex:9}} >
           <Text style={[styles.Status,{textAlign: Platform.OS === 'android' && 
             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -43,7 +43,7 @@ const Item = ({ item, onPress, style }) => (
         </View>
         <View style={{flex:1}}>
   
-          <View style={{marginRight:'15%',marginLeft:'5%',marginTop:5,alignItems:'flex-start'}}>
+          <View style={{flex:1}}>
               <MaterialIcons 
                   name="error" 
                   size={30} 
@@ -515,13 +515,13 @@ const styles = StyleSheet.create({
       fontSize: 16,
       fontWeight: 'bold' ,
       textAlign :'right',
-      marginRight:15,
+      marginRight:5,
       marginTop:5, 
     },
     date: {
-      fontSize: 14,
+      fontSize: 13,
       textAlign :'right',
-      marginRight:20,
+      marginRight:0,
       marginTop:5,
       color :'#7B7B7B',
     },

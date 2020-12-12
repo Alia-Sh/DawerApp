@@ -777,7 +777,7 @@ return (
                                             NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                             NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                             NativeModules.I18nManager.localeIdentifier === 'ar_SA' ?'row':'row-reverse',padding:5}}>
-                                    <View style={[styles.action]}>
+                                    <View style={[styles.action,{width:'80%'}]}>
                                         
                                         <TextInput style={styles.textInput} 
                                             value={DateAndTime}

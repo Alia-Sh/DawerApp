@@ -12,7 +12,7 @@ import {Card,Title,FAB} from 'react-native-paper';
 import firebase from '../Database/firebase';
 import AddCategory from './AddCategory';
 import DeleteModal from '../components/DeleteModal';
-
+import {FontAwesome5} from '@expo/vector-icons';
 const HomeScreen = ({navigation})=>{
   const [modalVisible,setModalVisible]=useState(false);
   const[CategoryList,setCategoryList]= useState([])

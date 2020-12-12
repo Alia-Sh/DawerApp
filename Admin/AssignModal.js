@@ -90,6 +90,7 @@ const AssignModal=(props)=>{
                                             moment(TIME,'hh:mm').isSame(moment(afterTime,'hh:mm'))
                                             ){
                                             setDriverList(DriverList.filter(item => item.DriverId != snapshot.val().DeliveryDriverId))
+                                            setDriverList2(DriverList2.filter(item => item.DriverId != snapshot.val().DeliveryDriverId))
                                          }
                                     }
                                 }
