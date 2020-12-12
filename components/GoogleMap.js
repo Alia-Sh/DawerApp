@@ -37,7 +37,7 @@ const Google=(props)=> {
       latitude: coords.latitude,
       longitude: coords.longitude,
     });
-    const Key="AIzaSyAocOTaKxXxXHKfs-k_lqjocebqw2PxBYM";
+    const Key="AIzaSyCx56jtGjlHH9DEY04EpWCa_HmRJ4lzOuQ";
     const url="https://maps.googleapis.com/maps/api/geocode/json?latlng="+coords.latitude+","+coords.longitude+"&key="+Key;
     fetch(url)
     .then(response=>response.json())
