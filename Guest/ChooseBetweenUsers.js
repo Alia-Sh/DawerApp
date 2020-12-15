@@ -79,7 +79,7 @@ useEffect(() => {
              </View>
               :
     <View style={{alignItems:'center',flexDirection:'column',bottom:'100%'}}>
-            <View style={{position:'absolute'}}> 
+      <View style={{position:'absolute',flex:1}}> 
         <View style={styles.header2}>
                  
                  <Animatable.Image 
@@ -94,9 +94,9 @@ useEffect(() => {
               colors={['#fff','#fff']}
               style={{width: '100%', height: '0.5%'}} /> 
 
-              </View>
+        </View>
 
-      <View style={styles.header}>
+          <View style={styles.header}>
               <Animatable.Image 
               animation="fadeInRight"
               duraton="80000"
@@ -137,7 +137,7 @@ useEffect(() => {
              
                
               
-
+              </View>
   <View style={styles.action}>
     <Text></Text>
   <Animatable.View animation="bounceIn" duration={7000}  colors={['#AFB42B','#827717']}>
@@ -168,7 +168,7 @@ useEffect(() => {
         </Animatable.View>
    
     
-    </View>
+   
         
 
           </View>
@@ -202,14 +202,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 90,
+    marginTop: '5%',
    // marginBottom: 10
 },header2: {
- flex: 0.25,
+ flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
-marginTop: 60,
-  marginBottom: -70
+marginTop: '15%',
+//   marginBottom: -70
 },
 footer: {
     flex: 1,
@@ -260,12 +260,15 @@ action: {
   NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
   NativeModules.I18nManager.localeIdentifier === 'ar_SA' ||
   NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'row' : 'row-reverse',
-  marginTop: 50, // was 130
-  marginBottom: 30, // NEW
+  marginTop: '15%', // was 130
+alignItems:'center',
+justifyContent:'center',
+  // marginBottom: 30, // NEW
   borderBottomWidth: 1,
   borderBottomColor: '#f2f2f2',
-  paddingBottom: 80,
+  // paddingBottom: 10,
   fontWeight: 'bold',
+  flex:1
   
 
   

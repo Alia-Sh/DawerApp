@@ -96,7 +96,7 @@ var DriverID=firebase.auth().currentUser.uid;
 
             </View>
           </View>
-          <View style={{flex:2}}>
+          <View style={{flex:1.5}}>
             <Image 
               source={require('../assets/DriverHomePageButtom.png')}
               style={styles.imageButtom}

@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 22,
       textAlign: 'center',
-      marginTop:30,   
+      marginTop:35,   
     }, 
     //end header
     //flatlist
@@ -519,15 +519,15 @@ const styles = StyleSheet.create({
       marginTop:5, 
     },
     date: {
-      fontSize: 13,
+      fontSize: 12,
       textAlign :'right',
-      marginRight:0,
+      marginRight:5,
       marginTop:5,
       color :'#7B7B7B',
     },
     icon:{
       position: 'absolute',
-      marginTop:30,
+      marginTop:35,
       left: 16
     },
     flexDirectionStyle:{

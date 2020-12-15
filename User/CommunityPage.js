@@ -41,6 +41,11 @@ const  CommunityPage= ({navigation}) =>{
               li.push(temp)
               setLoading(false)
             })
+            if(li){
+              li.sort(function(a, b){
+                return  new Date(b.DateAndTime) -new Date(a.DateAndTime);
+              });
+            }
             setPostList(li)
             setSearchisempty(false)
             setSearchOccur(false)

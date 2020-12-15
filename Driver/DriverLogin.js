@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   logo: {
     width: wight_logo ,
     height: height_logo,
-    marginTop: 50 ,
+    marginTop: 70 ,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   iconIos:{
     position: 'absolute',
     right: 16,
-    top:25
+    top:40
   },
   iconAndroid:{
     position: 'absolute',

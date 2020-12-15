@@ -28,6 +28,8 @@ const  NewPost= ({navigation}) =>{
         isLoading:false ,
         noDescription: true,
         noSubject: true,
+        lengthOfSubject:true,
+        specialCharacters:true
     });
     
       useEffect(() => {
@@ -61,26 +63,53 @@ const  NewPost= ({navigation}) =>{
                 });  
     
         const Add=()=>{    
-                var userId2 = firebase.auth().currentUser.uid;      
+          console.log(Subject.length);
+                var userId2 = firebase.auth().currentUser.uid;  
+                var specialCharacters = /[+=@#$%^~&*/;"““”'’:{}|<>€£¥•‘؛[['٪ـ_]/;  
+                console.log(specialCharacters.test(Subject));  
                 if(Description == '' && Subject !== ''){
                     setData({
                     ...data,
                     noDescription: false,
-                    noSubject: true
+                    noSubject: true,
+                    specialCharacters:true,
+                    lengthOfSubject: true,
                     })
                     }else if(Subject == '' && Description !== '' ){
                         setData({
                         ...data,
                         noDescription: true,
-                        noSubject: false
+                        noSubject: false,
+                        specialCharacters:true,
+                        lengthOfSubject: true,
                         })
                         }else if(Subject == '' && Description == '' ){
                             setData({
                             ...data,
                             noDescription: false,
                             noSubject: false,
+                            specialCharacters:true,
+                            lengthOfSubject: true,
                             })
                             }
+                            else if(Subject.length>80 ){
+                              setData({
+                              ...data,
+                              lengthOfSubject: false,
+                              noSubject: true,
+                              noDescription: true,
+                              specialCharacters:true
+                              })
+                              }
+                              else if(specialCharacters.test(Subject)){
+                                setData({
+                                ...data,
+                                lengthOfSubject: true,
+                                noSubject: true,
+                                noDescription: true,
+                                specialCharacters:false
+                                })
+                                }
                    else {     
                     firebase.database().ref('Posts/').push({
                         AuthorUserName: '@'+UserName,
@@ -170,6 +199,21 @@ const  NewPost= ({navigation}) =>{
             <Animatable.View animation="fadeInRight" duration={500}>
           <Text style={styles.errorMsg}>
             يجب ملء العنوان حتى يتم النشر
+          </Text>
+          </Animatable.View>
+      ) }
+
+{data.lengthOfSubject ? null : (
+            <Animatable.View animation="fadeInRight" duration={500}>
+          <Text style={styles.errorMsg}>
+            يجب أن لا يتجاوز العنوان ٢٠ حرف
+          </Text>
+          </Animatable.View>
+      ) }
+      {data.specialCharacters ? null : (
+            <Animatable.View animation="fadeInRight" duration={500}>
+          <Text style={styles.errorMsg}>
+            يجب أن لا يحتوي العنوان على رموز، عدا -، ؟، "،"، !، .، )، (
           </Text>
           </Animatable.View>
       ) }
