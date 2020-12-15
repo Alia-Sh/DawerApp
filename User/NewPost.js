@@ -121,7 +121,7 @@ const  NewPost= ({navigation}) =>{
                         setTimeout(()=>{
                             setAlert({
                                 ...alert,
-                                Title:'',
+                                Title:'منشور جديد',
                                 Message:'تم نشر منشورك بنجاح',
                                 jsonPath:"success",
                                 alertVisible:true,
@@ -129,7 +129,7 @@ const  NewPost= ({navigation}) =>{
                             setTimeout(() => {
                                 reSetData();
                                 navigation.navigate("UserHomePage")
-                            }, 1000)
+                            }, 2000)
                         },250)
                         console.log('data ' , data);
                     }).catch((error)=>{
@@ -186,7 +186,7 @@ const  NewPost= ({navigation}) =>{
               <View style={styles.action1}>
             <TextInput style={styles.textInput} 
             label="Subject"
-            placeholder="اكتب هنا ما عنوان المنشور.."
+            placeholder="اكتب هنا عنوان المنشور.."
             autoCapitalize="none"
             alignItems= 'flex-start' 
             editable={true} 

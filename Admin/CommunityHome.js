@@ -137,7 +137,7 @@ const  CommunityHome= ({navigation}) =>{
                     colors={["#809d65","#9cac74"]}
                     style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between'}}>
             <Title style={styles.text_header}>مجتمع دوّر</Title>
-            <FontAwesome5 name="chevron-left" size={30} color="#ffffff" style={Platform.OS === 'android' && 
+            <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={Platform.OS === 'android' && 
                                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                       NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
@@ -205,7 +205,7 @@ const  CommunityHome= ({navigation}) =>{
                   </View>
                 </View>
 
-                <Text style={styles.textStyle}>هل انت متاكد من حذف المنشور؟</Text>
+                <Text style={styles.textStyle}>هل أنت متأكد من حذف المنشور؟</Text>
                 <View style={{flexDirection:Platform.OS === 'android' &&
                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
         fontSize: 22,
         textAlign: 'center',
         marginLeft: 145 , 
-        marginTop: 37, 
+        marginTop: 30, 
         alignItems: 'center',
     },
     logo: {
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
       },
       iconIOS:{
         position:'absolute',
-        left:6,
+        right:14,
         marginTop: 39, 
         alignItems: 'center',
         justifyContent: 'center',
@@ -401,10 +401,10 @@ flexDirectionStyle:{
     NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
   },
   title: {
-    fontSize: 25,
+    fontSize: 24, //was 25
     fontWeight: 'bold' ,
     textAlign: 'right',
-    marginRight: 2 , 
+    marginRight: 7 , //was 2
     marginLeft:25.1,
     color: '#809d65',
     marginTop: 2
@@ -446,7 +446,7 @@ remove: {
     color: 'gray'
   },
   grid: {
-    marginBottom: 680,
+    marginBottom: 580, // was 680
       },
     
   icon: {

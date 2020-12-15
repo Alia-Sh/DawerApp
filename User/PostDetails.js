@@ -221,7 +221,7 @@ const fetchData=()=>{
 
                 {data.isEmptyList? 
 
-              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', marginTop: 250, fontSize: 13}}>لا يوجد ردود</Title>
+              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', marginTop: 150, fontSize: 13}}>لا يوجد ردود</Title>
               :
               <FlatList
               data={RepliesList}
@@ -251,7 +251,7 @@ const fetchData=()=>{
             <TextInput style={styles.Reply} 
             value={Reply}
             label="ٍReply"
-            placeholder="اكتب هنا ردك  .."
+            placeholder="اكتب ردك هنا .."
             autoCapitalize="none"
             alignItems= 'right' 
             editable={true} 
@@ -365,10 +365,11 @@ const styles=StyleSheet.create({
         margin: 4 , 
     },
     title: {
-      fontSize: 35,
+      fontSize: 30, //was 35
       fontWeight: 'bold' ,
       textAlign: 'center',
       color: '#9E9D24',
+      marginBottom:10,
     },
     ReplyTitle: {
         fontSize: 11,
@@ -447,6 +448,7 @@ const styles=StyleSheet.create({
         width: '100%',
         flex:1 ,
         flexDirection: 'row',
+        //marginTop: 18, // NEW
         overflow: 'hidden',
       },
      fabAndroid: {

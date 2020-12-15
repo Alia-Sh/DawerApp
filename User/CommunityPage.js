@@ -358,10 +358,10 @@ flexDirectionStyle:{
     NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
   },
   title: {
-    fontSize: 25,
+    fontSize: 22, //was 25
     fontWeight: 'bold' ,
     textAlign: 'right',
-    marginRight: 2 , 
+    marginRight: 7 , // was 2 
     color: '#9E9D24',
      marginTop: 2
 },

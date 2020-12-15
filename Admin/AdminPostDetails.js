@@ -106,7 +106,10 @@ const fetchData=()=>{
                      <Image source={require('../assets/UserLogo2.png')} 
                      style={styles.logo}
                      resizeMode='stretch' />
-                    <FontAwesome5 name="chevron-left" size={31} color="#fff" style={styles.icon}
+                      
+                      <Text style={styles.text_header}>منشور</Text>
+
+                    <FontAwesome5 name="chevron-right" size={24} color="#fff" style={styles.icon}
                     onPress={()=>navigation.goBack()}
                     />
                      
@@ -136,7 +139,7 @@ const fetchData=()=>{
 
                 {data.isEmptyList? 
 
-              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', marginTop: 250, fontSize: 13}}>لا يوجد ردود</Title>
+              <Title style={{alignItems:'center',alignContent:'center',justifyContent:'center',textAlign:'center',color:'#757575', marginTop: 150, fontSize: 13}}>لا يوجد ردود</Title>
               :
               <FlatList
               data={RepliesList}
@@ -183,17 +186,17 @@ const styles=StyleSheet.create({
         height: '10%'
       },
     logo: {
-        width: 90,
-        height: 40,
-      marginLeft: 285 , 
-      marginTop: 35, 
+        width: 85, // was 90
+        height: 35, // was 40
+        //marginLeft: 285 , 
+        marginTop: 30, //35
     },
     Reply: {
         height: 45,
         margin: 4 , 
     },
     title: {
-      fontSize: 35,
+      fontSize: 32,//was 36
       fontWeight: 'bold' ,
       textAlign: 'center',
       color: '#809d65',
@@ -208,8 +211,9 @@ const styles=StyleSheet.create({
     },
     icon:{
         position: 'absolute',
-        left: 16,
-        marginTop: 39,
+        //left: 16,
+        right: 14,
+        marginTop: 35,//39
     },
     ReplyIcon:{
         position: 'absolute',
@@ -282,7 +286,14 @@ const styles=StyleSheet.create({
         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
         NativeModules.I18nManager.localeIdentifier === 'ar_SA'? 'row' : 'row-reverse',  
       },
-      
+      text_header: { // NEW
+        marginRight: 150,
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 24,
+        textAlign: 'center',
+        marginTop:30
+    },
 
 
     
