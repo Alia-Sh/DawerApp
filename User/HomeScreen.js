@@ -134,6 +134,7 @@ const HomeScreen = ({navigation})=>{
       //destructiveButtonIndex: 2,
       //tintColor: 'blue',
       title : 'تصنيف نوع المادة',
+      message: 'فضلًا أدخل صورة واضحة لمادة واحدة فقط',
       cancelButtonIndex: 0
     },
     buttonIndex => {

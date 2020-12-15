@@ -174,13 +174,18 @@ const fetchData=()=>{
          <LinearGradient
                     colors={["#827717","#AFB42B"]}
                     style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between'}}>
-            
+                     
                      <Image source={require('../assets/UserLogo2.png')} 
                      style={styles.logo}
                      resizeMode='stretch' />
-                    <FontAwesome5 name="chevron-left" size={31} color="#fff" style={styles.icon}
+
+                     <Text style={styles.text_header}>منشور</Text>
+
+                     <FontAwesome5 name="chevron-right" size={24} color="#fff" style={styles.icon}
                     onPress={()=>navigation.goBack()}
                     />
+
+                    
                      
             </LinearGradient>
         
@@ -284,7 +289,7 @@ const fetchData=()=>{
                   </View>
                 </View>
 
-                <Text style={styles.textStyle}>هل انت متاكد من حذف المنشور؟</Text>
+                <Text style={styles.textStyle}>هل أنت متأكد من حذف المنشور؟</Text>
                 <View style={{flexDirection:Platform.OS === 'android' &&
                         NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                         NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
@@ -350,10 +355,10 @@ const styles=StyleSheet.create({
         height: '10%'
       },
     logo: {
-        width: 90,
-        height: 40,
-      marginLeft: 285 , 
-      marginTop: 35, 
+        width: 85, // was 90
+        height: 35, // was 40
+        //marginRight: 200 , 
+        marginTop: 30, 
     },
     Reply: {
         height: 45,
@@ -375,9 +380,17 @@ const styles=StyleSheet.create({
     },
     icon:{
         position: 'absolute',
-        left: 16,
-        marginTop: 39,
+        right: 14,
+        marginTop: 35,
     },
+    text_header: { // NEW
+      marginRight: 150,
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 24,
+      textAlign: 'center',
+      marginTop:30
+  },
     ReplyIcon:{
         position: 'absolute',
         left: 9,

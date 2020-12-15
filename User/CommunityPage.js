@@ -390,7 +390,7 @@ flexDirectionStyle:{
     color: 'gray'
   },
   grid: {
-    marginBottom: 580,
+    marginBottom: 480, // was 580
       },
       icon: {
         left: 12,

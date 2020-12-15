@@ -100,6 +100,7 @@ import ClassifierModal from './ClassifierModal';
       options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
       //destructiveButtonIndex: 2,
       title : 'تصنيف نوع المادة',
+      message: 'فضلًا أدخل صورة واضحة لمادة واحدة فقط',
       cancelButtonIndex: 0
     },
     buttonIndex => {

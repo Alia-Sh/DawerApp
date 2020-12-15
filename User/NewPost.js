@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import firebase from '../Database/firebase';
 import AlertView from "../components/AlertView";
 import { LinearGradient } from 'expo-linear-gradient';
-import {MaterialIcons} from '@expo/vector-icons';
+import {MaterialIcons, FontAwesome5} from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import moment from 'moment-hijri';
 
@@ -130,13 +130,18 @@ const  NewPost= ({navigation}) =>{
                      style={styles.logo}
                      resizeMode='stretch' />
                      <Text style={styles.text_header}>منشور جديد</Text>
-                     <MaterialIcons name="cancel" size={33} color="#ffffff" style={Platform.OS === 'android' && 
+                    {/* <MaterialIcons name="cancel" size={33} color="#ffffff" style={Platform.OS === 'android' && 
                     NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                     NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                     NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
                     styles.iconAndroid:styles.iconIOS} 
                     onPress={()=> {navigation.navigate("UserHomePage")}}
-                    /> 
+                    /> */}
+                  
+                   <FontAwesome5 name="chevron-right" size={24} color="#fff" style={styles.icon}
+                    onPress={()=>navigation.goBack()}
+                    />
+
             </LinearGradient>
         
             </View>
@@ -226,15 +231,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 22,
         textAlign: 'center',
-        marginRight: 130 , 
-        marginTop: 40, 
+        marginRight: 125 , // was 130
+        marginTop: 32, //was 40
         alignItems: 'center',
     },
     logo: {
-        width: 90,
-        height: 40,
-      marginRight: 50 , // was left 65
-      marginTop: 35, // was top 36
+      width: 85, // was 90
+      height: 35, // was 40
+      //marginRight: 50 , // was left 65
+      marginTop: 30, // was top 36-35
       alignItems: 'center',
       justifyContent: 'center',
   },
@@ -314,6 +319,11 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
       },
+      icon:{
+        position: 'absolute',
+        right: 14,
+        marginTop: 35,
+    },
       iconIOS:{
         position:'absolute',
         right:6,

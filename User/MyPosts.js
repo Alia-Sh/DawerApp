@@ -133,8 +133,8 @@ const  MyPosts= ({navigation}) =>{
          <LinearGradient
                     colors={["#827717","#AFB42B"]}
                     style={{ height: '100%', width: '100%', flexDirection:'row', justifyContent: 'space-between'}}>
-         <Title style={styles.text_header}>منشوراتي</Title>
-            <FontAwesome5 name="chevron-left" size={30} color="#ffffff" style={Platform.OS === 'android' && 
+         <Text style={styles.text_header}>منشوراتي</Text>
+            <FontAwesome5 name="chevron-right" size={24} color="#ffffff" style={Platform.OS === 'android' && 
                                       NativeModules.I18nManager.localeIdentifier === 'ar_EG' || 
                                       NativeModules.I18nManager.localeIdentifier === 'ar_AE' ||
                                       NativeModules.I18nManager.localeIdentifier === 'ar_SA'?
@@ -214,12 +214,16 @@ const styles = StyleSheet.create({
         height: '10%'
     },
     text_header: {
-        position:'absolute',
-        marginTop: 39, 
+        //position:'absolute',
+        //marginTop: 39, 
         marginLeft: 150,
-        alignItems: 'center',
+        //alignItems: 'center',
         color: '#fff',
-        fontSize: 25
+        //fontSize: 25,
+        fontWeight: 'bold',
+        fontSize: 24,
+        textAlign: 'center',
+        marginTop:30
     },
     logo: {
         width: 90,
@@ -307,8 +311,8 @@ const styles = StyleSheet.create({
       },
       iconIOS:{
         position:'absolute',
-        left:6,
-        marginTop: 39, 
+        right:16,
+        marginTop: 35, 
         alignItems: 'center',
         justifyContent: 'center',
     },
