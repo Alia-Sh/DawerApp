@@ -43,7 +43,7 @@ const  CommunityPage= ({navigation}) =>{
             })
             if(li){
               li.sort(function(a, b){
-                return  new Date(b.DateAndTime) -new Date(a.DateAndTime);
+                return  new Date(b.Date) -new Date(a.Date);
               });
             }
             setPostList(li)

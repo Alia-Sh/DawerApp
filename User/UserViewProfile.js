@@ -133,7 +133,7 @@ const UserViewProfile = ({navigation,props})=>{
                         onPress={() => {
                             navigation.navigate("UserEditProfile",{UserName,Name,Phone,Picture,Location})
                         }}>
-                        تحديث
+                        تعديل
                     </Button>
                 </View>
             </View>

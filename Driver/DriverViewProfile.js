@@ -130,7 +130,7 @@ const DriverViewProfile = ({navigation})=>{
                         onPress={() => {
                             navigation.navigate("DriverEditProfile",{UserName,Name,Phone,Location,Email,Picture})
                         }}>
-                        تحديث
+                        تعديل
                     </Button>
                 </View>
 

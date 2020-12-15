@@ -43,6 +43,11 @@ const  CommunityHome= ({navigation}) =>{
               li.push(temp)
               setLoading(false)
             })
+            if(li){
+              li.sort(function(a, b){
+                return  new Date(b.Date) -new Date(a.Date);
+              });
+            }
             setPostList(li)
             setSearchisempty(false)
             setSearchOccur(false)
