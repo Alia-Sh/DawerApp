@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import moment from 'moment-hijri';
 import AlertView from "../components/AlertView";
 import LottieView from 'lottie-react-native';
+import * as Animatable from 'react-native-animatable';
 
 
 
@@ -41,6 +42,7 @@ const PostDetails=({navigation,route})=>{
         noReply: true,
         Replyinput: React.createRef(),
         isEmptyList:false ,
+        fillReplyInput: true,
         visible: false
     });
 
@@ -85,7 +87,8 @@ const PostDetails=({navigation,route})=>{
         setData({
             ...data,
             noReply: true,
-            isEmptyList:false
+            isEmptyList:false,
+            fillReplyInput: true
 
         });
         setReply('');
@@ -98,6 +101,7 @@ const AddReply=()=>{
         setData({
         ...data,
         noReply: false,
+        fillReplyInput: false,
         })
         }
        else {     
@@ -272,6 +276,15 @@ const fetchData=()=>{
             </TextInput>  
             </LinearGradient>
             </KeyboardAvoidingView>
+
+            {data.fillReplyInput ? null : (
+            <Animatable.View animation="fadeInRight" duration={500}>
+              <Text style={styles.errorMsg2}>
+                خانة الرد فارغة..
+              </Text>
+            </Animatable.View>
+            )} 
+
             {alert.alertVisible?
             <AlertView title={alert.Title} message={alert.Message} jsonPath={alert.jsonPath}></AlertView>
             :null}
@@ -329,6 +342,17 @@ const fetchData=()=>{
 
 
 const styles=StyleSheet.create({
+    errorMsg2: { //NEW
+        color: 'darkred',
+        fontSize: 14,
+        marginRight: 16,
+        //marginBottom: 10,
+        marginTop: -25,
+        textAlign: Platform.OS === 'android' && 
+        NativeModules.I18nManager.localeIdentifier === 'ar_EG' ||
+        NativeModules.I18nManager.localeIdentifier === 'ar_SA' || 
+        NativeModules.I18nManager.localeIdentifier === 'ar_AE'? 'left' : 'right',
+    },
     root:{
         flex:1,
         backgroundColor: '#fff',   
