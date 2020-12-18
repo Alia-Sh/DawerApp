@@ -30,7 +30,7 @@ const createUser =()=>{
       
           firebase.database().ref('Admin/' + userId).set({
             Name:"Haneen",
-          
+            Email:data.UserName.concat("@gmail.com"),
             UserName:data.UserName,
           });
         
