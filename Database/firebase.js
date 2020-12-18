@@ -2,13 +2,13 @@ import * as firebase from 'firebase';
 
   // Your web app's Firebase configuration
   var firebaseConfig = {
-    apiKey: "AIzaSyAiT4V1_SaZ0vmftn_-ftAwIe19eFzKzgE",
-    authDomain: "dawerapp.firebaseapp.com",
-    databaseURL: "https://dawerapp.firebaseio.com",
-    projectId: "dawerapp",
-    storageBucket: "dawerapp.appspot.com",
-    messagingSenderId: "185539839396",
-    appId: "1:185539839396:web:cdead77f97a6ae8afbad31"
+    apiKey: "AIzaSyBbFriWu7Z3nU3DRKfcFL9oPe_3642yhGM",
+    authDomain: "euphoric-stone-298423.firebaseapp.com",
+    databaseURL: "https://euphoric-stone-298423-default-rtdb.firebaseio.com",
+    projectId: "euphoric-stone-298423",
+    storageBucket: "euphoric-stone-298423.appspot.com",
+    messagingSenderId: "546499363978",
+    appId: "1:546499363978:web:2e1937d9506a2819815973"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);

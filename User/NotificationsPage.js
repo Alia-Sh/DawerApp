@@ -45,7 +45,7 @@ const  NotificationsPage= ({navigation}) =>{
     }
 
     const fetchData=async()=>{
-        firebase.database().ref("Notification/"+userId).orderByChild('DateAndTime').limitToLast(20).on('value',async snapshot=>{
+        firebase.database().ref("Notification/"+userId).orderByChild('DateAndTime').limitToFirst(20).on('value',async snapshot=>{
           const Data = snapshot.val();
           if(Data){
             var li = []

@@ -23,9 +23,7 @@ console.log("on rejrct ",props.Token);
     }
 
     const rejectJoinRequest=(userId)=>{
-        firebase.database().ref('DeliveryDriver/' + userId).update({
-            Status:"Rejected" 
-        }).then(()=>{
+      firebase.database().ref('DeliveryDriver/' + userId).remove().then(()=>{
             props.setRejectModal(false);
             props.navigation.navigate("DriverHome");
         })

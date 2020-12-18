@@ -17,10 +17,9 @@ exports.newNodeDetected = functions.database.ref('User/{userId}/Name')
     return null;
 });
 //1 1 * * *
+//'1 00 * * *'
 exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
 .timeZone('Asia/Riyadh').onRun((context)=>{
-    // var currentDate = new Date();
-    // sendNotifications("ExponentPushToken[HLODp9Ac03jIiXoQoFPmKP]",' تم رفض الطلب ','قبول الطلب','NotificationsPage')
     database.ref('PickupRequest/').on('value',snapshot=>{
         const Data = snapshot.val();
         if(Data){        
@@ -30,17 +29,7 @@ exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
                     snapshot.forEach(function(snapshot){
                         var requestId=snapshot.key;
                         database.ref('PickupRequest/'+userId+"/"+requestId).on('value',snapshot=>{
-                            // var currentDate2 = moment(currentDate).format('Y/M/D HH:mm');
                             var date=snapshot.val().DateAndTime;
-                            // var INDEX=date.indexOf(" ");
-                            // var INDEX2=currentDate2.indexOf(" ");
-                            // var reqDate=moment(date.substring(0,INDEX)).format('Y/M/D');
-                            // var curDate=moment(currentDate2.substring(0,INDEX2)).format('Y/M/D')
-                            // console.log("date ",date);
-                            // console.log("date2 ",moment(date).format('Y/M/D'));
-                            // console.log("cuurent Date ",moment().tz('Asia/Riyadh').format('Y/M/D'));
-                            // console.log("Time ",moment(date).format('LT'));
-                            // console.log("isSameOrBefore ",moment(moment(date).format('Y/M/D')).isSameOrBefore(moment().tz('Asia/Riyadh').format('Y/M/D')));
                             if(moment(moment(date).format('Y/M/D')).isSameOrBefore(moment().tz('Asia/Riyadh').format('Y/M/D'))){
                                 if(snapshot.val().Status==="Pending"){
                                     database.ref('PickupRequest/'+userId+"/"+requestId).update({
@@ -68,11 +57,9 @@ exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
     return null;
 });
 // 'every 5 minutes'
+//'1 6 * * *'
 exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
 .timeZone('Asia/Riyadh').onRun((context)=>{
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
     database.ref('PickupRequest/').on('value',snapshot=>{
         const Data = snapshot.val();
         if(Data){        
@@ -82,12 +69,7 @@ exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
                     snapshot.forEach(function(snapshot){
                         var requestId=snapshot.key;
                         database.ref('PickupRequest/'+userId+"/"+requestId).on('value',snapshot=>{
-                            // var currentDate2 = moment(tomorrow).format('Y/M/D HH:mm');
                             var date=snapshot.val().DateAndTime;
-                            // var INDEX=date.indexOf(" ");
-                            // var INDEX2=currentDate2.indexOf(" ");
-                            // var reqDate=moment(date.substring(0,INDEX)).format('Y/M/D');
-                            // var curDate=moment(currentDate2.substring(0,INDEX2)).format('Y/M/D')
                             if(moment(moment(date).format('Y/M/D')).isSame(moment().add(1, 'days').tz('Asia/Riyadh').format('Y/M/D'))){
                                 if(snapshot.val().Status==="Accepted"){
                                     database.ref("User/"+userId).on('value',snapshot=>{
@@ -114,7 +96,10 @@ exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
     return null;
 });
 
-
+exports.removeUser = functions.database.ref("/DeliveryDriver/{uid}")
+    .onDelete((snapshot, context) => {        
+        return admin.auth().deleteUser(context.params.uid);
+    });
 
 
 const sendNotifications=async(token,msg,title,screen,param)=>{
@@ -138,3 +123,4 @@ const sendNotifications=async(token,msg,title,screen,param)=>{
       });
     }
   };
+
