@@ -548,7 +548,11 @@ import ClassifierModal from './ClassifierModal';
         }
         console.warn("A date has been picked: ", datetime);
         // setDateAndTime(moment(datetime).format('MMM, Do YYY hh:mm A'))
-        setDateAndTime(moment(datetime).locale('en-au').format('llll'))
+        if( moment(moment(datetime).format('Y/M/D')).isSame(moment(today).format('Y/M/D'))){
+            setDateAndTime(moment(datetime).add(1, 'days').locale('en-au').format('llll'))
+        }else{
+            setDateAndTime(moment(datetime).locale('en-au').format('llll'))
+        }
         // setDateAndTime(moment(datetime).format('Y/M/D hh:mm A'))
         hideDatePicker();
     };

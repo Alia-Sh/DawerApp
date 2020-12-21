@@ -18,7 +18,7 @@ exports.newNodeDetected = functions.database.ref('User/{userId}/Name')
 });
 //1 1 * * *
 //'1 00 * * *'
-exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
+exports.rejectRequest = functions.pubsub.schedule('1 00 * * *')
 .timeZone('Asia/Riyadh').onRun((context)=>{
     database.ref('PickupRequest/').on('value',snapshot=>{
         const Data = snapshot.val();
@@ -58,7 +58,7 @@ exports.pushDataEveryMinute = functions.pubsub.schedule('1 00 * * *')
 });
 // 'every 5 minutes'
 //'1 6 * * *'
-exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
+exports.sendRemember= functions.pubsub.schedule('1 6 * * *')
 .timeZone('Asia/Riyadh').onRun((context)=>{
     database.ref('PickupRequest/').on('value',snapshot=>{
         const Data = snapshot.val();
@@ -96,11 +96,15 @@ exports.pushDataEveryDay= functions.pubsub.schedule('1 6 * * *')
     return null;
 });
 
-exports.removeUser = functions.database.ref("/DeliveryDriver/{uid}")
+exports.removeDriver = functions.database.ref("/DeliveryDriver/{uid}")
     .onDelete((snapshot, context) => {        
         return admin.auth().deleteUser(context.params.uid);
     });
 
+exports.removeUser = functions.database.ref("/User/{uid}")
+    .onDelete((snapshot, context) => {        
+        return admin.auth().deleteUser(context.params.uid);
+    });
 
 const sendNotifications=async(token,msg,title,screen,param)=>{
     if(token!==""){
