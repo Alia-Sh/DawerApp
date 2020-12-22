@@ -31,6 +31,7 @@ export default class ClassifierModal extends React.Component {
       await tf.setBackend('rn-webgl');
       await tf.ready(); // preparing TensorFlow
       this.setState({ isTfReady: true,});
+      this.setState({ image: this.props.img });
       console.log("BEFORE LOAD")
       const modelJSON = require('../assets/tfjs_files/model.json');
       const modelWeights = require('../assets/tfjs_files/group1-shard.bin');
@@ -40,7 +41,7 @@ export default class ClassifierModal extends React.Component {
       console.log("Model loaded!");
       this.setState({ MyModel: model });
       this.setState({ isModelReady: true });
-      this.setState({ image: this.props.img });
+      //this.setState({ image: this.props.img });
       this.classifyImage()
     }
   
@@ -129,6 +130,65 @@ export default class ClassifierModal extends React.Component {
     )
   }
 
+  // FOR TESTING & PRESENTATION PURPOSES
+  camOptions = async () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+    {
+      options: ["إلغاء", "التقاط صورة", "اختيار صورة"],
+      //destructiveButtonIndex: 2,
+      //tintColor: 'blue',
+      title : 'تصنيف نوع المادة',
+      message: 'فضلًا أدخل صورة واضحة لمادة واحدة فقط',
+      cancelButtonIndex: 0
+    },
+    buttonIndex => {
+      if (buttonIndex === 0) {
+        // cancel action
+      } else if (buttonIndex === 1) {
+        this.pickFromCamera();
+      } else if (buttonIndex === 2) {
+        this.selectImage();
+      }
+    }
+    );
+  }
+
+  pickFromCamera = async ()=>{
+    const {granted} =  await Permissions.askAsync(Permissions.CAMERA)
+    if(granted){
+         let data =  await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1,1]
+          })
+        if(!data.cancelled){
+           const source = { uri: data.uri }
+           this.setState({ image: source })
+           this.classifyImage()
+        }
+    }else{
+       alert("you need to give the permission to work!")
+    }
+  }
+
+  selectImage = async () => {
+    try {
+      let response = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1]
+      })
+      if (!response.cancelled) {
+  
+        const source = { uri: response.uri }
+          this.setState({ image: source })
+          this.classifyImage()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   render() {
     const { isTfReady, isModelReady, predictions, image,  MyModel } = this.state
     const { navigation } = this.props;
@@ -201,9 +261,9 @@ export default class ClassifierModal extends React.Component {
         
 
         <TouchableOpacity
-            style={styles.imageWrapper}>
-            {/*onPress={isModelReady ? this.selectImage : undefined}> */}
-            <Image source={this.props.img} style={styles.imageContainer} />
+            style={styles.imageWrapper}
+            onPress={isModelReady ? this.camOptions : undefined}>
+            {image && <Image source={this.state.image} style={styles.imageContainer} />}
 
             {isModelReady && !image && (
             <Text style={styles.transparentText}></Text>
