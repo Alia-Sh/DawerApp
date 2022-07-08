@@ -41,7 +41,7 @@
     "jpeg-js": "^0.4.2",
     "lottie-ios": "^2.5.3",
     "lottie-react-native": "^2.5.11",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "moment-hijri": "^2.1.2",
     "multiselect-react-dropdown": "^1.6.1",
     "native-base": "^2.13.14",
