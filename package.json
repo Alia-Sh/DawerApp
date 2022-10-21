@@ -72,7 +72,7 @@
     "react-native-placesearch": "^2.0.0",
     "react-native-range-slider": "^0.1.2",
     "react-native-read-more-text": "^1.1.2",
-    "react-native-reanimated": "~1.9.0",
+    "react-native-reanimated": "~2.10.0",
     "react-native-safe-area-context": "~3.0.7",
     "react-native-safe-module": "^1.2.0",
     "react-native-screens": "~2.9.0",
